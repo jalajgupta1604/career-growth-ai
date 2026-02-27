@@ -9,7 +9,8 @@ class OnboardingController < ApplicationController
 
   VALID_CITIES = [
     "Bangalore", "Mumbai", "Delhi", "Hyderabad", "Pune", "Chennai",
-    "Kolkata", "Noida", "Gurugram", "Ahmedabad"
+    "Kolkata", "Noida", "Gurugram", "Ahmedabad", "Indore", "Bhopal",
+    "Jaipur", "Chandigarh"
   ].freeze
 
   def show
