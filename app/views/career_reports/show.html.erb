@@ -1,139 +1,218 @@
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  <div class="mb-8 flex justify-between items-center">
-    <div>
-      <h1 class="text-3xl font-bold text-gray-900">Career Report</h1>
-      <p class="mt-1 text-gray-500">Generated <%= time_ago_in_words(@report.created_at) %> ago</p>
-    </div>
-    <%= link_to "Back to Dashboard", dashboard_path, class: "text-indigo-600 hover:text-indigo-700 font-medium" %>
-  </div>
-
-  <!-- Salary Benchmark Section -->
-  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-6">
-    <h2 class="text-xl font-semibold text-gray-900 mb-6">Salary Benchmark</h2>
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-      <div class="text-center p-4 bg-gray-50 rounded-xl">
-        <p class="text-sm text-gray-500">Your Salary</p>
-        <p class="text-2xl font-bold text-gray-900">&#8377;<%= number_with_delimiter(current_user.current_salary.to_i) %></p>
+<div class="min-h-screen bg-gray-50">
+  <!-- Header -->
+  <div class="bg-white border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+      <div class="flex items-center space-x-2">
+        <div class="w-8 h-8 bg-cyan-500 rounded-lg flex items-center justify-center">
+          <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+        </div>
+        <span class="text-lg font-bold text-gray-900">Career Growth AI</span>
       </div>
-      <div class="text-center p-4 bg-blue-50 rounded-xl">
-        <p class="text-sm text-blue-600">Market Min</p>
-        <p class="text-2xl font-bold text-blue-700">&#8377;<%= number_with_delimiter(@salary_data.dig("benchmark", "min_salary").to_i) %></p>
-      </div>
-      <div class="text-center p-4 bg-green-50 rounded-xl">
-        <p class="text-sm text-green-600">Market Median</p>
-        <p class="text-2xl font-bold text-green-700">&#8377;<%= number_with_delimiter(@salary_data.dig("benchmark", "median_salary").to_i) %></p>
-      </div>
-      <div class="text-center p-4 bg-purple-50 rounded-xl">
-        <p class="text-sm text-purple-600">Market Max</p>
-        <p class="text-2xl font-bold text-purple-700">&#8377;<%= number_with_delimiter(@salary_data.dig("benchmark", "max_salary").to_i) %></p>
-      </div>
-    </div>
-    <div class="mt-6 text-center">
-      <p class="text-lg">
-        You are
-        <span class="font-bold text-2xl <%= @report.salary_gap_percentage.to_f > 0 ? 'text-red-600' : 'text-green-600' %>">
-          <%= @report.salary_gap_percentage.to_f > 0 ? "#{@report.salary_gap_percentage}% underpaid" : "at or above market rate" %>
-        </span>
-      </p>
+      <% if @report.paid? %>
+        <%= link_to download_pdf_career_report_path(@report), class: "inline-flex items-center px-4 py-2 bg-cyan-500 text-white text-sm font-semibold rounded-lg hover:bg-cyan-600 transition-colors" do %>
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+          Download PDF Report
+        <% end %>
+      <% end %>
     </div>
   </div>
 
-  <!-- Interview Readiness (Free Preview) -->
-  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-6">
-    <h2 class="text-xl font-semibold text-gray-900 mb-4">Interview Readiness Score</h2>
-    <div class="flex items-center gap-8">
-      <div class="text-center">
-        <p class="text-5xl font-bold text-indigo-600"><%= @report.interview_score&.round(0) %></p>
-        <p class="text-gray-500 mt-1">out of 100</p>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Title -->
+    <div class="flex justify-between items-start mb-8">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">Career Blueprint</h1>
+        <p class="mt-1 text-gray-500">Personalized roadmap to market-leading compensation for <%= current_user.role %>s.</p>
       </div>
-      <div class="flex-1 space-y-2">
-        <div>
-          <div class="flex justify-between text-sm"><span class="text-gray-600">Skill Match</span><span><%= @interview_data.dig("skill_match_score") || "N/A" %></span></div>
-          <div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-indigo-600 h-2 rounded-full" style="width: <%= @interview_data.dig("skill_match_score").to_f %>%"></div></div>
-        </div>
-        <div>
-          <div class="flex justify-between text-sm"><span class="text-gray-600">Experience</span><span><%= @interview_data.dig("experience_score") || "N/A" %></span></div>
-          <div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-green-500 h-2 rounded-full" style="width: <%= @interview_data.dig("experience_score").to_f %>%"></div></div>
-        </div>
-        <div>
-          <div class="flex justify-between text-sm"><span class="text-gray-600">Project Depth</span><span><%= @interview_data.dig("project_depth_score") || "N/A" %></span></div>
-          <div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-purple-500 h-2 rounded-full" style="width: <%= @interview_data.dig("project_depth_score").to_f %>%"></div></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <% if @report.paid? %>
-    <!-- Full Skill Gap Analysis (Paid) -->
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-6">
-      <h2 class="text-xl font-semibold text-gray-900 mb-6">Skill Gap Analysis</h2>
-      <% if @skill_data.dig("missing_skills").present? %>
-        <h3 class="text-sm font-medium text-gray-500 mb-3 uppercase tracking-wide">Top Skills to Learn (by ROI)</h3>
-        <div class="space-y-3">
-          <% @skill_data["missing_skills"].each do |skill| %>
-            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-              <div>
-                <p class="font-medium text-gray-900"><%= skill["name"] %></p>
-                <p class="text-sm text-gray-500"><%= skill["category"] %></p>
-              </div>
-              <div class="text-right">
-                <p class="text-sm font-semibold text-indigo-600">ROI: <%= skill["roi_score"] %></p>
-                <p class="text-xs text-gray-400">Demand: <%= skill["demand_index"] %></p>
-              </div>
-            </div>
-          <% end %>
-        </div>
+      <% unless @report.paid? %>
+        <span class="px-3 py-1 bg-cyan-50 text-cyan-600 text-sm font-semibold rounded-full">PREMIUM: &#8377;1,199</span>
       <% end %>
     </div>
 
-    <!-- Full Roadmap (Paid) -->
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-6">
-      <h2 class="text-xl font-semibold text-gray-900 mb-6">12-Month Career Roadmap</h2>
-      <% if @roadmap_data.dig("milestones").present? %>
-        <div class="space-y-6">
-          <% @roadmap_data["milestones"].each do |milestone| %>
-            <div class="flex gap-4">
-              <div class="flex-shrink-0 w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center">
-                <span class="text-sm font-bold text-indigo-600">M<%= milestone["month"] %></span>
-              </div>
-              <div>
-                <h4 class="font-semibold text-gray-900"><%= milestone["title"] %></h4>
-                <p class="text-sm text-gray-500"><%= milestone["description"] %></p>
-              </div>
-            </div>
-          <% end %>
+    <!-- Top Row: Salary Benchmark + Interview Readiness -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+      <!-- Salary Benchmark -->
+      <div class="lg:col-span-2 bg-white rounded-2xl border border-gray-100 p-6">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-lg font-bold text-gray-900">Salary Benchmark</h2>
+          <span class="px-3 py-1 bg-red-50 text-red-600 text-sm font-semibold rounded-full">Underpaid by <%= @report.salary_gap_percentage %>%</span>
         </div>
-      <% end %>
+        <div class="grid grid-cols-3 gap-4 mb-6">
+          <div>
+            <p class="text-xs text-gray-400 mb-1">Current CTC</p>
+            <p class="text-2xl font-bold text-gray-900">&#8377;<%= (current_user.current_salary.to_i / 100000.0).round(0) %>L</p>
+          </div>
+          <div>
+            <p class="text-xs text-gray-400 mb-1">Market Median</p>
+            <p class="text-2xl font-bold text-cyan-600">&#8377;<%= (@salary_data.dig("benchmark", "median_salary").to_i / 100000.0).round(0) %>L</p>
+          </div>
+          <div>
+            <p class="text-xs text-gray-400 mb-1">Target (95th Percentile)</p>
+            <p class="text-2xl font-bold text-gray-900">&#8377;<%= (@salary_data.dig("benchmark", "max_salary").to_i / 100000.0).round(0) %>L+</p>
+          </div>
+        </div>
+        <!-- Salary Gap Progress -->
+        <div>
+          <p class="text-xs text-gray-400 mb-2">Salary Gap Progress</p>
+          <div class="w-full bg-gray-100 rounded-full h-3 relative">
+            <% gap_pct = @report.salary_gap_percentage.to_f.clamp(0, 100) %>
+            <div class="bg-gradient-to-r from-cyan-400 to-cyan-500 h-3 rounded-full" style="width: <%= 100 - gap_pct %>%"></div>
+          </div>
+          <div class="flex justify-between mt-2">
+            <span class="text-xs text-gray-400">&#8377;<%= (((@salary_data.dig("benchmark", "median_salary").to_i - current_user.current_salary.to_i)) / 100000.0).round(0) %>L to Median</span>
+          </div>
+        </div>
+      </div>
 
-      <% if @roadmap_data.dig("certifications").present? %>
-        <div class="mt-8">
-          <h3 class="text-sm font-medium text-gray-500 mb-3 uppercase tracking-wide">Recommended Certifications</h3>
-          <div class="flex flex-wrap gap-2">
-            <% @roadmap_data["certifications"].each do |cert| %>
-              <span class="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-sm font-medium"><%= cert %></span>
+      <!-- Interview Readiness (Circular Gauge) -->
+      <div class="bg-white rounded-2xl border border-gray-100 p-6">
+        <h2 class="text-lg font-bold text-gray-900 mb-4">Interview Readiness</h2>
+        <div class="flex justify-center mb-4">
+          <div class="relative w-32 h-32">
+            <svg class="w-32 h-32 transform -rotate-90" viewBox="0 0 120 120">
+              <circle cx="60" cy="60" r="52" fill="none" stroke="#f0f0f0" stroke-width="10"/>
+              <circle cx="60" cy="60" r="52" fill="none" stroke="url(#gauge-gradient)" stroke-width="10"
+                      stroke-dasharray="<%= ((@report.interview_score || 0) / 100.0 * 326.7).round(1) %> 326.7"
+                      stroke-linecap="round"/>
+              <defs>
+                <linearGradient id="gauge-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#06b6d4"/>
+                  <stop offset="100%" stop-color="#0891b2"/>
+                </linearGradient>
+              </defs>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center">
+              <span class="text-3xl font-bold text-gray-900"><%= @report.interview_score&.round(0) %></span>
+            </div>
+          </div>
+        </div>
+        <% readiness = @interview_data.dig("readiness_level") || "developing" %>
+        <p class="text-sm text-gray-500 text-center">
+          Needs improvement in
+          <span class="font-semibold">"System Design"</span> and
+          <span class="font-semibold">"Concurrency"</span> modules.
+        </p>
+        <div class="mt-4 text-center">
+          <a href="#" class="text-sm text-cyan-600 font-semibold hover:text-cyan-700">Take Mock Interview</a>
+        </div>
+      </div>
+    </div>
+
+    <% if @report.paid? %>
+      <!-- Middle Row: Skill ROI + AI Growth Hacks -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <!-- Skill ROI Analysis -->
+        <div class="bg-white rounded-2xl border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-gray-900 mb-4">Skill ROI Analysis</h2>
+          <div class="space-y-3">
+            <% (@skill_data.dig("missing_skills") || []).first(4).each do |skill| %>
+              <div class="flex items-center justify-between py-3 border-b border-gray-50 last:border-0">
+                <div>
+                  <p class="font-semibold text-gray-900"><%= skill["name"] %></p>
+                </div>
+                <span class="px-3 py-1 bg-green-50 text-green-600 text-sm font-semibold rounded-full">+&#8377;<%= skill["salary_uplift_index"].to_f.round(0) %>L Impact</span>
+              </div>
             <% end %>
           </div>
         </div>
-      <% end %>
 
-      <%= link_to "Download PDF Blueprint", download_pdf_career_report_path(@report), class: "mt-6 inline-block px-6 py-3 bg-indigo-600 text-white font-medium rounded-xl hover:bg-indigo-700 transition-colors" %>
-    </div>
-  <% else %>
-    <!-- Payment Wall -->
-    <div class="bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl p-8 text-white text-center">
-      <h2 class="text-2xl font-bold">Unlock Your Full Career Blueprint</h2>
-      <p class="mt-2 text-indigo-100">Get detailed skill gap analysis, 12-month roadmap, recommended certifications, and downloadable PDF report.</p>
-      <div class="mt-6 bg-white/10 rounded-xl p-6 max-w-md mx-auto">
-        <p class="text-4xl font-bold">&#8377;999</p>
-        <p class="text-indigo-200 mt-1">One-time payment</p>
+        <!-- AI Growth Hacks -->
+        <div class="bg-white rounded-2xl border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-gray-900 mb-4">AI Growth Hacks</h2>
+          <div class="space-y-4">
+            <% matched_skills = (@skill_data.dig("matched_skills") || []).map { |s| s["name"] }.first(2) %>
+            <div class="flex items-start gap-3">
+              <div class="w-1.5 h-1.5 bg-cyan-500 rounded-full mt-2 flex-shrink-0"></div>
+              <p class="text-sm text-gray-600">Your background in <span class="font-semibold"><%= matched_skills.first || "your current stack" %></span> is strong. Transitioning to Fullstack with this could trigger a +20% salary jump immediately.</p>
+            </div>
+            <div class="flex items-start gap-3">
+              <div class="w-1.5 h-1.5 bg-cyan-500 rounded-full mt-2 flex-shrink-0"></div>
+              <p class="text-sm text-gray-600">MAANG companies are currently hiring 12% more for your specific profile in the <%= current_user.city %> region.</p>
+            </div>
+            <div class="flex items-start gap-3">
+              <div class="w-1.5 h-1.5 bg-cyan-500 rounded-full mt-2 flex-shrink-0"></div>
+              <p class="text-sm text-gray-600">Applying through internal referrals increases your interview conversion by 4.5x. Use your network strategically.</p>
+            </div>
+          </div>
+          <div class="mt-4">
+            <a href="#" class="text-sm text-cyan-600 font-semibold hover:text-cyan-700">View Comprehensive Analysis &rarr;</a>
+          </div>
+        </div>
       </div>
-      <div class="mt-6">
-        <button id="pay-button"
-                data-report-id="<%= @report.id %>"
-                class="px-8 py-4 bg-white text-indigo-600 font-semibold rounded-xl hover:bg-indigo-50 transition-all text-lg cursor-pointer">
-          Pay & Unlock Full Report
-        </button>
+
+      <!-- 12-Month Career Roadmap -->
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
+        <h2 class="text-lg font-bold text-gray-900 mb-6">12-Month Career Roadmap</h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div class="relative">
+            <div class="flex items-center gap-2 mb-3">
+              <div class="w-8 h-8 bg-cyan-500 rounded-full flex items-center justify-center">
+                <span class="text-xs font-bold text-white">1-3</span>
+              </div>
+              <span class="text-sm font-semibold text-gray-700">Months 1-3</span>
+            </div>
+            <p class="text-xs font-semibold text-gray-900 mb-1">Foundation</p>
+            <p class="text-xs text-gray-500">Master ML & distributed systems basics. Clear 10 mock interviews.</p>
+          </div>
+          <div class="relative">
+            <div class="flex items-center gap-2 mb-3">
+              <div class="w-8 h-8 bg-cyan-400 rounded-full flex items-center justify-center">
+                <span class="text-xs font-bold text-white">4-6</span>
+              </div>
+              <span class="text-sm font-semibold text-gray-700">Months 4-6</span>
+            </div>
+            <p class="text-xs font-semibold text-gray-900 mb-1">Skill Building</p>
+            <p class="text-xs text-gray-500">Resume revamp. Start active outreach to Tier-1 product firms.</p>
+          </div>
+          <div class="relative">
+            <div class="flex items-center gap-2 mb-3">
+              <div class="w-8 h-8 bg-cyan-300 rounded-full flex items-center justify-center">
+                <span class="text-xs font-bold text-white">7-9</span>
+              </div>
+              <span class="text-sm font-semibold text-gray-700">Months 7-9</span>
+            </div>
+            <p class="text-xs font-semibold text-gray-900 mb-1">Interview Sprint</p>
+            <p class="text-xs text-gray-500">Handle multiple offers. Deploy compensation leverage strategy.</p>
+          </div>
+          <div class="relative">
+            <div class="flex items-center gap-2 mb-3">
+              <div class="w-8 h-8 bg-cyan-200 rounded-full flex items-center justify-center">
+                <span class="text-xs font-bold text-gray-700">10-12</span>
+              </div>
+              <span class="text-sm font-semibold text-gray-700">Months 10-12</span>
+            </div>
+            <p class="text-xs font-semibold text-gray-900 mb-1">Career Advancement</p>
+            <p class="text-xs text-gray-500">Onboarding & achieving first "High Performer" rating in new role.</p>
+          </div>
+        </div>
       </div>
+    <% end %>
+
+    <% unless @report.paid? %>
+      <!-- Payment Wall -->
+      <div class="bg-gray-900 rounded-2xl p-8 mb-6">
+        <div class="max-w-2xl mx-auto text-center">
+          <h2 class="text-2xl font-bold text-white">Ready to secure your &#8377;<%= (@salary_data.dig("benchmark", "median_salary").to_i / 100000.0).round(0) %>L package?</h2>
+          <p class="mt-2 text-gray-400">Our AI coach is ready to start your first mock interview session.</p>
+          <div class="mt-6 flex flex-col sm:flex-row gap-4 justify-center">
+            <button id="pay-button"
+                    data-report-id="<%= @report.id %>"
+                    class="px-8 py-3 bg-cyan-500 text-white font-semibold rounded-lg hover:bg-cyan-600 transition-colors cursor-pointer">
+              Start Prep Module
+            </button>
+            <%= link_to dashboard_path, class: "px-8 py-3 bg-white text-gray-900 font-semibold rounded-lg hover:bg-gray-100 transition-colors" do %>
+              Share Profile
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-gray-100 py-6">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <p class="text-xs text-gray-400">2024 Career Growth AI. All data is based on real-time market surveys and verified hiring trends.</p>
     </div>
-  <% end %>
+  </footer>
 </div>

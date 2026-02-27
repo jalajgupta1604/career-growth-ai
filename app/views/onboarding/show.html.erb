@@ -1,58 +1,128 @@
-<div class="min-h-screen bg-gray-50 py-12">
+<div class="min-h-screen bg-gray-50 py-8">
   <div class="max-w-2xl mx-auto px-4">
-    <div class="text-center mb-8">
-      <h1 class="text-3xl font-bold text-gray-900">Tell us about yourself</h1>
-      <p class="mt-2 text-gray-500">This helps us benchmark your salary and identify growth opportunities.</p>
-    </div>
-
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-      <%= form_with(model: current_user, url: onboarding_path, method: :patch, class: "space-y-6") do |f| %>
-        <% if current_user.errors.any? %>
-          <div class="bg-red-50 border border-red-200 rounded-lg p-4">
-            <ul class="text-sm text-red-600 space-y-1">
-              <% current_user.errors.full_messages.each do |msg| %>
-                <li><%= msg %></li>
-              <% end %>
-            </ul>
-          </div>
-        <% end %>
-
-        <div>
-          <%= f.label :role, "Current Role", class: "block text-sm font-medium text-gray-700 mb-2" %>
-          <%= f.select :role,
-              OnboardingController::VALID_ROLES.map { |r| [r, r] },
-              { include_blank: "Select your role" },
-              class: "w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+      <div class="flex items-center space-x-2">
+        <div class="w-8 h-8 bg-cyan-500 rounded-lg flex items-center justify-center">
+          <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
         </div>
-
-        <div>
-          <%= f.label :city, "City", class: "block text-sm font-medium text-gray-700 mb-2" %>
-          <%= f.select :city,
-              OnboardingController::VALID_CITIES.map { |c| [c, c] },
-              { include_blank: "Select your city" },
-              class: "w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
-        </div>
-
-        <div>
-          <%= f.label :experience_years, "Years of Experience", class: "block text-sm font-medium text-gray-700 mb-2" %>
-          <%= f.number_field :experience_years, min: 0, max: 40, placeholder: "e.g. 5",
-              class: "w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
-        </div>
-
-        <div>
-          <%= f.label :current_salary, "Current Annual Salary (INR)", class: "block text-sm font-medium text-gray-700 mb-2" %>
-          <div class="relative">
-            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">&#8377;</span>
-            <%= f.number_field :current_salary, min: 0, step: 1000, placeholder: "e.g. 1200000",
-                class: "w-full pl-8 rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
-          </div>
-          <p class="mt-1 text-xs text-gray-400">Enter your annual CTC in INR (e.g., 12,00,000)</p>
-        </div>
-
-        <div class="pt-4">
-          <%= f.submit "Continue", class: "w-full py-3 px-6 bg-indigo-600 text-white font-medium rounded-xl hover:bg-indigo-700 transition-colors cursor-pointer" %>
-        </div>
+        <span class="text-lg font-bold text-gray-900">Career Growth AI</span>
+      </div>
+      <%= link_to root_path, class: "w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-200 transition-colors" do %>
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
       <% end %>
     </div>
+
+    <!-- Step Indicator -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-5 mb-8">
+      <div class="flex justify-between items-center mb-2">
+        <span class="text-sm font-semibold text-gray-700">STEP 1 OF 2</span>
+        <span class="text-sm font-semibold text-cyan-500">50% Complete</span>
+      </div>
+      <div class="w-full bg-gray-100 rounded-full h-2">
+        <div class="bg-cyan-500 h-2 rounded-full" style="width: 50%"></div>
+      </div>
+      <p class="mt-2 text-xs text-gray-400">Next: Upload Resume</p>
+    </div>
+
+    <!-- Form -->
+    <%= form_with(model: current_user, url: onboarding_path, method: :patch, multipart: true, class: "space-y-8") do |f| %>
+      <% if current_user.errors.any? %>
+        <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+          <ul class="text-sm text-red-600 space-y-1">
+            <% current_user.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <!-- Career Info -->
+      <div>
+        <h2 class="text-2xl font-bold text-gray-900">Tell us about your career</h2>
+        <p class="mt-2 text-gray-500">This helps our AI tailor the best career opportunities and personalized growth path for you.</p>
+      </div>
+
+      <div class="space-y-5">
+        <!-- Current Role -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">Current Role</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+            </div>
+            <%= f.select :role,
+                OnboardingController::VALID_ROLES.map { |r| [r, r] },
+                { include_blank: "e.g. Senior Software Engineer" },
+                class: "w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 focus:border-cyan-500 focus:ring-cyan-500 focus:bg-white transition-colors" %>
+          </div>
+        </div>
+
+        <!-- Experience + CTC side by side -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Years of Experience</label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+              </div>
+              <%= f.number_field :experience_years, min: 0, max: 40, placeholder: "e.g. 5",
+                  class: "w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 focus:border-cyan-500 focus:ring-cyan-500 focus:bg-white transition-colors" %>
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Current CTC (&#8377; LPA)</label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+              </div>
+              <%= f.number_field :current_salary, min: 0, step: 100000, placeholder: "e.g. 18",
+                  class: "w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 focus:border-cyan-500 focus:ring-cyan-500 focus:bg-white transition-colors" %>
+            </div>
+          </div>
+        </div>
+
+        <!-- City -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">Current City</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+            </div>
+            <%= f.select :city,
+                OnboardingController::VALID_CITIES.map { |c| [c, c] },
+                { include_blank: "e.g. Bangalore, India" },
+                class: "w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 focus:border-cyan-500 focus:ring-cyan-500 focus:bg-white transition-colors" %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resume Upload -->
+      <div>
+        <div class="flex items-center space-x-2 mb-4">
+          <svg class="w-5 h-5 text-cyan-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>
+          <h3 class="text-lg font-bold text-gray-900">Resume Upload</h3>
+        </div>
+        <div class="border-2 border-dashed border-cyan-200 bg-cyan-50/30 rounded-2xl p-10 text-center hover:border-cyan-400 transition-colors">
+          <div class="w-12 h-12 bg-cyan-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-6 h-6 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+            </svg>
+          </div>
+          <p class="text-sm text-gray-600">
+            <label for="resume_file" class="cursor-pointer text-cyan-600 font-semibold hover:text-cyan-700">Click to upload</label>
+            or drag and drop
+          </p>
+          <p class="mt-1 text-xs text-gray-400">PDF or DOCX (Max 5MB)</p>
+          <input type="file" name="resume_file" id="resume_file" accept=".pdf,.docx" class="sr-only">
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center justify-end gap-4 pt-4">
+        <%= link_to "Skip for now", dashboard_path, class: "text-sm font-semibold text-gray-500 hover:text-gray-700" %>
+        <%= f.submit "Continue →", class: "px-10 py-3.5 bg-cyan-500 text-white font-semibold rounded-xl hover:bg-cyan-600 transition-colors cursor-pointer text-lg" %>
+      </div>
+    <% end %>
   </div>
 </div>

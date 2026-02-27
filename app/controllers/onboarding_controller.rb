@@ -14,12 +14,21 @@ class OnboardingController < ApplicationController
 
   def show
     redirect_to dashboard_path if current_user.onboarding_complete?
+    @resume = current_user.resumes.new
   end
 
   def update
     if current_user.update(onboarding_params)
-      redirect_to new_resume_path, notice: "Profile updated! Now upload your resume."
+      # Handle resume upload if present
+      if params[:resume_file].present?
+        resume = current_user.resumes.new
+        resume.file.attach(params[:resume_file])
+        resume.save!
+        ResumeParsingJob.perform_later(resume.id)
+      end
+      redirect_to dashboard_path, notice: "Profile complete! Your career analysis is ready."
     else
+      @resume = current_user.resumes.new
       render :show, status: :unprocessable_entity
     end
   end

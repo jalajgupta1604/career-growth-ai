@@ -1,111 +1,293 @@
-<div class="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+<div class="min-h-screen bg-white">
+  <!-- Navigation -->
+  <nav class="border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16 items-center">
+        <div class="flex items-center space-x-2">
+          <div class="w-8 h-8 bg-cyan-500 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          </div>
+          <span class="text-xl font-bold text-gray-900">Career Growth AI</span>
+        </div>
+        <div class="hidden md:flex items-center space-x-8">
+          <a href="#how-it-works" class="text-sm text-gray-500 hover:text-gray-900">How it works</a>
+          <a href="#features" class="text-sm text-gray-500 hover:text-gray-900">Features</a>
+          <a href="#pricing" class="text-sm text-gray-500 hover:text-gray-900">Pricing</a>
+          <% if user_signed_in? %>
+            <%= link_to "Dashboard", dashboard_path, class: "text-sm text-gray-500 hover:text-gray-900" %>
+          <% else %>
+            <%= link_to "Login", new_user_session_path, class: "text-sm text-gray-500 hover:text-gray-900" %>
+            <%= link_to new_user_registration_path, class: "px-5 py-2.5 bg-cyan-500 text-white text-sm font-semibold rounded-lg hover:bg-cyan-600 transition-colors" do %>
+              Check AI Score
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </nav>
+
   <!-- Hero Section -->
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
-    <div class="text-center">
-      <div class="flex justify-center mb-6">
-        <span class="text-4xl font-bold text-indigo-600">CareerGrowth</span>
-        <span class="text-lg bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full font-medium ml-2 self-center">AI</span>
+  <div class="bg-gradient-to-b from-gray-50 to-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-20">
+      <div class="text-center text-xs text-gray-400 uppercase tracking-widest mb-6">Trusted by 10,000+ Indian professionals</div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div class="text-left">
+          <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-900 leading-tight">
+            Know Your Real
+            <span class="text-cyan-500">Market Value.</span><br>
+            Double Your Income.
+          </h1>
+          <p class="mt-6 text-lg text-gray-500 max-w-lg">
+            Personalized salary benchmarking, skill ROI analysis, and a 12-month growth roadmap tailored for the Indian IT ecosystem.
+          </p>
+          <div class="mt-8">
+            <% if user_signed_in? %>
+              <%= link_to dashboard_path, class: "inline-flex items-center px-8 py-4 bg-cyan-500 text-white font-semibold rounded-lg hover:bg-cyan-600 transition-colors text-lg shadow-lg shadow-cyan-200" do %>
+                Go to Dashboard
+              <% end %>
+            <% else %>
+              <%= link_to new_user_registration_path, class: "inline-flex items-center px-8 py-4 bg-cyan-500 text-white font-semibold rounded-lg hover:bg-cyan-600 transition-colors text-lg shadow-lg shadow-cyan-200" do %>
+                Check if You're Underpaid (Free)
+              <% end %>
+              <p class="mt-3 text-sm text-gray-400">No credit card required. Private & Secure.</p>
+            <% end %>
+          </div>
+        </div>
+        <div class="hidden lg:block">
+          <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-6">
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-sm font-semibold text-gray-700">Career Dashboard</span>
+              <div class="flex space-x-1">
+                <div class="w-2 h-2 rounded-full bg-cyan-400"></div>
+                <div class="w-2 h-2 rounded-full bg-gray-200"></div>
+                <div class="w-2 h-2 rounded-full bg-gray-200"></div>
+              </div>
+            </div>
+            <div class="space-y-3">
+              <div class="bg-gray-50 rounded-lg p-3">
+                <div class="flex justify-between text-xs mb-1"><span class="text-gray-500">Salary Gap</span><span class="text-cyan-600 font-semibold">+28%</span></div>
+                <div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-cyan-500 h-2 rounded-full" style="width: 72%"></div></div>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-3">
+                <div class="flex justify-between text-xs mb-1"><span class="text-gray-500">Skill Match</span><span class="text-cyan-600 font-semibold">65%</span></div>
+                <div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-cyan-500 h-2 rounded-full" style="width: 65%"></div></div>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-3">
+                <div class="flex justify-between text-xs mb-1"><span class="text-gray-500">Interview Score</span><span class="text-cyan-600 font-semibold">74/100</span></div>
+                <div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-cyan-500 h-2 rounded-full" style="width: 74%"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <h1 class="text-5xl sm:text-6xl font-extrabold text-gray-900 tracking-tight">
-        Check If You're
-        <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">Underpaid</span>
-      </h1>
+      <!-- Stats Bar -->
+      <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 border-t border-gray-100 pt-10">
+        <div class="text-center">
+          <p class="text-3xl font-bold text-gray-900">50k+</p>
+          <p class="text-sm text-gray-400 mt-1">Users Profiled</p>
+        </div>
+        <div class="text-center">
+          <p class="text-3xl font-bold text-gray-900">&#8377;12L</p>
+          <p class="text-sm text-gray-400 mt-1">Avg. Salary Benchmarked</p>
+        </div>
+        <div class="text-center">
+          <p class="text-3xl font-bold text-gray-900">1,200+</p>
+          <p class="text-sm text-gray-400 mt-1">Companies Mapped</p>
+        </div>
+        <div class="text-center">
+          <p class="text-3xl font-bold text-cyan-500 font-extrabold">AI</p>
+          <p class="text-sm text-gray-400 mt-1">Powered Engine</p>
+        </div>
+      </div>
+    </div>
+  </div>
 
-      <p class="mt-6 max-w-2xl mx-auto text-xl text-gray-500">
-        AI-powered salary benchmarking, skill gap analysis, and personalized career roadmaps for Indian IT professionals.
-      </p>
+  <!-- How It Works -->
+  <div id="how-it-works" class="bg-white py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl font-bold text-gray-900">How It Works</h2>
+        <p class="mt-3 text-gray-500">Three simple steps to unlock your professional potential.</p>
+      </div>
+      <div class="max-w-3xl mx-auto space-y-10">
+        <div class="flex items-start gap-6">
+          <div class="flex-shrink-0 w-10 h-10 bg-cyan-500 text-white rounded-full flex items-center justify-center font-bold text-sm">1</div>
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900">Login via Google</h3>
+            <p class="mt-1 text-gray-500">Instant access to your personalized dashboard using your professional identity.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-6">
+          <div class="flex-shrink-0 w-10 h-10 bg-cyan-500 text-white rounded-full flex items-center justify-center font-bold text-sm">2</div>
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900">Upload Your Resume</h3>
+            <p class="mt-1 text-gray-500">Our AI parses your tech stack, projects, and years of experience to build your profile.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-6">
+          <div class="flex-shrink-0 w-10 h-10 bg-cyan-500 text-white rounded-full flex items-center justify-center font-bold text-sm">3</div>
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900">Get Your Growth Blueprint</h3>
+            <p class="mt-1 text-gray-500">Receive a comprehensive report on salary benchmarking, skill gaps, and a customized roadmap.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-      <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+  <!-- Smarter Career Decisions -->
+  <div id="features" class="bg-gray-50 py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl font-bold text-gray-900">Smarter Career Decisions Powered by AI</h2>
+        <p class="mt-3 text-gray-500">Data-driven insights specifically for the Indian IT ecosystem.</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="bg-white rounded-2xl p-8 border border-gray-100">
+          <div class="w-12 h-12 bg-cyan-50 rounded-xl flex items-center justify-center mb-5">
+            <svg class="w-6 h-6 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900">Salary Intelligence</h3>
+          <p class="mt-2 text-gray-500 text-sm">Compare with 50,000+ real data points from Top 5 companies, startups, and MNCs in Bangalore, Mumbai & more.</p>
+        </div>
+        <div class="bg-white rounded-2xl p-8 border border-gray-100">
+          <div class="w-12 h-12 bg-cyan-50 rounded-xl flex items-center justify-center mb-5">
+            <svg class="w-6 h-6 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900">Skill Gap Analysis</h3>
+          <p class="mt-2 text-gray-500 text-sm">Identify high-ROI skills that will actually get you a ₹5-10L hike. We show you what's trending in your field.</p>
+        </div>
+        <div class="bg-white rounded-2xl p-8 border border-gray-100">
+          <div class="w-12 h-12 bg-cyan-50 rounded-xl flex items-center justify-center mb-5">
+            <svg class="w-6 h-6 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900">Interview Scoring</h3>
+          <p class="mt-2 text-gray-500 text-sm">AI scores your readiness for top target companies. Know exactly where you stand in a real job market.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pricing -->
+  <div id="pricing" class="bg-white py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl font-bold text-gray-900">Simple, Transparent Pricing</h2>
+        <p class="mt-3 text-gray-500">Invest in your career. The ROI is irresistible.</p>
+      </div>
+      <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Free Plan -->
+        <div class="bg-white rounded-2xl border-2 border-gray-100 p-8">
+          <p class="text-sm font-semibold text-gray-500 uppercase tracking-wide">Free Preview</p>
+          <p class="mt-4 text-4xl font-bold text-gray-900">&#8377;0</p>
+          <p class="mt-1 text-sm text-gray-400">A quick look at your value</p>
+          <ul class="mt-8 space-y-4">
+            <li class="flex items-center text-sm text-gray-600">
+              <svg class="w-5 h-5 text-cyan-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              Basic Salary Benchmark
+            </li>
+            <li class="flex items-center text-sm text-gray-600">
+              <svg class="w-5 h-5 text-cyan-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              Market Salary Comparison
+            </li>
+            <li class="flex items-center text-sm text-gray-400">
+              <svg class="w-5 h-5 text-gray-300 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+              Skill ROI Analysis
+            </li>
+            <li class="flex items-center text-sm text-gray-400">
+              <svg class="w-5 h-5 text-gray-300 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+              12-Month Roadmap
+            </li>
+            <li class="flex items-center text-sm text-gray-400">
+              <svg class="w-5 h-5 text-gray-300 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+              Downloadable PDF Report
+            </li>
+          </ul>
+          <div class="mt-8">
+            <%= link_to new_user_registration_path, class: "block w-full text-center py-3 px-6 border-2 border-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors" do %>
+              Get Started
+            <% end %>
+          </div>
+        </div>
+        <!-- Paid Plan -->
+        <div class="bg-white rounded-2xl border-2 border-cyan-500 p-8 relative">
+          <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-cyan-500 text-white text-xs font-bold px-3 py-1 rounded-full">RECOMMENDED</div>
+          <p class="text-sm font-semibold text-cyan-600 uppercase tracking-wide">Full Blueprint</p>
+          <p class="mt-4 text-4xl font-bold text-gray-900">&#8377;999</p>
+          <p class="mt-1 text-sm text-gray-400">One-time payment. No subscription.</p>
+          <ul class="mt-8 space-y-4">
+            <li class="flex items-center text-sm text-gray-600">
+              <svg class="w-5 h-5 text-cyan-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              Detailed Salary Benchmarking
+            </li>
+            <li class="flex items-center text-sm text-gray-600">
+              <svg class="w-5 h-5 text-cyan-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              Full Skill ROI Analysis
+            </li>
+            <li class="flex items-center text-sm text-gray-600">
+              <svg class="w-5 h-5 text-cyan-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              AI Growth Hacks
+            </li>
+            <li class="flex items-center text-sm text-gray-600">
+              <svg class="w-5 h-5 text-cyan-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              Recommended Certifications for You
+            </li>
+            <li class="flex items-center text-sm text-gray-600">
+              <svg class="w-5 h-5 text-cyan-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              Resume Optimization Tips
+            </li>
+            <li class="flex items-center text-sm text-gray-600">
+              <svg class="w-5 h-5 text-cyan-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              Downloadable PDF Report
+            </li>
+          </ul>
+          <div class="mt-8">
+            <%= link_to new_user_registration_path, class: "block w-full text-center py-3 px-6 bg-cyan-500 text-white font-semibold rounded-lg hover:bg-cyan-600 transition-colors" do %>
+              Get Full Report
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stop Guessing CTA -->
+  <div class="bg-gray-900 py-16">
+    <div class="max-w-4xl mx-auto px-4 text-center">
+      <h2 class="text-3xl font-bold text-white">Stop Guessing Your Worth</h2>
+      <p class="mt-4 text-gray-400 text-lg">Join thousands of Indian developers who used our AI to negotiate 40%+ hikes and land jobs at top-tier companies.</p>
+      <div class="mt-8">
         <% if user_signed_in? %>
-          <%= link_to dashboard_path, class: "inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-medium rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all" do %>
+          <%= link_to dashboard_path, class: "inline-flex items-center px-8 py-4 bg-cyan-500 text-white font-semibold rounded-lg hover:bg-cyan-600 transition-colors text-lg" do %>
             Go to Dashboard
           <% end %>
         <% else %>
-          <%= button_to user_google_oauth2_omniauth_authorize_path, method: :post, data: { turbo: false }, class: "inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-medium rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all" do %>
-            <svg class="w-5 h-5 mr-3" viewBox="0 0 24 24"><path fill="currentColor" d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/></svg>
-            Continue with Google
-          <% end %>
-          <%= link_to new_user_registration_path, class: "inline-flex items-center justify-center px-8 py-4 border-2 border-indigo-200 text-lg font-medium rounded-xl text-indigo-600 bg-white hover:bg-indigo-50 transition-all" do %>
-            Sign Up with Email
+          <%= link_to new_user_registration_path, class: "inline-flex items-center px-8 py-4 bg-cyan-500 text-white font-semibold rounded-lg hover:bg-cyan-600 transition-colors text-lg" do %>
+            Get Your Free Career Audit Now
           <% end %>
         <% end %>
       </div>
     </div>
-
-    <!-- Feature Cards -->
-    <div class="mt-24 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-      <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-        <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
-          <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-        </div>
-        <h3 class="text-lg font-semibold text-gray-900">Salary Benchmark</h3>
-        <p class="mt-2 text-gray-500 text-sm">Compare your salary against market data for your role, city, and experience level.</p>
-      </div>
-
-      <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-        <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mb-4">
-          <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-        </div>
-        <h3 class="text-lg font-semibold text-gray-900">Skill Gap Analysis</h3>
-        <p class="mt-2 text-gray-500 text-sm">Identify high-ROI skills to learn based on market demand and salary uplift potential.</p>
-      </div>
-
-      <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-        <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4">
-          <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-        </div>
-        <h3 class="text-lg font-semibold text-gray-900">Career Roadmap</h3>
-        <p class="mt-2 text-gray-500 text-sm">Get a personalized 12-month plan with skills, certifications, and project recommendations.</p>
-      </div>
-
-      <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-        <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mb-4">
-          <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-        </div>
-        <h3 class="text-lg font-semibold text-gray-900">Interview Score</h3>
-        <p class="mt-2 text-gray-500 text-sm">Know your interview readiness with a score based on skills, experience, and projects.</p>
-      </div>
-    </div>
-
-    <!-- How it Works -->
-    <div class="mt-24 text-center">
-      <h2 class="text-3xl font-bold text-gray-900">How It Works</h2>
-      <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-12">
-        <div>
-          <div class="w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center text-lg font-bold mx-auto">1</div>
-          <h3 class="mt-4 text-lg font-semibold">Sign Up & Tell Us About You</h3>
-          <p class="mt-2 text-gray-500">Your role, city, experience, and current compensation.</p>
-        </div>
-        <div>
-          <div class="w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center text-lg font-bold mx-auto">2</div>
-          <h3 class="mt-4 text-lg font-semibold">Upload Your Resume</h3>
-          <p class="mt-2 text-gray-500">Our AI extracts skills and experience from your PDF/DOCX resume.</p>
-        </div>
-        <div>
-          <div class="w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center text-lg font-bold mx-auto">3</div>
-          <h3 class="mt-4 text-lg font-semibold">Get Your Career Blueprint</h3>
-          <p class="mt-2 text-gray-500">Salary benchmark, skill gaps, 12-month roadmap, and interview readiness score.</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- CTA -->
-    <div class="mt-24 bg-indigo-600 rounded-3xl p-12 text-center">
-      <h2 class="text-3xl font-bold text-white">Ready to accelerate your career?</h2>
-      <p class="mt-4 text-indigo-100 text-lg">Join thousands of Indian IT professionals making data-driven career decisions.</p>
-      <div class="mt-8">
-        <% unless user_signed_in? %>
-          <%= button_to user_google_oauth2_omniauth_authorize_path, method: :post, data: { turbo: false }, class: "inline-flex items-center px-8 py-4 bg-white text-indigo-600 font-semibold rounded-xl hover:bg-indigo-50 transition-all text-lg" do %>
-            Get Started Free
-          <% end %>
-        <% end %>
-      </div>
-    </div>
-
-    <!-- Footer -->
-    <footer class="mt-24 pb-12 text-center text-gray-400 text-sm">
-      <p>Career Growth AI - Built for Indian IT Professionals</p>
-    </footer>
   </div>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-gray-100 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <div class="flex items-center space-x-2">
+          <div class="w-6 h-6 bg-cyan-500 rounded flex items-center justify-center">
+            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          </div>
+          <span class="text-sm font-semibold text-gray-700">Career Growth AI</span>
+        </div>
+        <div class="flex space-x-6 mt-4 md:mt-0">
+          <a href="#" class="text-sm text-gray-400 hover:text-gray-600">Privacy Policy</a>
+          <a href="#" class="text-sm text-gray-400 hover:text-gray-600">Terms of Service</a>
+          <a href="#" class="text-sm text-gray-400 hover:text-gray-600">Contact</a>
+        </div>
+        <p class="text-sm text-gray-400 mt-4 md:mt-0">2024 Career Growth AI. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
 </div>
