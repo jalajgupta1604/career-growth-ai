@@ -13,47 +13,44 @@
   <%= render "interview_prep/sidebar" %>
 
   <!-- Main Content Area -->
-  <div class="lg:ml-64">
-    <div class="flex flex-col xl:flex-row">
+  <div class="lg:ml-60">
+    <div class="flex flex-col lg:flex-row min-h-screen">
       <!-- Center Column -->
-      <div class="flex-1 px-4 sm:px-6 lg:px-8 py-6 max-w-4xl">
+      <div class="flex-1 px-5 lg:px-8 py-5 min-w-0">
         <!-- Header -->
-        <div class="mb-6">
-          <h1 class="text-2xl font-bold text-gray-900">Interview Preparation Module</h1>
-          <div class="flex flex-wrap items-center gap-4 mt-3">
-            <div class="flex items-center gap-2">
-              <span class="text-sm text-gray-500">Overall Progress</span>
-              <span class="text-sm font-bold text-gray-900"><%= @data[:overall_progress] %>%</span>
-            </div>
-            <div class="flex-1 max-w-xs bg-gray-100 rounded-full h-2">
-              <div class="bg-cyan-500 h-2 rounded-full transition-all duration-700" style="width: <%= @data[:overall_progress] %>%"></div>
+        <div class="mb-5">
+          <h1 class="text-xl font-bold text-gray-900">Interview Preparation Module</h1>
+          <div class="flex flex-wrap items-center gap-3 mt-2">
+            <span class="text-xs text-gray-500">Overall Progress</span>
+            <span class="text-xs font-bold text-gray-900"><%= @data[:overall_progress] %>%</span>
+            <div class="flex-1 max-w-[200px] bg-gray-100 rounded-full h-1.5">
+              <div class="bg-cyan-500 h-1.5 rounded-full transition-all duration-700" style="width: <%= @data[:overall_progress] %>%"></div>
             </div>
             <% cats = @data[:categories_with_progress] %>
             <% if cats.present? %>
-              <span class="text-xs text-gray-400">
-                Mock Interviews: <%= cats.find { |c| c[:category].slug == "mock-interviews" }&.dig(:progress_percentage) || 0 %>% |
-                Career Architect
+              <span class="text-[11px] text-gray-400">
+                Mock Interviews: <%= cats.find { |c| c[:category].slug == "mock-interviews" }&.dig(:progress_percentage) || 0 %>% | Career Architect
               </span>
             <% end %>
           </div>
         </div>
 
         <!-- Action Buttons -->
-        <div class="flex flex-wrap gap-3 mb-6">
+        <div class="flex flex-wrap gap-2.5 mb-5">
           <% if @data[:last_session_lesson] %>
-            <%= link_to interview_prep_lesson_path(@data[:last_session_lesson]), class: "inline-flex items-center gap-2 px-5 py-2.5 bg-cyan-500 text-white text-sm font-semibold rounded-full hover:bg-cyan-600 transition-colors" do %>
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/></svg>
+            <%= link_to interview_prep_lesson_path(@data[:last_session_lesson]), class: "inline-flex items-center gap-2 px-4 py-2 bg-cyan-500 text-white text-xs font-semibold rounded-full hover:bg-cyan-600 transition-colors" do %>
+              <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/></svg>
               Resume Last Session
             <% end %>
           <% else %>
-            <span class="inline-flex items-center gap-2 px-5 py-2.5 bg-cyan-500 text-white text-sm font-semibold rounded-full">
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/></svg>
+            <span class="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500 text-white text-xs font-semibold rounded-full">
+              <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/></svg>
               Resume Last Session
             </span>
           <% end %>
 
-          <a href="#mock-interviews" class="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-gray-700 text-sm font-medium rounded-full border border-gray-200 hover:bg-gray-50 transition-colors">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+          <a href="#mock-interviews" class="inline-flex items-center gap-2 px-4 py-2 bg-white text-gray-600 text-xs font-medium rounded-full border border-gray-200 hover:bg-gray-50 transition-colors">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
             Take Mock Interview
           </a>
         </div>
@@ -61,21 +58,21 @@
         <!-- Next Up Card -->
         <% if @data[:next_lesson] %>
           <% next_lesson = @data[:next_lesson] %>
-          <div class="bg-white rounded-2xl border border-gray-100 p-5 mb-6">
-            <div class="flex items-start gap-4">
-              <div class="w-20 h-14 bg-gray-800 rounded-xl flex items-center justify-center shrink-0">
-                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/></svg>
+          <div class="bg-white rounded-xl border border-gray-100 p-4 mb-5">
+            <div class="flex items-start gap-3">
+              <div class="w-24 h-16 bg-gray-900 rounded-lg flex items-center justify-center shrink-0 overflow-hidden">
+                <svg class="w-8 h-8 text-gray-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/></svg>
               </div>
-              <div class="flex-1">
-                <p class="text-xs font-semibold text-cyan-500 uppercase tracking-wide mb-1">Next Up</p>
+              <div class="flex-1 min-w-0">
+                <p class="text-[11px] font-semibold text-cyan-500 uppercase tracking-wider mb-0.5">Next Up</p>
                 <h3 class="text-sm font-bold text-gray-900"><%= next_lesson.title %></h3>
-                <p class="text-xs text-gray-500 mt-1"><%= next_lesson.topic %></p>
-                <div class="flex items-center gap-4 mt-2">
-                  <span class="text-xs text-gray-400"><%= next_lesson.duration_minutes %> min</span>
-                  <span class="text-xs text-gray-400"><%= next_lesson.difficulty_label %> Difficulty</span>
+                <p class="text-xs text-gray-400 mt-0.5">Topic: <%= next_lesson.topic %></p>
+                <div class="flex items-center gap-3 mt-1.5">
+                  <span class="text-[11px] text-gray-400"><%= next_lesson.duration_minutes %> min</span>
+                  <span class="text-[11px] text-gray-400"><%= next_lesson.difficulty_label %> Difficulty</span>
                 </div>
               </div>
-              <%= link_to interview_prep_start_lesson_path(next_lesson), method: :post, class: "self-center px-4 py-2 bg-cyan-500 text-white text-xs font-semibold rounded-lg hover:bg-cyan-600 transition-colors shrink-0" do %>
+              <%= link_to interview_prep_start_lesson_path(next_lesson), method: :post, class: "self-center px-3.5 py-1.5 bg-cyan-500 text-white text-xs font-semibold rounded-lg hover:bg-cyan-600 transition-colors shrink-0" do %>
                 Start Lesson
               <% end %>
             </div>
@@ -83,12 +80,14 @@
         <% end %>
 
         <!-- Preparation Categories Grid -->
-        <div class="mb-6">
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="text-lg font-bold text-gray-900">Preparation Categories</h2>
-            <span class="text-xs text-gray-400"><%= @data[:categories_with_progress].sum { |c| c[:total_lessons] } %> modules in progress</span>
+        <div class="mb-5">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+              <h2 class="text-base font-bold text-gray-900">Preparation Categories</h2>
+              <span class="text-[11px] text-gray-400"><%= @data[:categories_with_progress].sum { |c| c[:total_lessons] } %> modules in progress</span>
+            </div>
           </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <% @data[:categories_with_progress].each do |cat_data| %>
               <%= render "interview_prep/category_card", category_data: cat_data %>
             <% end %>
@@ -97,49 +96,49 @@
       </div>
 
       <!-- Right Sidebar -->
-      <div class="w-full xl:w-80 px-4 sm:px-6 lg:px-8 xl:px-0 xl:pr-6 py-6 xl:border-l xl:border-gray-100">
+      <div class="w-full lg:w-72 shrink-0 px-5 lg:px-0 lg:pr-5 py-5 lg:border-l lg:border-gray-100 bg-gray-50">
         <!-- Expert Tip -->
-        <div class="bg-cyan-50 rounded-2xl p-5 mb-6">
-          <div class="flex items-center gap-2 mb-3">
-            <svg class="w-5 h-5 text-cyan-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
-            <span class="text-sm font-bold text-cyan-700">EXPERT TIP</span>
+        <div class="bg-cyan-50 rounded-xl p-4 mb-5">
+          <div class="flex items-center gap-1.5 mb-2">
+            <svg class="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <span class="text-xs font-bold text-cyan-700 uppercase tracking-wider">Expert Tip</span>
           </div>
-          <p class="text-sm text-cyan-800 leading-relaxed">"<%= @data[:expert_tip] %>"</p>
+          <p class="text-xs text-cyan-800 leading-relaxed italic">"<%= @data[:expert_tip] %>"</p>
         </div>
 
         <!-- Resources -->
-        <div class="mb-6">
-          <div class="flex items-center justify-between mb-3">
+        <div class="mb-5">
+          <div class="flex items-center justify-between mb-2.5">
             <h3 class="text-sm font-bold text-gray-900">Resources</h3>
-            <a href="#" class="text-xs text-cyan-600 font-medium hover:text-cyan-700">View all</a>
+            <a href="#" class="text-[11px] text-cyan-600 font-medium hover:text-cyan-700">View all</a>
           </div>
-          <div class="space-y-3">
+          <div class="space-y-2">
             <% @data[:resources].each do |resource| %>
-              <div class="flex items-center gap-3 p-3 bg-white rounded-xl border border-gray-100 hover:shadow-sm transition-shadow">
-                <div class="w-10 h-10 rounded-lg flex items-center justify-center <%= prep_color(resource[:color], :light) %>">
+              <div class="flex items-center gap-2.5 p-2 bg-white rounded-lg border border-gray-100 hover:shadow-sm transition-shadow">
+                <div class="w-9 h-9 rounded-lg flex items-center justify-center bg-gray-800 shrink-0">
                   <% case resource[:icon] %>
                   <% when "database" %>
-                    <svg class="w-5 h-5 <%= prep_color(resource[:color], :text) %>" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/></svg>
+                    <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/></svg>
                   <% when "chart" %>
-                    <svg class="w-5 h-5 <%= prep_color(resource[:color], :text) %>" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                    <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
                   <% when "users" %>
-                    <svg class="w-5 h-5 <%= prep_color(resource[:color], :text) %>" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                   <% end %>
                 </div>
-                <p class="text-sm font-medium text-gray-700"><%= resource[:title] %></p>
+                <p class="text-xs font-medium text-gray-700"><%= resource[:title] %></p>
               </div>
             <% end %>
           </div>
         </div>
 
         <!-- Weekly Summary -->
-        <div class="bg-white rounded-2xl border border-gray-100 p-5">
-          <h3 class="text-sm font-bold text-gray-900 mb-3">Weekly Summary</h3>
-          <p class="text-sm text-gray-600 mb-1">
+        <div class="bg-white rounded-xl border border-gray-100 p-4">
+          <h3 class="text-sm font-bold text-gray-900 mb-2">Weekly Summary</h3>
+          <p class="text-xs text-gray-500 leading-relaxed">
             You completed <span class="font-semibold text-gray-900"><%= @data[:weekly_summary][:completed_count] %></span> modules this week. That's
             <span class="font-semibold text-gray-900"><%= @data[:weekly_summary][:total_minutes] %></span> min total.
           </p>
-          <a href="#" class="text-xs text-cyan-600 font-medium hover:text-cyan-700 mt-2 inline-block">Check Detailed Stats</a>
+          <a href="#" class="text-[11px] text-cyan-600 font-medium hover:text-cyan-700 mt-2 inline-block">Check Detailed Stats</a>
         </div>
       </div>
     </div>
