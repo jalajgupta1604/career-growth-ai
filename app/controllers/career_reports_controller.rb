@@ -25,7 +25,7 @@ class CareerReportsController < ApplicationController
   def download_pdf
     @report = current_user.career_reports.find(params[:id])
 
-    unless @report.paid?
+    unless @report.downloadable?
       redirect_to career_report_path(@report), alert: "Please unlock the full report to download PDF."
       return
     end
