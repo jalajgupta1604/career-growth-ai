@@ -32,6 +32,35 @@ class PaymentsController < ApplicationController
     render json: { error: "Payment creation failed" }, status: :unprocessable_entity
   end
 
+  def verify
+    payment = current_user.payments.find_by(razorpay_order_id: params[:razorpay_order_id])
+
+    unless payment
+      render json: { success: false, error: "Payment not found" }, status: :not_found
+      return
+    end
+
+    begin
+      Razorpay::Utility.verify_payment_signature(
+        "order_id" => params[:razorpay_order_id],
+        "payment_id" => params[:razorpay_payment_id],
+        "signature" => params[:razorpay_signature]
+      )
+
+      payment.update!(
+        razorpay_payment_id: params[:razorpay_payment_id],
+        status: :captured
+      )
+      payment.career_report.update!(payment_status: :paid)
+
+      render json: { success: true, message: "Payment verified successfully" }
+    rescue Razorpay::Error => e
+      payment.update!(status: :failed)
+      Rails.logger.error("Payment verification failed: #{e.message}")
+      render json: { success: false, error: "Payment verification failed" }, status: :unprocessable_entity
+    end
+  end
+
   def webhook
     payload = request.body.read
     signature = request.headers["X-Razorpay-Signature"]

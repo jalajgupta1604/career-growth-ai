@@ -28,6 +28,7 @@ Rails.application.routes.draw do
   # Payments
   resources :payments, only: [:create] do
     collection do
+      post :verify
       post :webhook
     end
   end

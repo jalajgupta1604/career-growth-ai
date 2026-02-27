@@ -25,6 +25,11 @@ class CareerReportsController < ApplicationController
   def download_pdf
     @report = current_user.career_reports.find(params[:id])
 
+    unless @report.paid?
+      redirect_to career_report_path(@report), alert: "Please unlock the full report to download PDF."
+      return
+    end
+
     pdf_service = PdfGeneratorService.new(@report)
     pdf_data = pdf_service.generate
 

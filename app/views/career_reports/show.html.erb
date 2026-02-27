@@ -9,9 +9,16 @@
         <span class="text-lg font-bold text-gray-900">Career Growth AI</span>
       </div>
       <div class="flex items-center gap-4">
-        <%= link_to download_pdf_career_report_path(@report), class: "inline-flex items-center px-4 py-2 bg-cyan-500 text-white text-sm font-semibold rounded-lg hover:bg-cyan-600 transition-colors" do %>
-          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-          Download PDF Report
+        <% if @report.paid? %>
+          <%= link_to download_pdf_career_report_path(@report), class: "inline-flex items-center px-4 py-2 bg-cyan-500 text-white text-sm font-semibold rounded-lg hover:bg-cyan-600 transition-colors" do %>
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            Download PDF Report
+          <% end %>
+        <% else %>
+          <span class="inline-flex items-center px-3 py-1 bg-gray-100 text-gray-400 text-sm font-medium rounded-lg">
+            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/></svg>
+            PDF Locked
+          </span>
         <% end %>
       </div>
     </div>
@@ -260,21 +267,48 @@
 
     <% unless @report.paid? %>
       <!-- Payment Wall / CTA -->
-      <div class="bg-gray-900 rounded-2xl p-8 mb-6">
+      <div class="bg-gray-900 rounded-2xl p-8 mb-6"
+           data-controller="payment"
+           data-payment-report-id-value="<%= @report.id %>"
+           data-payment-key-id-value="<%= ENV.fetch('RAZORPAY_KEY_ID', '') %>"
+           data-payment-user-name-value="<%= current_user.full_name %>"
+           data-payment-user-email-value="<%= current_user.email %>">
         <div class="max-w-2xl mx-auto text-center">
-          <h2 class="text-2xl font-bold text-white">Ready to secure your &#8377;<%= (@salary_data.dig("benchmark", "median_salary").to_i / 100000.0).round(0) %>L package?</h2>
-          <p class="mt-2 text-gray-400">Our AI coach is ready to start your first mock interview session.</p>
-          <div class="mt-6 flex flex-col sm:flex-row gap-4 justify-center">
-            <button id="pay-button"
-                    data-report-id="<%= @report.id %>"
-                    class="px-8 py-3 bg-cyan-500 text-white font-semibold rounded-lg hover:bg-cyan-600 transition-colors cursor-pointer">
-              Start Prep Module
+          <div class="inline-flex items-center justify-center w-14 h-14 bg-cyan-500/20 rounded-full mb-4">
+            <svg class="w-7 h-7 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+          </div>
+          <h2 class="text-2xl font-bold text-white">Unlock Your Full Career Blueprint</h2>
+          <p class="mt-2 text-gray-400">Get the complete analysis with personalized roadmap, skill recommendations, and downloadable PDF report.</p>
+          <div class="mt-4 flex flex-wrap justify-center gap-4 text-sm text-gray-400">
+            <span class="flex items-center gap-1"><svg class="w-4 h-4 text-cyan-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Full PDF Report</span>
+            <span class="flex items-center gap-1"><svg class="w-4 h-4 text-cyan-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Skill ROI Analysis</span>
+            <span class="flex items-center gap-1"><svg class="w-4 h-4 text-cyan-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> 12-Month Roadmap</span>
+            <span class="flex items-center gap-1"><svg class="w-4 h-4 text-cyan-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Salary Projections</span>
+          </div>
+          <div class="mt-6 flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <button data-action="click->payment#pay"
+                    class="px-8 py-3 bg-cyan-500 text-white font-semibold rounded-lg hover:bg-cyan-600 transition-colors cursor-pointer text-lg">
+              Unlock Full Report &mdash; &#8377;999
             </button>
-            <%= link_to dashboard_path, class: "px-8 py-3 bg-white text-gray-900 font-semibold rounded-lg hover:bg-gray-100 transition-colors text-center" do %>
-              Share Profile
-            <% end %>
+            <span class="text-xs text-gray-500">One-time payment &bull; Secure via Razorpay</span>
           </div>
         </div>
+      </div>
+    <% else %>
+      <!-- Paid confirmation badge -->
+      <div class="bg-green-50 border border-green-200 rounded-2xl p-4 mb-6 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+          </div>
+          <div>
+            <p class="text-sm font-semibold text-green-800">Premium Report Unlocked</p>
+            <p class="text-xs text-green-600">Full access to your career blueprint and PDF download.</p>
+          </div>
+        </div>
+        <%= link_to download_pdf_career_report_path(@report), class: "px-4 py-2 bg-green-500 text-white text-sm font-semibold rounded-lg hover:bg-green-600 transition-colors" do %>
+          Download PDF
+        <% end %>
       </div>
     <% end %>
   </div>
