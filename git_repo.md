@@ -1,1 +1,0 @@
-https://github.com/jalajcodenote/career-growth-ai.git
