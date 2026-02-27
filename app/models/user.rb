@@ -22,4 +22,8 @@ class User < ApplicationRecord
   def onboarding_complete?
     role.present? && city.present? && experience_years.present? && current_salary.present?
   end
+
+  def subscribed?
+    career_reports.exists?(payment_status: :paid)
+  end
 end

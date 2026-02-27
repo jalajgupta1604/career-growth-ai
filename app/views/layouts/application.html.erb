@@ -36,6 +36,9 @@
             </div>
             <div class="flex items-center space-x-4">
               <span class="text-sm text-gray-500"><%= current_user.full_name || current_user.email %></span>
+              <% if current_user.subscribed? %>
+                <span class="inline-flex items-center px-2 py-0.5 bg-amber-400 text-amber-900 text-xs font-bold rounded-full shadow-sm">PRO</span>
+              <% end %>
               <%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "text-sm text-gray-400 hover:text-red-500" %>
             </div>
           </div>

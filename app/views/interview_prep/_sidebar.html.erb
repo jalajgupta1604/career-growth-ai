@@ -17,7 +17,12 @@
         <span class="text-sm font-semibold text-cyan-600"><%= current_user.full_name&.first&.upcase || "U" %></span>
       </div>
       <div>
-        <p class="text-sm font-semibold text-gray-900"><%= current_user.full_name || "User" %></p>
+        <div class="flex items-center gap-1.5">
+          <p class="text-sm font-semibold text-gray-900"><%= current_user.full_name || "User" %></p>
+          <% if current_user.subscribed? %>
+            <span class="inline-flex items-center px-1.5 py-0.5 bg-amber-400 text-amber-900 text-[10px] font-bold rounded-full leading-none shadow-sm">PRO</span>
+          <% end %>
+        </div>
         <p class="text-xs text-gray-400"><%= current_user.role || "Candidate" %></p>
       </div>
     </div>
