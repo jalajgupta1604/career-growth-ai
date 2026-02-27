@@ -1,0 +1,18 @@
+<div class="max-w-4xl mx-auto px-4 py-8">
+  <h1 class="text-3xl font-bold text-gray-900 mb-6">Report Preview</h1>
+
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-6">
+    <h2 class="text-xl font-semibold text-gray-900 mb-4">Salary Benchmark (Free Preview)</h2>
+    <p class="text-lg">
+      You are <span class="font-bold <%= @report.salary_gap_percentage.to_f > 0 ? 'text-red-600' : 'text-green-600' %>">
+        <%= @report.salary_gap_percentage.to_f > 0 ? "#{@report.salary_gap_percentage}% below market median" : "at or above market rate" %>
+      </span>
+    </p>
+    <p class="mt-2 text-gray-500">Interview Readiness: <span class="font-semibold"><%= @report.interview_score&.round(0) %>/100</span></p>
+  </div>
+
+  <div class="bg-gray-100 rounded-2xl p-8 text-center">
+    <p class="text-gray-500 mb-4">Unlock the full report to see skill gap analysis, career roadmap, and download PDF.</p>
+    <%= link_to "View Full Report", career_report_path(@report), class: "px-6 py-3 bg-indigo-600 text-white font-medium rounded-xl hover:bg-indigo-700 transition-colors" %>
+  </div>
+</div>

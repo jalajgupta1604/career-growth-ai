@@ -1,0 +1,111 @@
+<div class="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+  <!-- Hero Section -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
+    <div class="text-center">
+      <div class="flex justify-center mb-6">
+        <span class="text-4xl font-bold text-indigo-600">CareerGrowth</span>
+        <span class="text-lg bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full font-medium ml-2 self-center">AI</span>
+      </div>
+
+      <h1 class="text-5xl sm:text-6xl font-extrabold text-gray-900 tracking-tight">
+        Check If You're
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">Underpaid</span>
+      </h1>
+
+      <p class="mt-6 max-w-2xl mx-auto text-xl text-gray-500">
+        AI-powered salary benchmarking, skill gap analysis, and personalized career roadmaps for Indian IT professionals.
+      </p>
+
+      <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+        <% if user_signed_in? %>
+          <%= link_to dashboard_path, class: "inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-medium rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all" do %>
+            Go to Dashboard
+          <% end %>
+        <% else %>
+          <%= button_to user_google_oauth2_omniauth_authorize_path, method: :post, data: { turbo: false }, class: "inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-medium rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all" do %>
+            <svg class="w-5 h-5 mr-3" viewBox="0 0 24 24"><path fill="currentColor" d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/></svg>
+            Continue with Google
+          <% end %>
+          <%= link_to new_user_registration_path, class: "inline-flex items-center justify-center px-8 py-4 border-2 border-indigo-200 text-lg font-medium rounded-xl text-indigo-600 bg-white hover:bg-indigo-50 transition-all" do %>
+            Sign Up with Email
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Feature Cards -->
+    <div class="mt-24 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+        <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
+          <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-900">Salary Benchmark</h3>
+        <p class="mt-2 text-gray-500 text-sm">Compare your salary against market data for your role, city, and experience level.</p>
+      </div>
+
+      <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+        <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mb-4">
+          <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-900">Skill Gap Analysis</h3>
+        <p class="mt-2 text-gray-500 text-sm">Identify high-ROI skills to learn based on market demand and salary uplift potential.</p>
+      </div>
+
+      <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+        <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4">
+          <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-900">Career Roadmap</h3>
+        <p class="mt-2 text-gray-500 text-sm">Get a personalized 12-month plan with skills, certifications, and project recommendations.</p>
+      </div>
+
+      <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+        <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mb-4">
+          <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-900">Interview Score</h3>
+        <p class="mt-2 text-gray-500 text-sm">Know your interview readiness with a score based on skills, experience, and projects.</p>
+      </div>
+    </div>
+
+    <!-- How it Works -->
+    <div class="mt-24 text-center">
+      <h2 class="text-3xl font-bold text-gray-900">How It Works</h2>
+      <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-12">
+        <div>
+          <div class="w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center text-lg font-bold mx-auto">1</div>
+          <h3 class="mt-4 text-lg font-semibold">Sign Up & Tell Us About You</h3>
+          <p class="mt-2 text-gray-500">Your role, city, experience, and current compensation.</p>
+        </div>
+        <div>
+          <div class="w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center text-lg font-bold mx-auto">2</div>
+          <h3 class="mt-4 text-lg font-semibold">Upload Your Resume</h3>
+          <p class="mt-2 text-gray-500">Our AI extracts skills and experience from your PDF/DOCX resume.</p>
+        </div>
+        <div>
+          <div class="w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center text-lg font-bold mx-auto">3</div>
+          <h3 class="mt-4 text-lg font-semibold">Get Your Career Blueprint</h3>
+          <p class="mt-2 text-gray-500">Salary benchmark, skill gaps, 12-month roadmap, and interview readiness score.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="mt-24 bg-indigo-600 rounded-3xl p-12 text-center">
+      <h2 class="text-3xl font-bold text-white">Ready to accelerate your career?</h2>
+      <p class="mt-4 text-indigo-100 text-lg">Join thousands of Indian IT professionals making data-driven career decisions.</p>
+      <div class="mt-8">
+        <% unless user_signed_in? %>
+          <%= button_to user_google_oauth2_omniauth_authorize_path, method: :post, data: { turbo: false }, class: "inline-flex items-center px-8 py-4 bg-white text-indigo-600 font-semibold rounded-xl hover:bg-indigo-50 transition-all text-lg" do %>
+            Get Started Free
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-24 pb-12 text-center text-gray-400 text-sm">
+      <p>Career Growth AI - Built for Indian IT Professionals</p>
+    </footer>
+  </div>
+</div>

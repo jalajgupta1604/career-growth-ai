@@ -1,0 +1,59 @@
+<div class="header">
+  <div class="logo">CareerGrowth AI</div>
+  <p>Career Blueprint Report</p>
+  <p style="font-size: 12px; color: #6b7280;">Generated on <%= Date.today.strftime("%B %d, %Y") %></p>
+</div>
+
+<h1>Career Blueprint for <%= @user.full_name || @user.email %></h1>
+<p><strong>Role:</strong> <%= @user.role %> | <strong>City:</strong> <%= @user.city %> | <strong>Experience:</strong> <%= @user.experience_years %> years</p>
+
+<h2>Salary Benchmark</h2>
+<div>
+  <div class="stat-box">
+    <div class="stat-label">Your Salary</div>
+    <div class="stat-value" style="color: #374151;">&#8377;<%= @user.current_salary.to_i.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse %></div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-label">Gap</div>
+    <div class="stat-value" style="color: <%= @report.salary_gap_percentage.to_f > 0 ? '#dc2626' : '#16a34a' %>;">
+      <%= @report.salary_gap_percentage %>%
+    </div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-label">Interview Score</div>
+    <div class="stat-value"><%= @report.interview_score&.round(0) %>/100</div>
+  </div>
+</div>
+
+<% if @report.roadmap_data.present? %>
+  <h2>12-Month Career Roadmap</h2>
+  <% (@report.roadmap_data.dig("roadmap", "milestones") || []).each do |milestone| %>
+    <div class="milestone">
+      <strong>Month <%= milestone["month"] %>: <%= milestone["title"] %></strong>
+      <p><%= milestone["description"] %></p>
+    </div>
+  <% end %>
+<% end %>
+
+<% if @report.skill_gap_data.present? %>
+  <h2>Skills to Learn</h2>
+  <% (@report.skill_gap_data.dig("skill_analysis", "top_skills_to_learn") || []).each do |skill| %>
+    <div class="skill-item">
+      <strong><%= skill["name"] %></strong> (<%= skill["category"] %>) - ROI Score: <%= skill["roi_score"] %>
+    </div>
+  <% end %>
+<% end %>
+
+<% if @report.roadmap_data.dig("roadmap", "certifications").present? %>
+  <h2>Recommended Certifications</h2>
+  <ul>
+    <% @report.roadmap_data.dig("roadmap", "certifications").each do |cert| %>
+      <li><%= cert %></li>
+    <% end %>
+  </ul>
+<% end %>
+
+<div class="footer">
+  <p>Career Growth AI - Personalized Career Intelligence for Indian IT Professionals</p>
+  <p>This report is confidential and generated specifically for <%= @user.full_name || @user.email %>.</p>
+</div>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html class="h-full">
+  <head>
+    <title><%= content_for(:title) || "Career Growth AI" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="h-full bg-gray-50">
+    <% if user_signed_in? %>
+      <nav class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex justify-between h-16">
+            <div class="flex items-center">
+              <%= link_to root_path, class: "flex items-center space-x-2" do %>
+                <span class="text-xl font-bold text-indigo-600">CareerGrowth</span>
+                <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-medium">AI</span>
+              <% end %>
+              <div class="ml-8 flex space-x-4">
+                <%= link_to "Dashboard", dashboard_path, class: "text-gray-600 hover:text-indigo-600 px-3 py-2 text-sm font-medium" %>
+              </div>
+            </div>
+            <div class="flex items-center space-x-4">
+              <span class="text-sm text-gray-500"><%= current_user.full_name || current_user.email %></span>
+              <%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "text-sm text-gray-500 hover:text-red-600" %>
+            </div>
+          </div>
+        </div>
+      </nav>
+    <% end %>
+
+    <% if notice.present? %>
+      <div class="max-w-7xl mx-auto px-4 mt-4">
+        <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm"><%= notice %></div>
+      </div>
+    <% end %>
+    <% if alert.present? %>
+      <div class="max-w-7xl mx-auto px-4 mt-4">
+        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm"><%= alert %></div>
+      </div>
+    <% end %>
+
+    <main>
+      <%= yield %>
+    </main>
+  </body>
+</html>

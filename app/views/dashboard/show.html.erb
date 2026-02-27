@@ -1,0 +1,76 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Welcome back, <%= current_user.full_name || current_user.email %></h1>
+    <p class="mt-1 text-gray-500"><%= current_user.role %> in <%= current_user.city %> &middot; <%= current_user.experience_years %> years experience</p>
+  </div>
+
+  <!-- Quick Stats -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <% if @salary_analysis %>
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <p class="text-sm font-medium text-gray-500">Salary Position</p>
+        <p class="mt-2 text-3xl font-bold <%= @salary_analysis[:underpaid_percentage] > 0 ? 'text-red-600' : 'text-green-600' %>">
+          <%= @salary_analysis[:underpaid_percentage] > 0 ? "#{@salary_analysis[:underpaid_percentage]}% underpaid" : "At market rate" %>
+        </p>
+        <p class="mt-1 text-sm text-gray-400">
+          Market median: &#8377;<%= number_with_delimiter(@salary_analysis[:salary_range][:median].to_i) %>
+        </p>
+      </div>
+    <% else %>
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <p class="text-sm font-medium text-gray-500">Salary Position</p>
+        <p class="mt-2 text-lg text-gray-400">No benchmark data available for your profile yet.</p>
+      </div>
+    <% end %>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+      <p class="text-sm font-medium text-gray-500">Resume Status</p>
+      <% if @resume %>
+        <p class="mt-2 text-lg font-semibold text-gray-900"><%= @resume.parsing_status.humanize %></p>
+        <p class="mt-1 text-sm text-gray-400">Uploaded <%= time_ago_in_words(@resume.created_at) %> ago</p>
+      <% else %>
+        <p class="mt-2 text-lg text-gray-400">No resume uploaded</p>
+        <%= link_to "Upload Resume", new_resume_path, class: "mt-2 inline-block text-sm text-indigo-600 font-medium hover:text-indigo-700" %>
+      <% end %>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+      <p class="text-sm font-medium text-gray-500">Interview Readiness</p>
+      <% if @latest_report %>
+        <p class="mt-2 text-3xl font-bold text-indigo-600"><%= @latest_report.interview_score&.round(0) %>/100</p>
+        <p class="mt-1 text-sm text-gray-400">Based on your latest report</p>
+      <% else %>
+        <p class="mt-2 text-lg text-gray-400">Generate a report to see your score</p>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+      <h2 class="text-xl font-semibold text-gray-900">Generate Career Report</h2>
+      <p class="mt-2 text-gray-500">Get a comprehensive analysis with salary benchmarking, skill gaps, career roadmap, and interview readiness score.</p>
+      <div class="mt-6">
+        <%= button_to "Generate Report", career_reports_path, method: :post, class: "px-6 py-3 bg-indigo-600 text-white font-medium rounded-xl hover:bg-indigo-700 transition-colors cursor-pointer" %>
+      </div>
+    </div>
+
+    <% if @latest_report %>
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+        <h2 class="text-xl font-semibold text-gray-900">Latest Report</h2>
+        <p class="mt-2 text-gray-500">Generated <%= time_ago_in_words(@latest_report.created_at) %> ago</p>
+        <div class="mt-4 space-y-2">
+          <p class="text-sm"><span class="text-gray-500">Salary Gap:</span> <span class="font-semibold"><%= @latest_report.salary_gap_percentage %>%</span></p>
+          <p class="text-sm"><span class="text-gray-500">Interview Score:</span> <span class="font-semibold"><%= @latest_report.interview_score&.round(0) %>/100</span></p>
+          <p class="text-sm"><span class="text-gray-500">Payment:</span> <span class="font-semibold"><%= @latest_report.payment_status.humanize %></span></p>
+        </div>
+        <div class="mt-6 flex gap-3">
+          <%= link_to "View Report", career_report_path(@latest_report), class: "px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors" %>
+          <% if @latest_report.paid? %>
+            <%= link_to "Download PDF", download_pdf_career_report_path(@latest_report), class: "px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors" %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

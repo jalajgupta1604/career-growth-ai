@@ -1,0 +1,58 @@
+<div class="min-h-screen bg-gray-50 py-12">
+  <div class="max-w-2xl mx-auto px-4">
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">Tell us about yourself</h1>
+      <p class="mt-2 text-gray-500">This helps us benchmark your salary and identify growth opportunities.</p>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+      <%= form_with(model: current_user, url: onboarding_path, method: :patch, class: "space-y-6") do |f| %>
+        <% if current_user.errors.any? %>
+          <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+            <ul class="text-sm text-red-600 space-y-1">
+              <% current_user.errors.full_messages.each do |msg| %>
+                <li><%= msg %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <div>
+          <%= f.label :role, "Current Role", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.select :role,
+              OnboardingController::VALID_ROLES.map { |r| [r, r] },
+              { include_blank: "Select your role" },
+              class: "w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+        </div>
+
+        <div>
+          <%= f.label :city, "City", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.select :city,
+              OnboardingController::VALID_CITIES.map { |c| [c, c] },
+              { include_blank: "Select your city" },
+              class: "w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+        </div>
+
+        <div>
+          <%= f.label :experience_years, "Years of Experience", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.number_field :experience_years, min: 0, max: 40, placeholder: "e.g. 5",
+              class: "w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+        </div>
+
+        <div>
+          <%= f.label :current_salary, "Current Annual Salary (INR)", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <div class="relative">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">&#8377;</span>
+            <%= f.number_field :current_salary, min: 0, step: 1000, placeholder: "e.g. 1200000",
+                class: "w-full pl-8 rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+          </div>
+          <p class="mt-1 text-xs text-gray-400">Enter your annual CTC in INR (e.g., 12,00,000)</p>
+        </div>
+
+        <div class="pt-4">
+          <%= f.submit "Continue", class: "w-full py-3 px-6 bg-indigo-600 text-white font-medium rounded-xl hover:bg-indigo-700 transition-colors cursor-pointer" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

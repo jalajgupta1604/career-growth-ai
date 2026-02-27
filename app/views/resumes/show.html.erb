@@ -1,0 +1,31 @@
+<div class="max-w-4xl mx-auto px-4 py-8">
+  <h1 class="text-3xl font-bold text-gray-900 mb-6">Resume Details</h1>
+
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+    <div class="flex justify-between items-center mb-6">
+      <div>
+        <p class="text-sm text-gray-500">Status</p>
+        <p class="text-lg font-semibold"><%= @resume.parsing_status.humanize %></p>
+      </div>
+      <div>
+        <p class="text-sm text-gray-500">Uploaded</p>
+        <p class="text-lg font-semibold"><%= @resume.created_at.strftime("%B %d, %Y") %></p>
+      </div>
+    </div>
+
+    <% if @resume.completed? && @resume.parsed_data.present? %>
+      <div class="border-t border-gray-100 pt-6">
+        <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-3">Extracted Skills</h3>
+        <div class="flex flex-wrap gap-2">
+          <% (@resume.parsed_data["skills"] || []).each do |skill| %>
+            <span class="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-sm"><%= skill %></span>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mt-6">
+    <%= link_to "Back to Dashboard", dashboard_path, class: "text-indigo-600 hover:text-indigo-700 font-medium" %>
+  </div>
+</div>
