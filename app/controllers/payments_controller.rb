@@ -42,9 +42,9 @@ class PaymentsController < ApplicationController
 
     begin
       Razorpay::Utility.verify_payment_signature(
-        "order_id" => params[:razorpay_order_id],
-        "payment_id" => params[:razorpay_payment_id],
-        "signature" => params[:razorpay_signature]
+        razorpay_order_id: params[:razorpay_order_id],
+        razorpay_payment_id: params[:razorpay_payment_id],
+        razorpay_signature: params[:razorpay_signature]
       )
 
       payment.update!(
@@ -54,7 +54,7 @@ class PaymentsController < ApplicationController
       payment.career_report.update!(payment_status: :paid)
 
       render json: { success: true, message: "Payment verified successfully" }
-    rescue Razorpay::Error => e
+    rescue Razorpay::Error, SecurityError => e
       payment.update!(status: :failed)
       Rails.logger.error("Payment verification failed: #{e.message}")
       render json: { success: false, error: "Payment verification failed" }, status: :unprocessable_entity

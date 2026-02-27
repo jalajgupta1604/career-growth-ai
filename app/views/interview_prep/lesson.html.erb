@@ -1,0 +1,131 @@
+<div class="min-h-screen bg-gray-50" data-controller="interview-prep">
+  <!-- Mobile Header -->
+  <div class="lg:hidden bg-white border-b border-gray-100 px-4 py-3 flex items-center justify-between">
+    <button data-action="click->interview-prep#toggleSidebar" class="p-2 rounded-lg hover:bg-gray-100">
+      <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+    <span class="text-sm font-bold text-gray-900">PrepMaster</span>
+    <div class="w-8 h-8 bg-cyan-100 rounded-full flex items-center justify-center">
+      <span class="text-xs font-semibold text-cyan-600"><%= current_user.full_name&.first&.upcase || "U" %></span>
+    </div>
+  </div>
+
+  <%= render "interview_prep/sidebar" %>
+
+  <!-- Main Content -->
+  <div class="lg:ml-64">
+    <div class="max-w-4xl px-4 sm:px-6 lg:px-8 py-6">
+      <!-- Breadcrumb -->
+      <nav class="flex items-center gap-2 text-sm mb-6">
+        <%= link_to "Interview Prep", interview_prep_path, class: "text-gray-400 hover:text-cyan-600" %>
+        <svg class="w-4 h-4 text-gray-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+        <span class="text-gray-400"><%= @category.name %></span>
+        <svg class="w-4 h-4 text-gray-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+        <span class="text-gray-900 font-medium"><%= @lesson.title %></span>
+      </nav>
+
+      <!-- Lesson Header -->
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
+        <div class="flex items-start justify-between mb-4">
+          <div>
+            <div class="flex items-center gap-2 mb-2">
+              <span class="px-2 py-0.5 text-xs font-medium rounded-full <%= prep_color(@category.color_class, :bg) %> <%= prep_color(@category.color_class, :text) %>"><%= @category.name %></span>
+              <span class="text-xs text-gray-400"><%= @lesson.difficulty_label %></span>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900"><%= @lesson.title %></h1>
+            <p class="text-sm text-gray-500 mt-2"><%= @lesson.description %></p>
+          </div>
+          <% if @status == "completed" %>
+            <span class="inline-flex items-center gap-1 px-3 py-1.5 bg-green-50 text-green-600 rounded-full text-xs font-semibold shrink-0">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              Completed
+            </span>
+          <% elsif @status == "in_progress" %>
+            <span class="inline-flex items-center gap-1 px-3 py-1.5 bg-yellow-50 text-yellow-600 rounded-full text-xs font-semibold shrink-0">
+              In Progress
+            </span>
+          <% end %>
+        </div>
+
+        <div class="flex items-center gap-6 text-sm text-gray-400">
+          <span class="flex items-center gap-1">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <%= @lesson.duration_minutes %> minutes
+          </span>
+          <span class="flex items-center gap-1">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+            <%= @lesson.topic %>
+          </span>
+        </div>
+      </div>
+
+      <!-- Lesson Content -->
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
+        <% content = @lesson.content_data %>
+        <% if content.present? %>
+          <% if content["sections"].present? %>
+            <% content["sections"].each do |section| %>
+              <div class="mb-6 last:mb-0">
+                <h2 class="text-lg font-bold text-gray-900 mb-3"><%= section["title"] %></h2>
+                <div class="prose prose-sm max-w-none text-gray-600">
+                  <p><%= section["body"] %></p>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+
+          <% if content["key_points"].present? %>
+            <div class="mt-6 bg-cyan-50 rounded-xl p-5">
+              <h3 class="text-sm font-bold text-cyan-700 mb-3">Key Takeaways</h3>
+              <ul class="space-y-2">
+                <% content["key_points"].each do |point| %>
+                  <li class="flex items-start gap-2 text-sm text-cyan-800">
+                    <svg class="w-4 h-4 text-cyan-500 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                    <%= point %>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="py-12 text-center">
+            <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+              <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+            </div>
+            <p class="text-sm text-gray-500">Lesson content coming soon.</p>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Mark as Complete / Navigation -->
+      <div class="flex items-center justify-between">
+        <div>
+          <% if @prev_lesson %>
+            <%= link_to interview_prep_lesson_path(@prev_lesson), class: "inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors" do %>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+              Previous
+            <% end %>
+          <% end %>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <% unless @status == "completed" %>
+            <%= button_to "Mark as Complete", interview_prep_complete_lesson_path(@lesson), method: :post, class: "inline-flex items-center gap-2 px-5 py-2.5 bg-green-500 text-white text-sm font-semibold rounded-lg hover:bg-green-600 transition-colors cursor-pointer" %>
+          <% else %>
+            <span class="inline-flex items-center gap-2 px-5 py-2.5 bg-green-100 text-green-700 text-sm font-semibold rounded-lg">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              Completed
+            </span>
+          <% end %>
+
+          <% if @next_lesson %>
+            <%= link_to interview_prep_lesson_path(@next_lesson), class: "inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors" do %>
+              Next
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

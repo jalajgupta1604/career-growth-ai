@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_27_085316) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_27_100003) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -55,6 +55,21 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_27_085316) do
     t.index ["user_id"], name: "index_career_reports_on_user_id"
   end
 
+  create_table "lesson_progresses", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "prep_lesson_id", null: false
+    t.integer "status", default: 0, null: false
+    t.integer "time_spent_minutes", default: 0
+    t.datetime "started_at"
+    t.datetime "completed_at"
+    t.jsonb "notes_data", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["prep_lesson_id"], name: "index_lesson_progresses_on_prep_lesson_id"
+    t.index ["user_id", "prep_lesson_id"], name: "index_lesson_progresses_on_user_id_and_prep_lesson_id", unique: true
+    t.index ["user_id"], name: "index_lesson_progresses_on_user_id"
+  end
+
   create_table "payments", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "career_report_id", null: false
@@ -66,6 +81,37 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_27_085316) do
     t.datetime "updated_at", null: false
     t.index ["career_report_id"], name: "index_payments_on_career_report_id"
     t.index ["user_id"], name: "index_payments_on_user_id"
+  end
+
+  create_table "prep_categories", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "slug", null: false
+    t.text "description"
+    t.string "icon_name"
+    t.string "color_class"
+    t.integer "position", default: 0
+    t.string "difficulty_level"
+    t.integer "estimated_hours"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["position"], name: "index_prep_categories_on_position"
+    t.index ["slug"], name: "index_prep_categories_on_slug", unique: true
+  end
+
+  create_table "prep_lessons", force: :cascade do |t|
+    t.bigint "prep_category_id", null: false
+    t.string "title", null: false
+    t.text "description"
+    t.string "topic"
+    t.integer "duration_minutes"
+    t.string "difficulty_label"
+    t.integer "position", default: 0
+    t.jsonb "content_data", default: {}
+    t.string "thumbnail_url"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["position"], name: "index_prep_lessons_on_position"
+    t.index ["prep_category_id"], name: "index_prep_lessons_on_prep_category_id"
   end
 
   create_table "resumes", force: :cascade do |t|
@@ -132,8 +178,11 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_27_085316) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "career_reports", "users"
+  add_foreign_key "lesson_progresses", "prep_lessons"
+  add_foreign_key "lesson_progresses", "users"
   add_foreign_key "payments", "career_reports"
   add_foreign_key "payments", "users"
+  add_foreign_key "prep_lessons", "prep_categories"
   add_foreign_key "resumes", "users"
   add_foreign_key "role_skill_mappings", "skills"
 end

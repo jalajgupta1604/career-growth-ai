@@ -25,6 +25,12 @@ Rails.application.routes.draw do
     end
   end
 
+  # Interview Prep
+  get "interview-prep", to: "interview_prep#show", as: :interview_prep
+  get "interview-prep/lessons/:id", to: "interview_prep#lesson", as: :interview_prep_lesson
+  post "interview-prep/lessons/:lesson_id/start", to: "interview_prep#start_lesson", as: :interview_prep_start_lesson
+  post "interview-prep/lessons/:lesson_id/complete", to: "interview_prep#complete_lesson", as: :interview_prep_complete_lesson
+
   # Payments
   resources :payments, only: [:create] do
     collection do

@@ -6,6 +6,7 @@ class User < ApplicationRecord
   has_many :resumes, dependent: :destroy
   has_many :career_reports, dependent: :destroy
   has_many :payments, dependent: :destroy
+  has_many :lesson_progresses, dependent: :destroy
 
   validates :email, presence: true, uniqueness: true
 

@@ -298,3 +298,170 @@ end
 puts "Created #{RoleSkillMapping.count} role-skill mappings"
 
 puts "Seeding complete!"
+
+# Interview Prep Categories & Lessons
+puts "Seeding interview prep categories and lessons..."
+
+system_design = PrepCategory.find_or_create_by!(slug: "system-design") do |c|
+  c.name = "System Design (HLD,LLD)"
+  c.description = "Master scalable Architecture & APIs. Learn to design large-scale distributed systems."
+  c.icon_name = "server"
+  c.color_class = "cyan"
+  c.position = 1
+  c.difficulty_level = "Advanced"
+  c.estimated_hours = 24
+end
+
+dsa = PrepCategory.find_or_create_by!(slug: "dsa") do |c|
+  c.name = "Data Structures & Algo"
+  c.description = "Arrays, Trees, Graphs & Dynamic Programming. Build strong problem-solving foundations."
+  c.icon_name = "code"
+  c.color_class = "green"
+  c.position = 2
+  c.difficulty_level = "Intermediate"
+  c.estimated_hours = 30
+end
+
+behavioral = PrepCategory.find_or_create_by!(slug: "behavioral") do |c|
+  c.name = "Behavioral & L/L/T"
+  c.description = "Crack behavioral interviews with STAR method. Leadership, conflict resolution & more."
+  c.icon_name = "users"
+  c.color_class = "purple"
+  c.position = 3
+  c.difficulty_level = "Beginner"
+  c.estimated_hours = 12
+end
+
+mock = PrepCategory.find_or_create_by!(slug: "mock-interviews") do |c|
+  c.name = "Mock Interviews"
+  c.description = "Practice with realistic interview scenarios. Build confidence for the real thing."
+  c.icon_name = "video"
+  c.color_class = "orange"
+  c.position = 4
+  c.difficulty_level = "Mixed"
+  c.estimated_hours = 10
+end
+
+# System Design Lessons (12)
+sd_lessons = [
+  { title: "System Design - HLD", topic: "Load Balancing & High Availability Strategies", duration_minutes: 45, difficulty_label: "L8", position: 1,
+    content_data: { "sections" => [{ "title" => "Introduction to High-Level Design", "body" => "High-Level Design (HLD) focuses on the overall system architecture. You'll learn to break down complex systems into components, define their interactions, and make trade-off decisions around scalability, availability, and consistency." }, { "title" => "Load Balancing Strategies", "body" => "Explore different load balancing algorithms including Round Robin, Least Connections, and Consistent Hashing. Understand when to use L4 vs L7 load balancers and how to design for failover." }, { "title" => "High Availability Patterns", "body" => "Learn about redundancy, replication, and failover mechanisms. Understand active-passive vs active-active configurations, health checks, and circuit breaker patterns." }], "key_points" => ["Always start with requirements clarification", "Consider both functional and non-functional requirements", "Draw the high-level architecture before diving into details", "Discuss trade-offs explicitly"] } },
+  { title: "Designing a URL Shortener", topic: "Hashing, Base62 encoding, Database design", duration_minutes: 40, difficulty_label: "L6", position: 2,
+    content_data: { "sections" => [{ "title" => "Requirements & Estimation", "body" => "Define functional requirements (shorten URL, redirect, analytics) and estimate scale: 100M URLs/month, 10:1 read/write ratio." }, { "title" => "Database & Encoding", "body" => "Use Base62 encoding for short codes. Compare SQL vs NoSQL for storage. Implement counter-based vs hash-based ID generation." }], "key_points" => ["Calculate storage and bandwidth estimates", "Discuss cache strategy for hot URLs", "Handle collision in hash-based approaches"] } },
+  { title: "Designing a Chat System", topic: "WebSockets, Message queues, Presence", duration_minutes: 50, difficulty_label: "L8", position: 3,
+    content_data: { "sections" => [{ "title" => "Real-time Communication", "body" => "Compare WebSocket, Long Polling, and Server-Sent Events. Design connection management and message delivery guarantees." }], "key_points" => ["WebSockets for bidirectional real-time communication", "Message ordering and delivery guarantees", "Presence management and online status"] } },
+  { title: "Designing a News Feed", topic: "Fan-out, Ranking algorithms, Caching", duration_minutes: 45, difficulty_label: "L7", position: 4,
+    content_data: { "sections" => [{ "title" => "Feed Generation", "body" => "Compare fan-out-on-write vs fan-out-on-read approaches. Design ranking algorithms that balance recency, relevance, and engagement." }], "key_points" => ["Fan-out-on-write for users with few friends", "Fan-out-on-read for celebrity accounts", "Cache frequently accessed feeds"] } },
+  { title: "Designing a Rate Limiter", topic: "Token bucket, Sliding window, Distributed limiting", duration_minutes: 35, difficulty_label: "L6", position: 5,
+    content_data: { "sections" => [{ "title" => "Rate Limiting Algorithms", "body" => "Explore token bucket, leaking bucket, fixed window, sliding window log, and sliding window counter algorithms with their trade-offs." }], "key_points" => ["Choose algorithm based on precision vs memory trade-off", "Use Redis for distributed rate limiting", "Consider rate limiting at multiple levels"] } },
+  { title: "Designing an E-commerce Platform", topic: "Inventory, Payments, Order management", duration_minutes: 55, difficulty_label: "L9", position: 6,
+    content_data: { "sections" => [{ "title" => "Core Components", "body" => "Design product catalog, shopping cart, order management, payment processing, and inventory management with eventual consistency." }], "key_points" => ["Handle inventory race conditions", "Implement saga pattern for distributed transactions", "Design for peak traffic (flash sales)"] } },
+  { title: "Database Sharding & Partitioning", topic: "Horizontal scaling, Consistent hashing", duration_minutes: 40, difficulty_label: "L7", position: 7,
+    content_data: { "sections" => [{ "title" => "Sharding Strategies", "body" => "Compare range-based, hash-based, and directory-based sharding. Understand resharding challenges and consistent hashing." }], "key_points" => ["Choose shard key carefully", "Plan for cross-shard queries", "Consistent hashing minimizes data movement"] } },
+  { title: "Caching Strategies Deep Dive", topic: "Cache-aside, Write-through, CDN", duration_minutes: 35, difficulty_label: "L6", position: 8,
+    content_data: { "sections" => [{ "title" => "Caching Patterns", "body" => "Learn cache-aside, read-through, write-through, write-behind, and refresh-ahead patterns. Understand cache invalidation strategies." }], "key_points" => ["Cache invalidation is one of the hardest problems", "Use TTL as a safety net", "Monitor cache hit ratios"] } },
+  { title: "Designing a Search Engine", topic: "Inverted index, Ranking, Crawling", duration_minutes: 50, difficulty_label: "L9", position: 9,
+    content_data: { "sections" => [{ "title" => "Search Architecture", "body" => "Design web crawler, indexing pipeline, query processing, and ranking engine. Understand inverted indexes and TF-IDF scoring." }], "key_points" => ["Inverted index is the core data structure", "PageRank for authority-based ranking", "Handle query spelling correction and suggestions"] } },
+  { title: "Microservices Architecture", topic: "Service mesh, API gateway, Event-driven", duration_minutes: 45, difficulty_label: "L8", position: 10,
+    content_data: { "sections" => [{ "title" => "Microservices Patterns", "body" => "Learn service decomposition, API gateway pattern, service discovery, circuit breaker, and saga pattern for distributed transactions." }], "key_points" => ["Define clear service boundaries", "Use API gateway for cross-cutting concerns", "Implement circuit breakers for resilience"] } },
+  { title: "Designing a Video Streaming Platform", topic: "CDN, Transcoding, Adaptive streaming", duration_minutes: 50, difficulty_label: "L9", position: 11,
+    content_data: { "sections" => [{ "title" => "Video Pipeline", "body" => "Design video upload, transcoding pipeline, content delivery network, and adaptive bitrate streaming with HLS/DASH." }], "key_points" => ["Transcode to multiple resolutions", "Use CDN for global distribution", "Implement adaptive bitrate streaming"] } },
+  { title: "LLD: Parking Lot System", topic: "OOP design, SOLID principles, Class diagrams", duration_minutes: 40, difficulty_label: "L6", position: 12,
+    content_data: { "sections" => [{ "title" => "Low-Level Design Approach", "body" => "Apply SOLID principles to design a parking lot system. Define classes, interfaces, and their relationships using UML diagrams." }], "key_points" => ["Start with use cases and actors", "Apply SOLID principles throughout", "Use design patterns (Strategy, Observer, Factory)"] } }
+]
+
+sd_lessons.each do |data|
+  PrepLesson.find_or_create_by!(prep_category: system_design, title: data[:title]) do |l|
+    l.assign_attributes(data.except(:title))
+  end
+end
+
+# DSA Lessons (15)
+dsa_lessons = [
+  { title: "Arrays & Two Pointer Technique", topic: "Array manipulation, Sliding window", duration_minutes: 40, difficulty_label: "L4", position: 1,
+    content_data: { "sections" => [{ "title" => "Two Pointer Fundamentals", "body" => "Master the two-pointer technique for solving array problems efficiently. Learn when to use same-direction vs opposite-direction pointers." }], "key_points" => ["Two pointers reduce O(n^2) to O(n)", "Sliding window for subarray problems", "Sort first when order doesn't matter"] } },
+  { title: "Linked Lists Mastery", topic: "Reversal, Cycle detection, Merge", duration_minutes: 35, difficulty_label: "L4", position: 2,
+    content_data: { "sections" => [{ "title" => "Core Operations", "body" => "Practice linked list reversal, Floyd's cycle detection, merging sorted lists, and finding intersection points." }], "key_points" => ["Draw the pointer changes before coding", "Use dummy head node to simplify edge cases", "Fast & slow pointer for cycle detection"] } },
+  { title: "Stacks & Queues", topic: "Monotonic stack, BFS applications", duration_minutes: 35, difficulty_label: "L5", position: 3,
+    content_data: { "sections" => [{ "title" => "Advanced Stack Patterns", "body" => "Learn monotonic stack for next greater element problems, evaluate expressions, and implement queue using stacks." }], "key_points" => ["Monotonic stack for next greater/smaller element", "Stack for matching parentheses and expression evaluation", "Queue for BFS traversal"] } },
+  { title: "Hash Maps & Hash Sets", topic: "Collision handling, Frequency counting", duration_minutes: 30, difficulty_label: "L4", position: 4,
+    content_data: { "sections" => [{ "title" => "Hash Map Patterns", "body" => "Use hash maps for frequency counting, two-sum pattern, grouping, and implementing LRU cache." }], "key_points" => ["Hash maps provide O(1) average lookup", "Use for counting and grouping problems", "Combine with other data structures for complex solutions"] } },
+  { title: "Binary Trees & BST", topic: "Traversals, BST operations, Balance", duration_minutes: 45, difficulty_label: "L6", position: 5,
+    content_data: { "sections" => [{ "title" => "Tree Traversal Patterns", "body" => "Master DFS (preorder, inorder, postorder) and BFS traversals. Solve problems using recursive and iterative approaches." }], "key_points" => ["Inorder traversal of BST gives sorted order", "Use level-order for breadth-first problems", "Think recursively: solve for root, recurse for subtrees"] } },
+  { title: "Heaps & Priority Queues", topic: "Top-K problems, Merge K sorted lists", duration_minutes: 35, difficulty_label: "L6", position: 6,
+    content_data: { "sections" => [{ "title" => "Heap Applications", "body" => "Use heaps for top-K elements, running median, merge K sorted arrays, and task scheduling problems." }], "key_points" => ["Min-heap for K largest, max-heap for K smallest", "Heap operations are O(log n)", "Use for streaming/online algorithms"] } },
+  { title: "Graph Traversal: BFS & DFS", topic: "Connected components, Topological sort", duration_minutes: 45, difficulty_label: "L7", position: 7,
+    content_data: { "sections" => [{ "title" => "Graph Algorithms", "body" => "Implement BFS and DFS for graphs. Solve connected components, cycle detection, and topological sorting problems." }], "key_points" => ["BFS for shortest path in unweighted graphs", "DFS for cycle detection and topological sort", "Use visited set to avoid infinite loops"] } },
+  { title: "Dynamic Programming Fundamentals", topic: "Memoization, Tabulation, Common patterns", duration_minutes: 50, difficulty_label: "L7", position: 8,
+    content_data: { "sections" => [{ "title" => "DP Thinking Framework", "body" => "Learn to identify DP problems, define states and transitions, and implement both top-down (memoization) and bottom-up (tabulation) solutions." }], "key_points" => ["Identify overlapping subproblems", "Define the state clearly", "Start with brute force, then optimize with memoization"] } },
+  { title: "DP: Knapsack & Subset Problems", topic: "0/1 Knapsack, Subset sum, Partition", duration_minutes: 45, difficulty_label: "L7", position: 9,
+    content_data: { "sections" => [{ "title" => "Knapsack Family", "body" => "Solve 0/1 knapsack, unbounded knapsack, subset sum, and partition problems. Learn space optimization techniques." }], "key_points" => ["0/1 knapsack: include or exclude each item", "Space optimize from 2D to 1D array", "Subset sum is a special case of knapsack"] } },
+  { title: "DP: String Problems", topic: "LCS, Edit distance, Palindromes", duration_minutes: 45, difficulty_label: "L8", position: 10,
+    content_data: { "sections" => [{ "title" => "String DP Patterns", "body" => "Solve longest common subsequence, edit distance, longest palindromic subsequence, and regex matching using DP." }], "key_points" => ["Two-string DP: use 2D table indexed by both strings", "Edit distance has 3 operations: insert, delete, replace", "Palindrome DP: expand from center or use interval DP"] } },
+  { title: "Sorting & Searching Algorithms", topic: "Binary search variations, QuickSort", duration_minutes: 40, difficulty_label: "L5", position: 11,
+    content_data: { "sections" => [{ "title" => "Binary Search Mastery", "body" => "Go beyond basic binary search: search in rotated arrays, find first/last occurrence, search in 2D matrix, and binary search on answer." }], "key_points" => ["Binary search on answer for optimization problems", "Handle edge cases in rotated array search", "Know when to use lower_bound vs upper_bound"] } },
+  { title: "Greedy Algorithms", topic: "Interval scheduling, Huffman coding", duration_minutes: 35, difficulty_label: "L6", position: 12,
+    content_data: { "sections" => [{ "title" => "Greedy Strategy", "body" => "Learn to prove greedy choice property. Solve interval scheduling, activity selection, and optimal merge pattern problems." }], "key_points" => ["Prove greedy choice leads to optimal solution", "Sort by end time for interval scheduling", "Greedy doesn't always work - verify with counterexamples"] } },
+  { title: "Backtracking Patterns", topic: "Permutations, Combinations, N-Queens", duration_minutes: 40, difficulty_label: "L7", position: 13,
+    content_data: { "sections" => [{ "title" => "Backtracking Framework", "body" => "Learn the backtracking template: make choice, explore, undo choice. Apply to permutations, combinations, sudoku, and N-Queens." }], "key_points" => ["Use a template: choose, explore, unchoose", "Prune early to improve performance", "Track state with visited array or bitmask"] } },
+  { title: "Trie & Advanced Data Structures", topic: "Prefix trees, Segment trees, Union-Find", duration_minutes: 40, difficulty_label: "L8", position: 14,
+    content_data: { "sections" => [{ "title" => "Trie Operations", "body" => "Implement trie for prefix search, autocomplete, and word dictionary. Introduction to segment trees and union-find for range queries and connectivity." }], "key_points" => ["Trie for prefix-based search problems", "Union-Find for connected components", "Segment tree for range queries"] } },
+  { title: "Bit Manipulation Techniques", topic: "XOR tricks, Bitmask DP", duration_minutes: 30, difficulty_label: "L6", position: 15,
+    content_data: { "sections" => [{ "title" => "Bit Tricks", "body" => "Master common bit manipulation techniques: check/set/clear bits, XOR properties, counting set bits, and bitmask DP." }], "key_points" => ["XOR: a^a=0, a^0=a for finding unique elements", "n&(n-1) removes lowest set bit", "Bitmask DP for subset enumeration"] } }
+]
+
+dsa_lessons.each do |data|
+  PrepLesson.find_or_create_by!(prep_category: dsa, title: data[:title]) do |l|
+    l.assign_attributes(data.except(:title))
+  end
+end
+
+# Behavioral Lessons (8)
+behavioral_lessons = [
+  { title: "STAR Method Mastery", topic: "Structuring behavioral answers", duration_minutes: 30, difficulty_label: "L3", position: 1,
+    content_data: { "sections" => [{ "title" => "The STAR Framework", "body" => "Learn to structure your behavioral answers using Situation, Task, Action, Result. Practice crafting compelling narratives that highlight your impact." }], "key_points" => ["Keep Situation and Task brief (20% of answer)", "Focus most time on Action (50%)", "Quantify Results whenever possible"] } },
+  { title: "Leadership & Influence", topic: "Leading without authority, Mentoring", duration_minutes: 35, difficulty_label: "L5", position: 2,
+    content_data: { "sections" => [{ "title" => "Demonstrating Leadership", "body" => "Prepare stories about leading projects, mentoring team members, driving technical decisions, and influencing stakeholders without formal authority." }], "key_points" => ["Show initiative and ownership", "Demonstrate impact beyond your role", "Highlight how you grew others"] } },
+  { title: "Conflict Resolution", topic: "Handling disagreements, Difficult conversations", duration_minutes: 30, difficulty_label: "L5", position: 3,
+    content_data: { "sections" => [{ "title" => "Navigating Conflicts", "body" => "Learn frameworks for discussing conflicts constructively. Prepare stories about disagreements with teammates, managers, or cross-functional partners." }], "key_points" => ["Focus on the problem, not the person", "Show empathy and active listening", "Highlight the positive outcome"] } },
+  { title: "Tell Me About Yourself", topic: "Elevator pitch, Career narrative", duration_minutes: 25, difficulty_label: "L2", position: 4,
+    content_data: { "sections" => [{ "title" => "Crafting Your Narrative", "body" => "Build a compelling 2-minute career story that connects your past experience, current role, and future goals to the position you're interviewing for." }], "key_points" => ["Keep it under 2 minutes", "Connect past-present-future", "Tailor to the specific role"] } },
+  { title: "Why This Company?", topic: "Research, Alignment, Motivation", duration_minutes: 25, difficulty_label: "L3", position: 5,
+    content_data: { "sections" => [{ "title" => "Showing Genuine Interest", "body" => "Research company culture, recent news, products, and tech stack. Align your interests and career goals with the company's mission and opportunities." }], "key_points" => ["Research beyond the job description", "Connect your goals with company mission", "Show knowledge of recent company achievements"] } },
+  { title: "Failure & Learning Stories", topic: "Growth mindset, Accountability", duration_minutes: 30, difficulty_label: "L4", position: 6,
+    content_data: { "sections" => [{ "title" => "Discussing Failures", "body" => "Prepare stories about failures, mistakes, and setbacks that demonstrate accountability, learning, and growth. Show how you applied lessons learned." }], "key_points" => ["Own the failure - don't blame others", "Focus on what you learned", "Show how you applied the lesson afterwards"] } },
+  { title: "Teamwork & Collaboration", topic: "Cross-functional work, Remote collaboration", duration_minutes: 30, difficulty_label: "L4", position: 7,
+    content_data: { "sections" => [{ "title" => "Collaborative Excellence", "body" => "Prepare stories demonstrating effective collaboration with designers, product managers, and other engineering teams. Highlight communication and coordination skills." }], "key_points" => ["Show you value diverse perspectives", "Demonstrate proactive communication", "Highlight your role in team success"] } },
+  { title: "Salary Negotiation Strategies", topic: "Offer evaluation, Counter-offers", duration_minutes: 35, difficulty_label: "L5", position: 8,
+    content_data: { "sections" => [{ "title" => "Negotiation Framework", "body" => "Learn frameworks for evaluating offers, timing your negotiation, presenting counter-offers, and negotiating beyond base salary (equity, signing bonus, WFH)." }], "key_points" => ["Never give a number first", "Research market rates thoroughly", "Negotiate the total package, not just base salary"] } }
+]
+
+behavioral_lessons.each do |data|
+  PrepLesson.find_or_create_by!(prep_category: behavioral, title: data[:title]) do |l|
+    l.assign_attributes(data.except(:title))
+  end
+end
+
+# Mock Interview Lessons (6)
+mock_lessons = [
+  { title: "System Design Mock: Design Twitter", topic: "Full mock interview simulation", duration_minutes: 60, difficulty_label: "L8", position: 1,
+    content_data: { "sections" => [{ "title" => "Mock Interview Setup", "body" => "Simulate a 45-minute system design interview for designing Twitter. Practice requirements gathering, high-level design, deep dives, and handling follow-up questions." }], "key_points" => ["Spend first 5 min on requirements", "Draw the architecture clearly", "Discuss trade-offs at each decision point"] } },
+  { title: "DSA Mock: Array & String Problems", topic: "Timed coding practice with industry questions", duration_minutes: 45, difficulty_label: "L6", position: 2,
+    content_data: { "sections" => [{ "title" => "Coding Interview Simulation", "body" => "Practice solving 2-3 coding problems in 45 minutes. Focus on thinking out loud, writing clean code, and handling edge cases." }], "key_points" => ["Think out loud throughout", "Clarify constraints before coding", "Test with examples and edge cases"] } },
+  { title: "Behavioral Mock: Amazon LP", topic: "Leadership Principles deep-dive practice", duration_minutes: 40, difficulty_label: "L5", position: 3,
+    content_data: { "sections" => [{ "title" => "Amazon Leadership Principles", "body" => "Practice answering behavioral questions mapped to Amazon's 16 Leadership Principles. Prepare 2-3 stories for each principle." }], "key_points" => ["Map your stories to specific LPs", "Use concrete metrics and outcomes", "Practice pivot between stories smoothly"] } },
+  { title: "Full Loop Mock: Frontend Engineer", topic: "Complete interview day simulation", duration_minutes: 90, difficulty_label: "L7", position: 4,
+    content_data: { "sections" => [{ "title" => "Full Loop Simulation", "body" => "Simulate a complete interview loop: coding round, system design round, behavioral round, and hiring manager round. Practice transitions and maintaining energy." }], "key_points" => ["Manage your energy across rounds", "Each round is independent - reset mentally", "Ask clarifying questions in every round"] } },
+  { title: "System Design Mock: Design Uber", topic: "Geo-spatial systems & real-time matching", duration_minutes: 60, difficulty_label: "L9", position: 5,
+    content_data: { "sections" => [{ "title" => "Ride-Sharing System Design", "body" => "Design Uber's core system: rider-driver matching, real-time location tracking, pricing engine, and trip management." }], "key_points" => ["Geospatial indexing with QuadTree/GeoHash", "Real-time location updates with WebSockets", "Supply-demand based dynamic pricing"] } },
+  { title: "DSA Mock: Graph & DP Problems", topic: "Advanced problem-solving practice", duration_minutes: 50, difficulty_label: "L8", position: 6,
+    content_data: { "sections" => [{ "title" => "Advanced Coding Practice", "body" => "Tackle medium-hard graph and dynamic programming problems. Practice identifying patterns and optimizing solutions within time constraints." }], "key_points" => ["Identify the problem pattern first", "Start with brute force, then optimize", "Communicate your thought process clearly"] } }
+]
+
+mock_lessons.each do |data|
+  PrepLesson.find_or_create_by!(prep_category: mock, title: data[:title]) do |l|
+    l.assign_attributes(data.except(:title))
+  end
+end
+
+puts "Created #{PrepCategory.count} prep categories with #{PrepLesson.count} lessons"
