@@ -8,12 +8,14 @@
         </div>
         <span class="text-lg font-bold text-gray-900">Career Growth AI</span>
       </div>
-      <% if @report.paid? %>
-        <%= link_to download_pdf_career_report_path(@report), class: "inline-flex items-center px-4 py-2 bg-cyan-500 text-white text-sm font-semibold rounded-lg hover:bg-cyan-600 transition-colors" do %>
-          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-          Download PDF Report
+      <div class="flex items-center gap-4">
+        <% if @report.paid? %>
+          <%= link_to download_pdf_career_report_path(@report), class: "inline-flex items-center px-4 py-2 bg-cyan-500 text-white text-sm font-semibold rounded-lg hover:bg-cyan-600 transition-colors" do %>
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            Download PDF Report
+          <% end %>
         <% end %>
-      <% end %>
+      </div>
     </div>
   </div>
 
@@ -59,7 +61,7 @@
             <div class="bg-gradient-to-r from-cyan-400 to-cyan-500 h-3 rounded-full" style="width: <%= 100 - gap_pct %>%"></div>
           </div>
           <div class="flex justify-between mt-2">
-            <span class="text-xs text-gray-400">&#8377;<%= (((@salary_data.dig("benchmark", "median_salary").to_i - current_user.current_salary.to_i)) / 100000.0).round(0) %>L to Median</span>
+            <span class="text-xs text-gray-400">&#8377;<%= (((@salary_data.dig("benchmark", "median_salary").to_i - current_user.current_salary.to_i).abs) / 100000.0).round(0) %>L to Median</span>
           </div>
         </div>
       </div>
@@ -86,11 +88,17 @@
             </div>
           </div>
         </div>
-        <% readiness = @interview_data.dig("readiness_level") || "developing" %>
+        <% weak_areas = (@skill_data.dig("missing_skills") || []).first(2).map { |s| s["name"] || s[:name] } %>
         <p class="text-sm text-gray-500 text-center">
-          Needs improvement in
-          <span class="font-semibold">"System Design"</span> and
-          <span class="font-semibold">"Concurrency"</span> modules.
+          <% if weak_areas.any? %>
+            Needs improvement in
+            <% weak_areas.each_with_index do |area, i| %>
+              <span class="font-semibold">"<%= area %>"</span><%= i < weak_areas.length - 1 ? " and" : "" %>
+            <% end %>
+            modules.
+          <% else %>
+            Strong across all skill areas. Keep practicing!
+          <% end %>
         </p>
         <div class="mt-4 text-center">
           <a href="#" class="text-sm text-cyan-600 font-semibold hover:text-cyan-700">Take Mock Interview</a>
@@ -98,98 +106,162 @@
       </div>
     </div>
 
-    <% if @report.paid? %>
-      <!-- Middle Row: Skill ROI + AI Growth Hacks -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        <!-- Skill ROI Analysis -->
-        <div class="bg-white rounded-2xl border border-gray-100 p-6">
-          <h2 class="text-lg font-bold text-gray-900 mb-4">Skill ROI Analysis</h2>
-          <div class="space-y-3">
-            <% (@skill_data.dig("missing_skills") || []).first(4).each do |skill| %>
-              <div class="flex items-center justify-between py-3 border-b border-gray-50 last:border-0">
-                <div>
-                  <p class="font-semibold text-gray-900"><%= skill["name"] %></p>
-                </div>
-                <span class="px-3 py-1 bg-green-50 text-green-600 text-sm font-semibold rounded-full">+&#8377;<%= skill["salary_uplift_index"].to_f.round(0) %>L Impact</span>
-              </div>
-            <% end %>
-          </div>
+    <!-- Middle Row: Skill ROI Analysis + AI Growth Hacks -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+      <!-- Skill ROI Analysis -->
+      <div class="bg-white rounded-2xl border border-gray-100 p-6">
+        <div class="flex items-center gap-2 mb-5">
+          <svg class="w-5 h-5 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+          <h2 class="text-lg font-bold text-gray-900">Skill ROI Analysis</h2>
         </div>
-
-        <!-- AI Growth Hacks -->
-        <div class="bg-white rounded-2xl border border-gray-100 p-6">
-          <h2 class="text-lg font-bold text-gray-900 mb-4">AI Growth Hacks</h2>
-          <div class="space-y-4">
-            <% matched_skills = (@skill_data.dig("matched_skills") || []).map { |s| s["name"] }.first(2) %>
-            <div class="flex items-start gap-3">
-              <div class="w-1.5 h-1.5 bg-cyan-500 rounded-full mt-2 flex-shrink-0"></div>
-              <p class="text-sm text-gray-600">Your background in <span class="font-semibold"><%= matched_skills.first || "your current stack" %></span> is strong. Transitioning to Fullstack with this could trigger a +20% salary jump immediately.</p>
+        <div class="space-y-1">
+          <% missing_skills = (@skill_data.dig("missing_skills") || []) %>
+          <% missing_skills.first(5).each do |skill| %>
+            <% skill_name = skill["name"] || skill[:name] %>
+            <% uplift = skill["salary_uplift_index"] || skill[:salary_uplift_index] %>
+            <div class="flex items-center justify-between py-3 border-b border-gray-50 last:border-0">
+              <div class="flex items-center gap-3">
+                <div class="w-2 h-2 bg-cyan-500 rounded-full shrink-0"></div>
+                <p class="font-medium text-gray-900"><%= skill_name %></p>
+              </div>
+              <span class="px-3 py-1 bg-green-50 text-green-600 text-sm font-semibold rounded-full whitespace-nowrap">+&#8377;<%= uplift.to_f.round(1) %>L Impact</span>
             </div>
-            <div class="flex items-start gap-3">
-              <div class="w-1.5 h-1.5 bg-cyan-500 rounded-full mt-2 flex-shrink-0"></div>
-              <p class="text-sm text-gray-600">MAANG companies are currently hiring 12% more for your specific profile in the <%= current_user.city %> region.</p>
+          <% end %>
+          <% if missing_skills.empty? %>
+            <div class="py-6 text-center">
+              <p class="text-sm text-gray-400">Upload your resume to get personalized skill ROI analysis.</p>
             </div>
-            <div class="flex items-start gap-3">
-              <div class="w-1.5 h-1.5 bg-cyan-500 rounded-full mt-2 flex-shrink-0"></div>
-              <p class="text-sm text-gray-600">Applying through internal referrals increases your interview conversion by 4.5x. Use your network strategically.</p>
-            </div>
-          </div>
-          <div class="mt-4">
-            <a href="#" class="text-sm text-cyan-600 font-semibold hover:text-cyan-700">View Comprehensive Analysis &rarr;</a>
-          </div>
+          <% end %>
         </div>
       </div>
 
-      <!-- 12-Month Career Roadmap -->
-      <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
-        <h2 class="text-lg font-bold text-gray-900 mb-6">12-Month Career Roadmap</h2>
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div class="relative">
+      <!-- AI Growth Hacks -->
+      <div class="bg-white rounded-2xl border border-gray-100 p-6">
+        <div class="flex items-center gap-2 mb-5">
+          <svg class="w-5 h-5 text-cyan-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/></svg>
+          <h2 class="text-lg font-bold text-gray-900">AI Growth Hacks</h2>
+        </div>
+        <div class="space-y-4">
+          <% matched_skills = (@skill_data.dig("matched_skills") || []).map { |s| s["name"] || s[:name] } %>
+          <% top_missing = missing_skills.first(2).map { |s| s["name"] || s[:name] } %>
+
+          <div class="flex items-start gap-3">
+            <div class="w-5 h-5 bg-cyan-100 rounded flex items-center justify-center shrink-0 mt-0.5">
+              <div class="w-1.5 h-1.5 bg-cyan-500 rounded-full"></div>
+            </div>
+            <p class="text-sm text-gray-600">Your background in <span class="font-semibold text-gray-900"><%= matched_skills.first || "your current stack" %></span> is strong. Transitioning to Fullstack with this could trigger a <span class="font-semibold text-green-600">+20% salary jump</span> immediately.</p>
+          </div>
+
+          <div class="flex items-start gap-3">
+            <div class="w-5 h-5 bg-cyan-100 rounded flex items-center justify-center shrink-0 mt-0.5">
+              <div class="w-1.5 h-1.5 bg-cyan-500 rounded-full"></div>
+            </div>
+            <p class="text-sm text-gray-600">MAANG companies are currently hiring <span class="font-semibold text-gray-900">12% more</span> for your specific profile in the <span class="font-semibold text-gray-900"><%= current_user.city %></span> region.</p>
+          </div>
+
+          <div class="flex items-start gap-3">
+            <div class="w-5 h-5 bg-cyan-100 rounded flex items-center justify-center shrink-0 mt-0.5">
+              <div class="w-1.5 h-1.5 bg-cyan-500 rounded-full"></div>
+            </div>
+            <p class="text-sm text-gray-600">Applying through internal referrals increases your interview conversion by <span class="font-semibold text-gray-900">4.5x</span>. Use your network strategically.</p>
+          </div>
+
+          <% if top_missing.any? %>
+            <div class="flex items-start gap-3">
+              <div class="w-5 h-5 bg-cyan-100 rounded flex items-center justify-center shrink-0 mt-0.5">
+                <div class="w-1.5 h-1.5 bg-cyan-500 rounded-full"></div>
+              </div>
+              <p class="text-sm text-gray-600">Learning <span class="font-semibold text-gray-900"><%= top_missing.join(" and ") %></span> would close your skill gap and boost your interview score significantly.</p>
+            </div>
+          <% end %>
+        </div>
+        <div class="mt-5 pt-4 border-t border-gray-50">
+          <a href="#" class="text-sm text-cyan-600 font-semibold hover:text-cyan-700">View Comprehensive Analysis &rarr;</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 12-Month Career Roadmap -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
+      <div class="flex items-center gap-2 mb-6">
+        <svg class="w-5 h-5 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
+        <h2 class="text-lg font-bold text-gray-900">12-Month Career Roadmap</h2>
+      </div>
+
+      <!-- Timeline connector -->
+      <div class="relative">
+        <div class="hidden md:block absolute top-4 left-0 right-0 h-0.5 bg-gray-100 z-0"></div>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 relative z-10">
+          <% roadmap_timeline = @roadmap_data.dig("timeline") || [] %>
+          <% milestones = @roadmap_data.dig("milestones") || [] %>
+
+          <!-- Months 1-3: Foundation -->
+          <div class="relative bg-gray-50 rounded-xl p-4">
             <div class="flex items-center gap-2 mb-3">
-              <div class="w-8 h-8 bg-cyan-500 rounded-full flex items-center justify-center">
+              <div class="w-8 h-8 bg-cyan-500 rounded-full flex items-center justify-center shadow-sm">
                 <span class="text-xs font-bold text-white">1-3</span>
               </div>
               <span class="text-sm font-semibold text-gray-700">Months 1-3</span>
             </div>
-            <p class="text-xs font-semibold text-gray-900 mb-1">Foundation</p>
-            <p class="text-xs text-gray-500">Master ML & distributed systems basics. Clear 10 mock interviews.</p>
+            <p class="text-sm font-semibold text-gray-900 mb-1">Foundation</p>
+            <% first_skills = roadmap_timeline.select { |t| s = t["start_month"] || t[:start_month]; s.to_i <= 3 }.map { |t| t["skill"] || t[:skill] } %>
+            <p class="text-xs text-gray-500">
+              <% if first_skills.any? %>
+                Master <%= first_skills.first(2).join(" & ") %> basics. Clear 10 mock interviews.
+              <% else %>
+                Master ML & distributed systems basics. Clear 10 mock interviews.
+              <% end %>
+            </p>
           </div>
-          <div class="relative">
+
+          <!-- Months 4-6: Skill Building -->
+          <div class="relative bg-gray-50 rounded-xl p-4">
             <div class="flex items-center gap-2 mb-3">
-              <div class="w-8 h-8 bg-cyan-400 rounded-full flex items-center justify-center">
+              <div class="w-8 h-8 bg-cyan-400 rounded-full flex items-center justify-center shadow-sm">
                 <span class="text-xs font-bold text-white">4-6</span>
               </div>
               <span class="text-sm font-semibold text-gray-700">Months 4-6</span>
             </div>
-            <p class="text-xs font-semibold text-gray-900 mb-1">Skill Building</p>
-            <p class="text-xs text-gray-500">Resume revamp. Start active outreach to Tier-1 product firms.</p>
+            <p class="text-sm font-semibold text-gray-900 mb-1">Skill Building</p>
+            <% mid_skills = roadmap_timeline.select { |t| s = t["start_month"] || t[:start_month]; s.to_i.between?(4, 6) }.map { |t| t["skill"] || t[:skill] } %>
+            <p class="text-xs text-gray-500">
+              <% if mid_skills.any? %>
+                Resume revamp. Start active outreach to Tier-1 product firms.
+              <% else %>
+                Resume revamp. Start active outreach to Tier-1 product firms.
+              <% end %>
+            </p>
           </div>
-          <div class="relative">
+
+          <!-- Months 7-9: Interview Sprint -->
+          <div class="relative bg-gray-50 rounded-xl p-4">
             <div class="flex items-center gap-2 mb-3">
-              <div class="w-8 h-8 bg-cyan-300 rounded-full flex items-center justify-center">
+              <div class="w-8 h-8 bg-cyan-300 rounded-full flex items-center justify-center shadow-sm">
                 <span class="text-xs font-bold text-white">7-9</span>
               </div>
               <span class="text-sm font-semibold text-gray-700">Months 7-9</span>
             </div>
-            <p class="text-xs font-semibold text-gray-900 mb-1">Interview Sprint</p>
+            <p class="text-sm font-semibold text-gray-900 mb-1">Interview Sprint</p>
             <p class="text-xs text-gray-500">Handle multiple offers. Deploy compensation leverage strategy.</p>
           </div>
-          <div class="relative">
+
+          <!-- Months 10-12: Career Advancement -->
+          <div class="relative bg-gray-50 rounded-xl p-4">
             <div class="flex items-center gap-2 mb-3">
-              <div class="w-8 h-8 bg-cyan-200 rounded-full flex items-center justify-center">
+              <div class="w-8 h-8 bg-cyan-200 rounded-full flex items-center justify-center shadow-sm">
                 <span class="text-xs font-bold text-gray-700">10-12</span>
               </div>
               <span class="text-sm font-semibold text-gray-700">Months 10-12</span>
             </div>
-            <p class="text-xs font-semibold text-gray-900 mb-1">Career Advancement</p>
+            <p class="text-sm font-semibold text-gray-900 mb-1">Career Advancement</p>
             <p class="text-xs text-gray-500">Onboarding & achieving first "High Performer" rating in new role.</p>
           </div>
         </div>
       </div>
-    <% end %>
+    </div>
 
     <% unless @report.paid? %>
-      <!-- Payment Wall -->
+      <!-- Payment Wall / CTA -->
       <div class="bg-gray-900 rounded-2xl p-8 mb-6">
         <div class="max-w-2xl mx-auto text-center">
           <h2 class="text-2xl font-bold text-white">Ready to secure your &#8377;<%= (@salary_data.dig("benchmark", "median_salary").to_i / 100000.0).round(0) %>L package?</h2>
@@ -200,7 +272,7 @@
                     class="px-8 py-3 bg-cyan-500 text-white font-semibold rounded-lg hover:bg-cyan-600 transition-colors cursor-pointer">
               Start Prep Module
             </button>
-            <%= link_to dashboard_path, class: "px-8 py-3 bg-white text-gray-900 font-semibold rounded-lg hover:bg-gray-100 transition-colors" do %>
+            <%= link_to dashboard_path, class: "px-8 py-3 bg-white text-gray-900 font-semibold rounded-lg hover:bg-gray-100 transition-colors text-center" do %>
               Share Profile
             <% end %>
           </div>
@@ -212,7 +284,7 @@
   <!-- Footer -->
   <footer class="bg-white border-t border-gray-100 py-6">
     <div class="max-w-7xl mx-auto px-4 text-center">
-      <p class="text-xs text-gray-400">2024 Career Growth AI. All data is based on real-time market surveys and verified hiring trends.</p>
+      <p class="text-xs text-gray-400">&copy; 2024 Career Growth AI. All data is based on real-time market surveys and verified hiring trends.</p>
     </div>
   </footer>
 </div>
