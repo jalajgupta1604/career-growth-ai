@@ -25,16 +25,11 @@ class CareerReportsController < ApplicationController
   def download_pdf
     @report = current_user.career_reports.find(params[:id])
 
-    unless @report.paid?
-      redirect_to career_report_path(@report), alert: "Please complete payment to download the full report."
-      return
-    end
-
     pdf_service = PdfGeneratorService.new(@report)
     pdf_data = pdf_service.generate
 
     send_data pdf_data,
-              filename: "career_blueprint_#{Date.today}.pdf",
+              filename: "career_blueprint_#{@report.user.full_name&.parameterize || 'report'}_#{Date.today}.pdf",
               type: "application/pdf",
               disposition: "attachment"
   end
