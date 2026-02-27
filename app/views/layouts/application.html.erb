@@ -19,7 +19,7 @@
   </head>
 
   <body class="h-full bg-gray-50">
-    <% if user_signed_in? && !controller_name.in?(%w[pages onboarding career_reports]) %>
+    <% if user_signed_in? && !controller_name.in?(%w[pages onboarding career_reports resumes sessions registrations]) %>
       <nav class="bg-white border-b border-gray-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="flex justify-between h-16">
