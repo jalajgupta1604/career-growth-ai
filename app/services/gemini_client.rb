@@ -1,5 +1,5 @@
 class GeminiClient
-  API_BASE = "https://generativelanguage.googleapis.com/v1beta/models"
+  API_BASE = "https://generativelanguage.googleapis.com"
   DEFAULT_TIMEOUT = 30
 
   def initialize
@@ -11,7 +11,7 @@ class GeminiClient
     return nil if @api_key.blank?
 
     body = build_request_body(prompt, response_schema)
-    response = connection.post(endpoint_path, body.to_json)
+    response = request_with_retry(body)
 
     if response.success?
       parse_response(response.body, response_schema)
@@ -33,14 +33,27 @@ class GeminiClient
     @connection ||= Faraday.new(url: API_BASE) do |f|
       f.options.timeout = DEFAULT_TIMEOUT
       f.options.open_timeout = 10
-      f.request :retry, max: 2, interval: 1, retry_statuses: [429, 500, 502, 503]
       f.headers["Content-Type"] = "application/json"
       f.adapter Faraday.default_adapter
     end
   end
 
+  def request_with_retry(body, max_retries: 2)
+    retries = 0
+    begin
+      connection.post(endpoint_path, body.to_json)
+    rescue Faraday::TimeoutError, Faraday::ConnectionFailed => e
+      retries += 1
+      if retries <= max_retries
+        sleep(retries)
+        retry
+      end
+      raise
+    end
+  end
+
   def endpoint_path
-    "/#{@model}:generateContent?key=#{@api_key}"
+    "/v1beta/models/#{@model}:generateContent?key=#{@api_key}"
   end
 
   def build_request_body(prompt, response_schema)
