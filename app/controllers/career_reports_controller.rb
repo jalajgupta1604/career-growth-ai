@@ -15,6 +15,8 @@ class CareerReportsController < ApplicationController
     @skill_data = @report.skill_gap_data&.dig("skill_analysis") || {}
     @roadmap_data = @report.roadmap_data&.dig("roadmap") || {}
     @interview_data = @report.roadmap_data&.dig("interview") || {}
+    @ai_growth_hacks = @report.roadmap_data&.dig("ai_growth_hacks")
+    @ai_insights = @report.roadmap_data&.dig("ai_insights")
   end
 
   def preview

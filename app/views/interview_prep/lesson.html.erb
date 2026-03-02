@@ -97,6 +97,51 @@
         <% end %>
       </div>
 
+      <% if @ai_questions.present? && @ai_questions.any? %>
+        <!-- AI Practice Questions -->
+        <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
+          <div class="flex items-center gap-2 mb-5">
+            <div class="w-8 h-8 bg-cyan-500 rounded-lg flex items-center justify-center">
+              <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"/></svg>
+            </div>
+            <div>
+              <h2 class="text-lg font-bold text-gray-900">AI Practice Questions</h2>
+              <p class="text-xs text-gray-400">Personalized questions based on your role and this topic</p>
+            </div>
+          </div>
+
+          <div class="space-y-3">
+            <% @ai_questions.each_with_index do |q, index| %>
+              <div class="border border-gray-100 rounded-xl overflow-hidden" data-controller="accordion">
+                <button data-action="click->accordion#toggle" class="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors">
+                  <div class="flex items-center gap-3">
+                    <span class="w-6 h-6 bg-cyan-100 text-cyan-600 rounded-full flex items-center justify-center text-xs font-bold shrink-0"><%= index + 1 %></span>
+                    <span class="text-sm font-medium text-gray-900"><%= q["question"] %></span>
+                  </div>
+                  <div class="flex items-center gap-2 shrink-0 ml-3">
+                    <% if q["difficulty"].present? %>
+                      <span class="px-2 py-0.5 text-xs font-medium rounded-full
+                        <%= case q["difficulty"].to_s.downcase
+                            when "easy" then "bg-green-50 text-green-600"
+                            when "hard" then "bg-red-50 text-red-600"
+                            else "bg-yellow-50 text-yellow-600"
+                            end %>">
+                        <%= q["difficulty"].capitalize %>
+                      </span>
+                    <% end %>
+                    <svg data-accordion-target="icon" class="w-4 h-4 text-gray-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                  </div>
+                </button>
+                <div data-accordion-target="content" class="hidden border-t border-gray-100 p-4 bg-gray-50">
+                  <p class="text-sm font-semibold text-gray-700 mb-2">Model Answer:</p>
+                  <p class="text-sm text-gray-600"><%= q["model_answer"] %></p>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
       <!-- Mark as Complete / Navigation -->
       <div class="flex items-center justify-between">
         <div>

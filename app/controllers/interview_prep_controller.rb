@@ -14,6 +14,7 @@ class InterviewPrepController < ApplicationController
     @current_index = @siblings.index(@lesson)
     @prev_lesson = @current_index && @current_index > 0 ? @siblings[@current_index - 1] : nil
     @next_lesson = @current_index && @current_index < @siblings.size - 1 ? @siblings[@current_index + 1] : nil
+    @ai_questions = InterviewPrepService.new(current_user).ai_practice_questions(@lesson)
   end
 
   def start_lesson

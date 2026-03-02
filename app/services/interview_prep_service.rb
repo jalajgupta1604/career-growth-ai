@@ -25,6 +25,34 @@ class InterviewPrepService
     progress
   end
 
+  def ai_practice_questions(lesson)
+    cache_key = "gemini/interview_questions/user_#{@user.id}/lesson_#{lesson.id}"
+
+    Rails.cache.fetch(cache_key, expires_in: 24.hours) do
+      category_name = lesson.prep_category.name
+      topic = lesson.topic
+      difficulty = lesson.difficulty_label
+      role = @user.role || "Software Developer"
+
+      prompt = GeminiPrompts.interview_questions_prompt(category_name, topic, difficulty, role)
+      result = GeminiClient.new.generate(prompt, response_schema: interview_questions_schema)
+      return [] unless result
+
+      questions = result["questions"] || result
+      questions = [questions] unless questions.is_a?(Array)
+      questions.map do |q|
+        {
+          "question" => q["question"].to_s,
+          "model_answer" => q["model_answer"].to_s,
+          "difficulty" => q["difficulty"].to_s
+        }
+      end
+    end
+  rescue => e
+    Rails.logger.error("AI interview questions failed: #{e.message}")
+    []
+  end
+
   def mark_lesson_completed(lesson)
     progress = LessonProgress.find_or_initialize_by(user: @user, prep_lesson: lesson)
     progress.update!(status: :completed, completed_at: Time.current)
@@ -97,5 +125,24 @@ class InterviewPrepService
       { title: "Big-O Complexity Mastery", icon: "chart", color: "green" },
       { title: "Handling Conflict Situations", icon: "users", color: "orange" }
     ]
+  end
+
+  def interview_questions_schema
+    {
+      type: "OBJECT",
+      properties: {
+        questions: {
+          type: "ARRAY",
+          items: {
+            type: "OBJECT",
+            properties: {
+              question: { type: "STRING" },
+              model_answer: { type: "STRING" },
+              difficulty: { type: "STRING" }
+            }
+          }
+        }
+      }
+    }
   end
 end

@@ -147,37 +147,56 @@
           <h2 class="text-lg font-bold text-gray-900">AI Growth Hacks</h2>
         </div>
         <div class="space-y-4">
-          <% matched_skills = (@skill_data.dig("matched_skills") || []).map { |s| s["name"] || s[:name] } %>
-          <% top_missing = missing_skills.first(2).map { |s| s["name"] || s[:name] } %>
+          <% if @ai_growth_hacks.present? %>
+            <% @ai_growth_hacks.each do |hack| %>
+              <div class="flex items-start gap-3">
+                <div class="w-5 h-5 bg-cyan-100 rounded flex items-center justify-center shrink-0 mt-0.5">
+                  <div class="w-1.5 h-1.5 bg-cyan-500 rounded-full"></div>
+                </div>
+                <div class="flex-1">
+                  <div class="flex items-center gap-2 mb-1">
+                    <p class="text-sm font-semibold text-gray-900"><%= hack["title"] %></p>
+                    <% if hack["impact_label"].present? %>
+                      <span class="px-2 py-0.5 bg-green-50 text-green-600 text-xs font-semibold rounded-full"><%= hack["impact_label"] %></span>
+                    <% end %>
+                  </div>
+                  <p class="text-sm text-gray-600"><%= hack["description"] %></p>
+                </div>
+              </div>
+            <% end %>
+          <% else %>
+            <% matched_skills = (@skill_data.dig("matched_skills") || []).map { |s| s["name"] || s[:name] } %>
+            <% top_missing = missing_skills.first(2).map { |s| s["name"] || s[:name] } %>
 
-          <div class="flex items-start gap-3">
-            <div class="w-5 h-5 bg-cyan-100 rounded flex items-center justify-center shrink-0 mt-0.5">
-              <div class="w-1.5 h-1.5 bg-cyan-500 rounded-full"></div>
-            </div>
-            <p class="text-sm text-gray-600">Your background in <span class="font-semibold text-gray-900"><%= matched_skills.first || "your current stack" %></span> is strong. Transitioning to Fullstack with this could trigger a <span class="font-semibold text-green-600">+20% salary jump</span> immediately.</p>
-          </div>
-
-          <div class="flex items-start gap-3">
-            <div class="w-5 h-5 bg-cyan-100 rounded flex items-center justify-center shrink-0 mt-0.5">
-              <div class="w-1.5 h-1.5 bg-cyan-500 rounded-full"></div>
-            </div>
-            <p class="text-sm text-gray-600">MAANG companies are currently hiring <span class="font-semibold text-gray-900">12% more</span> for your specific profile in the <span class="font-semibold text-gray-900"><%= current_user.city %></span> region.</p>
-          </div>
-
-          <div class="flex items-start gap-3">
-            <div class="w-5 h-5 bg-cyan-100 rounded flex items-center justify-center shrink-0 mt-0.5">
-              <div class="w-1.5 h-1.5 bg-cyan-500 rounded-full"></div>
-            </div>
-            <p class="text-sm text-gray-600">Applying through internal referrals increases your interview conversion by <span class="font-semibold text-gray-900">4.5x</span>. Use your network strategically.</p>
-          </div>
-
-          <% if top_missing.any? %>
             <div class="flex items-start gap-3">
               <div class="w-5 h-5 bg-cyan-100 rounded flex items-center justify-center shrink-0 mt-0.5">
                 <div class="w-1.5 h-1.5 bg-cyan-500 rounded-full"></div>
               </div>
-              <p class="text-sm text-gray-600">Learning <span class="font-semibold text-gray-900"><%= top_missing.join(" and ") %></span> would close your skill gap and boost your interview score significantly.</p>
+              <p class="text-sm text-gray-600">Your background in <span class="font-semibold text-gray-900"><%= matched_skills.first || "your current stack" %></span> is strong. Transitioning to Fullstack with this could trigger a <span class="font-semibold text-green-600">+20% salary jump</span> immediately.</p>
             </div>
+
+            <div class="flex items-start gap-3">
+              <div class="w-5 h-5 bg-cyan-100 rounded flex items-center justify-center shrink-0 mt-0.5">
+                <div class="w-1.5 h-1.5 bg-cyan-500 rounded-full"></div>
+              </div>
+              <p class="text-sm text-gray-600">MAANG companies are currently hiring <span class="font-semibold text-gray-900">12% more</span> for your specific profile in the <span class="font-semibold text-gray-900"><%= current_user.city %></span> region.</p>
+            </div>
+
+            <div class="flex items-start gap-3">
+              <div class="w-5 h-5 bg-cyan-100 rounded flex items-center justify-center shrink-0 mt-0.5">
+                <div class="w-1.5 h-1.5 bg-cyan-500 rounded-full"></div>
+              </div>
+              <p class="text-sm text-gray-600">Applying through internal referrals increases your interview conversion by <span class="font-semibold text-gray-900">4.5x</span>. Use your network strategically.</p>
+            </div>
+
+            <% if top_missing.any? %>
+              <div class="flex items-start gap-3">
+                <div class="w-5 h-5 bg-cyan-100 rounded flex items-center justify-center shrink-0 mt-0.5">
+                  <div class="w-1.5 h-1.5 bg-cyan-500 rounded-full"></div>
+                </div>
+                <p class="text-sm text-gray-600">Learning <span class="font-semibold text-gray-900"><%= top_missing.join(" and ") %></span> would close your skill gap and boost your interview score significantly.</p>
+              </div>
+            <% end %>
           <% end %>
         </div>
         <div class="mt-5 pt-4 border-t border-gray-50">
@@ -263,6 +282,20 @@
           </div>
         </div>
       </div>
+
+      <% if @ai_insights.present? %>
+        <div class="mt-6 bg-gradient-to-r from-cyan-50 to-blue-50 border border-cyan-100 rounded-xl p-5">
+          <div class="flex items-start gap-3">
+            <div class="w-8 h-8 bg-cyan-500 rounded-lg flex items-center justify-center shrink-0">
+              <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"/></svg>
+            </div>
+            <div>
+              <h3 class="text-sm font-bold text-cyan-800 mb-1">AI Insight</h3>
+              <p class="text-sm text-cyan-700"><%= @ai_insights %></p>
+            </div>
+          </div>
+        </div>
+      <% end %>
     </div>
 
     <% unless @report.downloadable? %>

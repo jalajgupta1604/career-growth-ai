@@ -7,16 +7,45 @@ class ResumeParserService
     return {} unless @resume.file.attached?
 
     text = extract_text
-    {
+    base_result = {
       raw_text: text,
       skills: extract_skills(text),
       projects: extract_projects(text),
       certifications: extract_certifications(text),
       experience_entries: extract_experience(text)
     }
+
+    ai_result = ai_parse
+    if ai_result
+      merge_ai_results(base_result, ai_result)
+    else
+      base_result
+    end
   end
 
   private
+
+  def ai_parse
+    GeminiResumeService.new(@resume).parse
+  rescue => e
+    Rails.logger.error("AI resume parsing failed, using regex fallback: #{e.message}")
+    nil
+  end
+
+  def merge_ai_results(base_result, ai_result)
+    # Keep DB-matched skills as ground truth, add AI-discovered skills
+    db_skills = base_result[:skills] || []
+    ai_skills = ai_result["skills"] || []
+    merged_skills = (db_skills + ai_skills).map(&:downcase).uniq
+
+    base_result.merge(
+      skills: merged_skills,
+      projects: ai_result["projects"].presence || base_result[:projects],
+      certifications: ai_result["certifications"].presence || base_result[:certifications],
+      experience_entries: ai_result["experience_entries"].presence || base_result[:experience_entries],
+      summary: ai_result["summary"]
+    )
+  end
 
   def extract_text
     blob = @resume.file.blob
