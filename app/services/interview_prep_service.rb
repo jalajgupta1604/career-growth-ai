@@ -98,23 +98,34 @@ class InterviewPrepService
 
   def weekly_summary
     week_start = Time.current.beginning_of_week
+    last_week_start = 1.week.ago.beginning_of_week
     completed_this_week = @user.lesson_progresses
                                .where(status: :completed)
                                .where("completed_at >= ?", week_start)
+                               .count
+    completed_last_week = @user.lesson_progresses
+                               .where(status: :completed)
+                               .where("completed_at >= ? AND completed_at < ?", last_week_start, week_start)
                                .count
     total_minutes = @user.lesson_progresses
                          .where("updated_at >= ?", week_start)
                          .sum(:time_spent_minutes)
 
-    { completed_count: completed_this_week, total_minutes: total_minutes }
+    improvement_pct = if completed_last_week > 0
+      (((completed_this_week - completed_last_week).to_f / completed_last_week) * 100).round
+    else
+      completed_this_week > 0 ? 100 : 0
+    end
+
+    { completed_count: completed_this_week, total_minutes: total_minutes, last_week_count: completed_last_week, improvement_percentage: improvement_pct }
   end
 
   def expert_tip
     tips = [
-      "When answering behavioral questions, focus on your individual contribution. Use 'I' instead of 'We' to highlight your immediate impact.",
-      "For system design interviews, always start with requirements clarification. Spend the first 5 minutes asking questions.",
-      "Practice coding problems out loud. Explaining your thought process is as important as getting the right answer.",
-      "Use the STAR method (Situation, Task, Action, Result) for behavioral questions to structure your answers clearly."
+      { text: "When answering behavioral questions, focus on your individual contribution. Use 'I' instead of 'We' to highlight your immediate impact.", attribution: "MAANG_ARCHITECT_AMAZON" },
+      { text: "For system design interviews, always start with requirements clarification. Spend the first 5 minutes asking questions.", attribution: "MAANG_ARCHITECT_GOOGLE" },
+      { text: "Practice coding problems out loud. Explaining your thought process is as important as getting the right answer.", attribution: "MAANG_ARCHITECT_META" },
+      { text: "Use the STAR method (Situation, Task, Action, Result) for behavioral questions to structure your answers clearly.", attribution: "MAANG_ARCHITECT_MICROSOFT" }
     ]
     tips.sample(random: Random.new(@user.id + Date.current.yday))
   end
