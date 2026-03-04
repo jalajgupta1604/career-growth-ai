@@ -1,0 +1,153 @@
+<div class="min-h-screen bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="text-center mb-16">
+      <h1 class="text-4xl font-bold text-gray-900">Simple, Transparent Pricing</h1>
+      <p class="mt-3 text-lg text-gray-500">Invest in your career. The ROI is irresistible.</p>
+    </div>
+
+    <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8"
+         <% if user_signed_in? %>
+           data-controller="subscription"
+           data-subscription-key-id-value="<%= ENV.fetch('RAZORPAY_KEY_ID', '') %>"
+           data-subscription-user-name-value="<%= current_user.full_name %>"
+           data-subscription-user-email-value="<%= current_user.email %>"
+         <% end %>>
+      <!-- Free Plan -->
+      <div class="bg-white rounded-2xl border-2 border-gray-100 p-8">
+        <p class="text-sm font-semibold text-gray-500 uppercase tracking-wide">Free Preview</p>
+        <p class="mt-4 text-4xl font-bold text-gray-900">&#8377;0</p>
+        <p class="mt-1 text-sm text-gray-400">A quick look at your value</p>
+        <ul class="mt-8 space-y-4">
+          <li class="flex items-center text-sm text-gray-600">
+            <svg class="w-5 h-5 text-cyan-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+            Basic Salary Benchmark
+          </li>
+          <li class="flex items-center text-sm text-gray-600">
+            <svg class="w-5 h-5 text-cyan-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+            Market Salary Comparison
+          </li>
+          <li class="flex items-center text-sm text-gray-400">
+            <svg class="w-5 h-5 text-gray-300 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+            Skill ROI Analysis
+          </li>
+          <li class="flex items-center text-sm text-gray-400">
+            <svg class="w-5 h-5 text-gray-300 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+            12-Month Roadmap
+          </li>
+          <li class="flex items-center text-sm text-gray-400">
+            <svg class="w-5 h-5 text-gray-300 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+            Downloadable PDF Report
+          </li>
+        </ul>
+        <div class="mt-8">
+          <% if user_signed_in? %>
+            <%= link_to dashboard_path, class: "block w-full text-center py-3 px-6 border-2 border-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors" do %>
+              Go to Dashboard
+            <% end %>
+          <% else %>
+            <%= link_to new_user_session_path, class: "block w-full text-center py-3 px-6 border-2 border-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors" do %>
+              Get Started
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Monthly Plan -->
+      <div class="bg-white rounded-2xl border-2 border-gray-200 p-8">
+        <p class="text-sm font-semibold text-cyan-600 uppercase tracking-wide">Pro Monthly</p>
+        <p class="mt-4 text-4xl font-bold text-gray-900">&#8377;499<span class="text-lg font-normal text-gray-400">/mo</span></p>
+        <p class="mt-1 text-sm text-gray-400">Full access, cancel anytime</p>
+        <ul class="mt-8 space-y-4">
+          <li class="flex items-center text-sm text-gray-600">
+            <svg class="w-5 h-5 text-cyan-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+            Detailed Salary Benchmarking
+          </li>
+          <li class="flex items-center text-sm text-gray-600">
+            <svg class="w-5 h-5 text-cyan-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+            Full Skill ROI Analysis
+          </li>
+          <li class="flex items-center text-sm text-gray-600">
+            <svg class="w-5 h-5 text-cyan-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+            AI Growth Hacks
+          </li>
+          <li class="flex items-center text-sm text-gray-600">
+            <svg class="w-5 h-5 text-cyan-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+            Recommended Certifications
+          </li>
+          <li class="flex items-center text-sm text-gray-600">
+            <svg class="w-5 h-5 text-cyan-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+            Downloadable PDF Report
+          </li>
+        </ul>
+        <div class="mt-8">
+          <% if user_signed_in? %>
+            <% if current_user.subscribed? %>
+              <%= link_to subscriptions_manage_path, class: "block w-full text-center py-3 px-6 bg-gray-100 text-gray-700 font-semibold rounded-lg hover:bg-gray-200 transition-colors" do %>
+                Manage Subscription
+              <% end %>
+            <% else %>
+              <button data-action="click->subscription#subscribe"
+                      data-plan="monthly"
+                      class="w-full py-3 px-6 bg-cyan-500 text-white font-semibold rounded-lg hover:bg-cyan-600 transition-colors cursor-pointer">
+                Subscribe Monthly
+              </button>
+            <% end %>
+          <% else %>
+            <%= link_to new_user_session_path, class: "block w-full text-center py-3 px-6 bg-cyan-500 text-white font-semibold rounded-lg hover:bg-cyan-600 transition-colors" do %>
+              Subscribe Monthly
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Yearly Plan -->
+      <div class="bg-white rounded-2xl border-2 border-cyan-500 p-8 relative">
+        <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-cyan-500 text-white text-xs font-bold px-3 py-1 rounded-full">RECOMMENDED</div>
+        <p class="text-sm font-semibold text-cyan-600 uppercase tracking-wide">Pro Yearly</p>
+        <p class="mt-4 text-4xl font-bold text-gray-900">&#8377;4,999<span class="text-lg font-normal text-gray-400">/yr</span></p>
+        <p class="mt-1 text-sm text-cyan-600 font-medium">Save 2 months free</p>
+        <ul class="mt-8 space-y-4">
+          <li class="flex items-center text-sm text-gray-600">
+            <svg class="w-5 h-5 text-cyan-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+            Everything in Monthly
+          </li>
+          <li class="flex items-center text-sm text-gray-600">
+            <svg class="w-5 h-5 text-cyan-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+            Priority support
+          </li>
+          <li class="flex items-center text-sm text-gray-600">
+            <svg class="w-5 h-5 text-cyan-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+            Early access to new features
+          </li>
+          <li class="flex items-center text-sm text-gray-600">
+            <svg class="w-5 h-5 text-cyan-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+            Resume Optimization Tips
+          </li>
+          <li class="flex items-center text-sm text-gray-600">
+            <svg class="w-5 h-5 text-cyan-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+            Downloadable PDF Report
+          </li>
+        </ul>
+        <div class="mt-8">
+          <% if user_signed_in? %>
+            <% if current_user.subscribed? %>
+              <%= link_to subscriptions_manage_path, class: "block w-full text-center py-3 px-6 bg-gray-100 text-gray-700 font-semibold rounded-lg hover:bg-gray-200 transition-colors" do %>
+                Manage Subscription
+              <% end %>
+            <% else %>
+              <button data-action="click->subscription#subscribe"
+                      data-plan="yearly"
+                      class="w-full py-3 px-6 bg-cyan-500 text-white font-semibold rounded-lg hover:bg-cyan-600 transition-colors cursor-pointer">
+                Subscribe Yearly &mdash; Save &#8377;989
+              </button>
+            <% end %>
+          <% else %>
+            <%= link_to new_user_session_path, class: "block w-full text-center py-3 px-6 bg-cyan-500 text-white font-semibold rounded-lg hover:bg-cyan-600 transition-colors" do %>
+              Subscribe Yearly &mdash; Save &#8377;989
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

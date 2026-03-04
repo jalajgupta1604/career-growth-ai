@@ -7,6 +7,7 @@ class User < ApplicationRecord
   has_many :career_reports, dependent: :destroy
   has_many :payments, dependent: :destroy
   has_many :lesson_progresses, dependent: :destroy
+  has_one  :subscription, dependent: :destroy
 
   validates :email, presence: true, uniqueness: true
 
@@ -24,6 +25,14 @@ class User < ApplicationRecord
   end
 
   def subscribed?
+    legacy_paid? || active_subscription?
+  end
+
+  def legacy_paid?
     career_reports.exists?(payment_status: :paid)
+  end
+
+  def active_subscription?
+    subscription&.active_access? || false
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_27_100003) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_03_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -155,6 +155,27 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_27_100003) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "subscriptions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "razorpay_subscription_id", null: false
+    t.string "razorpay_plan_id", null: false
+    t.string "plan_name", null: false
+    t.integer "status", default: 0, null: false
+    t.integer "amount"
+    t.string "short_url"
+    t.datetime "current_period_start"
+    t.datetime "current_period_end"
+    t.datetime "cancelled_at"
+    t.integer "total_count"
+    t.integer "paid_count", default: 0
+    t.string "razorpay_customer_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["razorpay_subscription_id"], name: "index_subscriptions_on_razorpay_subscription_id", unique: true
+    t.index ["status"], name: "index_subscriptions_on_status"
+    t.index ["user_id"], name: "index_subscriptions_on_user_id", unique: true
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -185,4 +206,5 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_27_100003) do
   add_foreign_key "prep_lessons", "prep_categories"
   add_foreign_key "resumes", "users"
   add_foreign_key "role_skill_mappings", "skills"
+  add_foreign_key "subscriptions", "users"
 end

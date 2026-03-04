@@ -31,11 +31,24 @@ Rails.application.routes.draw do
   post "interview-prep/lessons/:lesson_id/start", to: "interview_prep#start_lesson", as: :interview_prep_start_lesson
   post "interview-prep/lessons/:lesson_id/complete", to: "interview_prep#complete_lesson", as: :interview_prep_complete_lesson
 
-  # Payments
+  # Payments (legacy)
   resources :payments, only: [:create] do
     collection do
       post :verify
       post :webhook
     end
   end
+
+  # Subscriptions
+  resource :subscriptions, only: [:new, :create] do
+    collection do
+      post :verify
+      post :webhook
+      get :manage
+      post :cancel
+    end
+  end
+
+  # Pricing page
+  get "pricing", to: "pages#pricing", as: :pricing
 end

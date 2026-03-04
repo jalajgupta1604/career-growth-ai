@@ -2,4 +2,7 @@ class PagesController < ApplicationController
   def home
     redirect_to dashboard_path if user_signed_in? && current_user.onboarding_complete?
   end
+
+  def pricing
+  end
 end

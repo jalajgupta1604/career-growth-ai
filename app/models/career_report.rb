@@ -11,6 +11,6 @@ class CareerReport < ApplicationRecord
   end
 
   def downloadable?
-    paid? || user.career_reports.exists?(payment_status: :paid)
+    user.subscribed?
   end
 end
