@@ -116,7 +116,7 @@ class SubscriptionsController < ApplicationController
 
     begin
       Razorpay::Utility.verify_webhook_signature(payload, signature, ENV.fetch("RAZORPAY_WEBHOOK_SECRET", ""))
-    rescue Razorpay::Error
+    rescue Razorpay::Error, SecurityError, StandardError
       head :bad_request
       return
     end
