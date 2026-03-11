@@ -197,7 +197,7 @@
               <p class="text-xs text-gray-500 mb-4">Upload your resume for AI-powered skill extraction and career analysis.</p>
             <% end %>
 
-            <%= form_with(url: resumes_path, method: :post, multipart: true, class: "space-y-3") do |f| %>
+            <%= form_with(url: resumes_path, method: :post, multipart: true, class: "space-y-3", data: { controller: "loading-button", loading_button_text_value: "Uploading & Analyzing...", action: "submit->loading-button#submit" }) do |f| %>
               <div class="relative">
                 <label for="dashboard_resume_file" class="block w-full px-4 py-3 bg-white border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
                   <span class="text-sm text-gray-400">Choose PDF or DOCX...</span>
@@ -238,7 +238,7 @@
         <p class="mt-2 text-xs text-cyan-600">Report will be based on your latest resume (<%= (@resume.parsed_data&.dig("skills") || []).size %> skills detected).</p>
       <% end %>
       <div class="mt-6">
-        <%= button_to "Generate Report", career_reports_path, method: :post, class: "px-6 py-3 bg-cyan-500 text-white font-medium rounded-xl hover:bg-cyan-600 transition-colors cursor-pointer" %>
+        <%= button_to "Generate Report", career_reports_path, method: :post, class: "px-6 py-3 bg-cyan-500 text-white font-medium rounded-xl hover:bg-cyan-600 transition-colors cursor-pointer", form: { data: { controller: "loading-button", loading_button_text_value: "Generating Report...", action: "submit->loading-button#submit" } } %>
       </div>
     </div>
 

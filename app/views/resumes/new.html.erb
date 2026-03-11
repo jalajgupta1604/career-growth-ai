@@ -62,7 +62,7 @@
       <h1 class="text-3xl font-bold text-gray-900">Upload Your Resume</h1>
       <p class="mt-2 text-gray-500">We'll extract your skills and experience to generate personalized career insights.</p>
 
-      <%= form_with(model: @resume, url: resumes_path, method: :post, multipart: true, class: "mt-8 space-y-6") do |f| %>
+      <%= form_with(model: @resume, url: resumes_path, method: :post, multipart: true, class: "mt-8 space-y-6", data: { controller: "loading-button", loading_button_text_value: "Uploading & Analyzing...", action: "submit->loading-button#submit" }) do |f| %>
         <!-- Upload Zone -->
         <div data-controller="file-drop">
           <div data-file-drop-target="zone" class="border-2 border-dashed border-cyan-200 bg-cyan-50/30 rounded-2xl p-10 text-center hover:border-cyan-400 transition-all cursor-pointer relative">
