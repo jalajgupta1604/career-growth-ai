@@ -21,13 +21,7 @@
       <h3 class="text-sm font-semibold text-gray-700 mb-4">Profile Photo</h3>
       <div class="flex items-center gap-6">
         <div class="relative shrink-0" id="avatar-preview-container">
-          <% if current_user.avatar_url.present? %>
-            <img src="<%= current_user.avatar_url %>" id="avatar-preview" class="w-20 h-20 rounded-full object-cover ring-4 ring-gray-100" alt="Current photo">
-          <% else %>
-            <div id="avatar-preview" class="w-20 h-20 rounded-full bg-gradient-to-br from-cyan-400 to-cyan-600 flex items-center justify-center ring-4 ring-gray-100">
-              <span class="text-2xl font-bold text-white"><%= current_user.full_name&.first&.upcase || "U" %></span>
-            </div>
-          <% end %>
+          <%= user_avatar(current_user, size: "w-20 h-20", extra_class: "ring-4 ring-gray-100") %>
         </div>
         <div class="flex-1">
           <label class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer">

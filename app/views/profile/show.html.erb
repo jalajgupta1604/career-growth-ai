@@ -11,13 +11,7 @@
   <div class="bg-white rounded-2xl border border-gray-100 p-8 mb-8">
     <div class="flex items-center gap-5 mb-8">
       <div class="relative group">
-        <% if current_user.avatar_url.present? %>
-          <img src="<%= current_user.avatar_url %>" class="w-20 h-20 rounded-full object-cover ring-4 ring-gray-100" alt="Profile">
-        <% else %>
-          <div class="w-20 h-20 rounded-full bg-gradient-to-br from-cyan-400 to-cyan-600 flex items-center justify-center ring-4 ring-gray-100">
-            <span class="text-2xl font-bold text-white"><%= current_user.full_name&.first&.upcase || "U" %></span>
-          </div>
-        <% end %>
+        <%= user_avatar(current_user, size: "w-20 h-20", extra_class: "ring-4 ring-gray-100") %>
         <%= link_to edit_profile_path(anchor: "photo"), class: "absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity" do %>
           <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
         <% end %>

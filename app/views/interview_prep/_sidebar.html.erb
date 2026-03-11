@@ -11,13 +11,7 @@
 
     <!-- User Info -->
     <div class="flex items-center gap-3 p-3 mb-8 rounded-xl bg-gray-50 border border-gray-100">
-      <% if current_user.avatar_url.present? %>
-        <div class="w-10 h-10 rounded-full bg-cover bg-center shrink-0" style="background-image: url('<%= current_user.avatar_url %>')"></div>
-      <% else %>
-        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-cyan-600 flex items-center justify-center shrink-0">
-          <span class="text-sm font-bold text-white"><%= current_user.full_name&.first&.upcase || "U" %></span>
-        </div>
-      <% end %>
+      <%= user_avatar(current_user, size: "w-10 h-10", extra_class: "shrink-0") %>
       <div class="flex flex-col min-w-0">
         <span class="text-sm font-semibold text-gray-900 truncate"><%= current_user.full_name || "User" %></span>
         <span class="text-xs text-gray-500">L<%= [current_user.experience_years.to_i / 2, 10].min %> Candidate</span>

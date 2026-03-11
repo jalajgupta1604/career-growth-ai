@@ -57,9 +57,16 @@ class User < ApplicationRecord
   def avatar_url
     if profile_photo.attached?
       Rails.application.routes.url_helpers.rails_blob_path(profile_photo, only_path: true)
-    else
+    elsif profile_picture_url.present?
       profile_picture_url
+    else
+      default_avatar_url
     end
+  end
+
+  def default_avatar_url
+    initials = (full_name.presence || email.first(1)).to_s.split.map(&:first).join.first(2).upcase
+    "https://ui-avatars.com/api/?name=#{CGI.escape(initials)}&background=06b6d4&color=fff&size=128&bold=true"
   end
 
   def referral_count
