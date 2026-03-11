@@ -1,0 +1,106 @@
+<div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Edit Profile</h1>
+    <p class="mt-1 text-sm text-gray-500">Update your personal and career information.</p>
+  </div>
+
+  <%= form_with model: current_user, url: profile_path, method: :patch, html: { multipart: true }, class: "space-y-6" do |f| %>
+    <% if current_user.errors.any? %>
+      <div class="bg-red-50 border border-red-200 rounded-xl p-4">
+        <p class="text-sm font-semibold text-red-700 mb-2"><%= pluralize(current_user.errors.count, "error") %> prevented your profile from being saved:</p>
+        <ul class="list-disc list-inside text-sm text-red-600 space-y-1">
+          <% current_user.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <!-- Profile Photo -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-8" id="photo">
+      <h3 class="text-sm font-semibold text-gray-700 mb-4">Profile Photo</h3>
+      <div class="flex items-center gap-6">
+        <div class="relative shrink-0" id="avatar-preview-container">
+          <% if current_user.avatar_url.present? %>
+            <img src="<%= current_user.avatar_url %>" id="avatar-preview" class="w-20 h-20 rounded-full object-cover ring-4 ring-gray-100" alt="Current photo">
+          <% else %>
+            <div id="avatar-preview" class="w-20 h-20 rounded-full bg-gradient-to-br from-cyan-400 to-cyan-600 flex items-center justify-center ring-4 ring-gray-100">
+              <span class="text-2xl font-bold text-white"><%= current_user.full_name&.first&.upcase || "U" %></span>
+            </div>
+          <% end %>
+        </div>
+        <div class="flex-1">
+          <label class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer">
+            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            <span id="photo-label">Choose Photo</span>
+            <%= f.file_field :profile_photo, accept: "image/png,image/jpeg,image/webp", class: "hidden", onchange: "previewPhoto(this)" %>
+          </label>
+          <p class="mt-2 text-xs text-gray-400">PNG, JPEG, or WebP. Max 5MB.</p>
+          <% if current_user.profile_photo.attached? %>
+            <p class="mt-1 text-xs text-gray-500">Current: <%= current_user.profile_photo.filename %></p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile Fields -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-8 space-y-6">
+      <!-- Full Name -->
+      <div>
+        <%= f.label :full_name, "Full Name", class: "block text-sm font-semibold text-gray-700 mb-1" %>
+        <%= f.text_field :full_name, class: "w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-900 focus:border-cyan-500 focus:ring-cyan-500 focus:bg-white transition-colors", placeholder: "Your full name" %>
+      </div>
+
+      <!-- Role -->
+      <div>
+        <%= f.label :role, "Job Role", class: "block text-sm font-semibold text-gray-700 mb-1" %>
+        <%= f.text_field :role, class: "w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-900 focus:border-cyan-500 focus:ring-cyan-500 focus:bg-white transition-colors", placeholder: "e.g. Software Engineer, Product Manager" %>
+      </div>
+
+      <!-- City -->
+      <div>
+        <%= f.label :city, "City", class: "block text-sm font-semibold text-gray-700 mb-1" %>
+        <%= f.text_field :city, class: "w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-900 focus:border-cyan-500 focus:ring-cyan-500 focus:bg-white transition-colors", placeholder: "e.g. Bangalore, Mumbai" %>
+      </div>
+
+      <!-- Experience Years -->
+      <div>
+        <%= f.label :experience_years, "Years of Experience", class: "block text-sm font-semibold text-gray-700 mb-1" %>
+        <%= f.number_field :experience_years, class: "w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-900 focus:border-cyan-500 focus:ring-cyan-500 focus:bg-white transition-colors", placeholder: "e.g. 5", min: 0, max: 50, step: 1 %>
+      </div>
+
+      <!-- Current Salary -->
+      <div>
+        <%= f.label :current_salary, "Current Annual Salary (₹)", class: "block text-sm font-semibold text-gray-700 mb-1" %>
+        <%= f.number_field :current_salary, class: "w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-900 focus:border-cyan-500 focus:ring-cyan-500 focus:bg-white transition-colors", placeholder: "e.g. 1500000", min: 0, step: 1000 %>
+        <p class="mt-1 text-xs text-gray-400">This is used for salary benchmarking. Kept private.</p>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-between pt-2">
+      <%= link_to "Cancel", profile_path, class: "text-sm font-medium text-gray-500 hover:text-gray-700" %>
+      <%= f.submit "Save Changes", class: "px-6 py-2.5 bg-cyan-500 text-white font-semibold rounded-lg hover:bg-cyan-600 transition-colors cursor-pointer" %>
+    </div>
+  <% end %>
+</div>
+
+<script>
+  function previewPhoto(input) {
+    if (input.files && input.files[0]) {
+      var file = input.files[0];
+      var maxSize = 5 * 1024 * 1024;
+      if (file.size > maxSize) {
+        alert("File is too large. Maximum size is 5MB.");
+        input.value = "";
+        return;
+      }
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var container = document.getElementById("avatar-preview-container");
+        container.innerHTML = '<img src="' + e.target.result + '" id="avatar-preview" class="w-20 h-20 rounded-full object-cover ring-4 ring-gray-100" alt="Preview">';
+      };
+      reader.readAsDataURL(file);
+      document.getElementById("photo-label").textContent = file.name;
+    }
+  }
+</script>

@@ -4,7 +4,7 @@ class SubscriptionsController < ApplicationController
 
   def new
     @plan = params[:plan] || "monthly"
-    redirect_to subscriptions_manage_path if current_user.active_subscription?
+    redirect_to manage_subscriptions_path if current_user.active_subscription?
   end
 
   def create
@@ -62,11 +62,15 @@ class SubscriptionsController < ApplicationController
     end
 
     begin
-      Razorpay::Utility.verify_subscription_payment_signature(
-        razorpay_subscription_id: params[:razorpay_subscription_id],
-        razorpay_payment_id: params[:razorpay_payment_id],
-        razorpay_signature: params[:razorpay_signature]
+      expected_signature = OpenSSL::HMAC.hexdigest(
+        "SHA256",
+        ENV.fetch("RAZORPAY_KEY_SECRET", ""),
+        "#{params[:razorpay_payment_id]}|#{params[:razorpay_subscription_id]}"
       )
+
+      unless ActiveSupport::SecurityUtils.secure_compare(expected_signature, params[:razorpay_signature].to_s)
+        raise SecurityError, "Invalid subscription payment signature"
+      end
 
       subscription.update!(
         status: :active,
@@ -76,7 +80,7 @@ class SubscriptionsController < ApplicationController
       )
 
       render json: { success: true, message: "Subscription activated successfully" }
-    rescue Razorpay::Error, SecurityError => e
+    rescue SecurityError => e
       Rails.logger.error("Subscription verification failed: #{e.message}")
       render json: { success: false, error: "Subscription verification failed" }, status: :unprocessable_entity
     end
@@ -91,7 +95,7 @@ class SubscriptionsController < ApplicationController
     subscription = current_user.subscription
 
     unless subscription&.active?
-      redirect_to subscriptions_manage_path, alert: "No active subscription to cancel."
+      redirect_to manage_subscriptions_path, alert: "No active subscription to cancel."
       return
     end
 
@@ -103,10 +107,10 @@ class SubscriptionsController < ApplicationController
         cancelled_at: Time.current
       )
 
-      redirect_to subscriptions_manage_path, notice: "Subscription cancelled. You'll retain access until #{subscription.current_period_end&.strftime('%B %d, %Y')}."
+      redirect_to manage_subscriptions_path, notice: "Subscription cancelled. You'll retain access until #{subscription.current_period_end&.strftime('%B %d, %Y')}."
     rescue => e
       Rails.logger.error("Subscription cancellation failed: #{e.message}")
-      redirect_to subscriptions_manage_path, alert: "Failed to cancel subscription. Please try again."
+      redirect_to manage_subscriptions_path, alert: "Failed to cancel subscription. Please try again."
     end
   end
 

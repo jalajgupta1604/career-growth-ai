@@ -1,0 +1,141 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Interview Experiences</h1>
+      <p class="mt-1 text-gray-500">Learn from real interview experiences shared by the community</p>
+    </div>
+    <%= link_to new_interview_experience_path, class: "px-5 py-2.5 bg-cyan-500 text-white text-sm font-semibold rounded-xl hover:bg-cyan-600 transition-colors" do %>
+      Share Your Experience
+    <% end %>
+  </div>
+
+  <!-- Filters -->
+  <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
+    <%= form_with url: interview_experiences_path, method: :get, class: "flex flex-wrap items-end gap-4" do %>
+      <div>
+        <label class="block text-xs font-medium text-gray-500 mb-1">Company</label>
+        <input type="text" name="company_name" value="<%= @filters[:company_name] %>" class="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-cyan-500" placeholder="e.g., Google">
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-gray-500 mb-1">Role</label>
+        <input type="text" name="role" value="<%= @filters[:role] %>" class="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-cyan-500" placeholder="e.g., SDE">
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-gray-500 mb-1">Difficulty</label>
+        <select name="difficulty" class="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-cyan-500">
+          <option value="">All</option>
+          <% %w[easy medium hard].each do |d| %>
+            <option value="<%= d %>" <%= "selected" if @filters[:difficulty] == d %>><%= d.capitalize %></option>
+          <% end %>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-gray-500 mb-1">Outcome</label>
+        <select name="outcome" class="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-cyan-500">
+          <option value="">All</option>
+          <% %w[selected rejected in_progress no_response].each do |o| %>
+            <option value="<%= o %>" <%= "selected" if @filters[:outcome] == o %>><%= o.humanize %></option>
+          <% end %>
+        </select>
+      </div>
+      <button type="submit" class="px-4 py-2 bg-cyan-500 text-white text-sm font-semibold rounded-lg hover:bg-cyan-600 transition-colors cursor-pointer">Filter</button>
+    <% end %>
+  </div>
+
+  <!-- Stats -->
+  <% stats = @data[:stats] %>
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+    <div class="bg-white rounded-2xl border border-gray-100 p-5">
+      <p class="text-xs font-medium text-gray-500">Total Experiences</p>
+      <p class="mt-1 text-2xl font-bold text-gray-900"><%= stats[:total] %></p>
+    </div>
+    <div class="bg-white rounded-2xl border border-gray-100 p-5">
+      <p class="text-xs font-medium text-gray-500">Avg Rating</p>
+      <p class="mt-1 text-2xl font-bold text-cyan-600"><%= stats[:avg_rating] %>/5</p>
+    </div>
+    <div class="bg-white rounded-2xl border border-gray-100 p-5">
+      <p class="text-xs font-medium text-gray-500">Avg Rounds</p>
+      <p class="mt-1 text-2xl font-bold text-gray-900"><%= stats[:avg_rounds] %></p>
+    </div>
+    <div class="bg-white rounded-2xl border border-gray-100 p-5">
+      <p class="text-xs font-medium text-gray-500">Selection Rate</p>
+      <p class="mt-1 text-2xl font-bold text-green-600"><%= stats[:selection_rate] %>%</p>
+    </div>
+  </div>
+
+  <!-- Company Clusters -->
+  <% clusters = @data[:company_clusters] %>
+  <% if clusters.any? %>
+    <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Company Insights</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+        <% clusters.each do |cluster| %>
+          <div class="bg-gray-50 rounded-xl p-4">
+            <p class="text-sm font-semibold text-gray-900"><%= cluster.company_name %></p>
+            <div class="flex items-center gap-4 mt-2">
+              <span class="text-xs text-gray-500"><%= cluster.total_count %> experience<%= cluster.total_count == 1 ? '' : 's' %></span>
+              <span class="text-xs text-gray-500">Avg <%=cluster.avg_rating %>/5</span>
+              <span class="text-xs text-gray-500">~<%= cluster.avg_rounds %> rounds</span>
+            </div>
+            <div class="flex items-center gap-2 mt-2">
+              <% if cluster.selected_count.to_i > 0 %>
+                <span class="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full"><%= cluster.selected_count %> selected</span>
+              <% end %>
+              <span class="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded-full"><%= cluster.common_difficulty %></span>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Experiences List -->
+  <% if @data[:experiences].any? %>
+    <div class="bg-white rounded-2xl border border-gray-100 p-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Recent Experiences</h2>
+      <div class="space-y-4">
+        <% @data[:experiences].each do |exp| %>
+          <div class="bg-gray-50 rounded-xl p-5 hover:bg-gray-100 transition-colors">
+            <div class="flex items-start justify-between">
+              <div>
+                <div class="flex items-center gap-2">
+                  <p class="text-sm font-semibold text-gray-900"><%= exp.company_name %></p>
+                  <span class="text-xs bg-<%= exp.difficulty_color %>-100 text-<%= exp.difficulty_color %>-700 px-1.5 py-0.5 rounded-full"><%= exp.difficulty.capitalize %></span>
+                </div>
+                <p class="text-xs text-gray-500 mt-1"><%= exp.role %> &middot; <%= exp.rounds_count || "?" %> rounds &middot; <%= exp.created_at.strftime("%b %Y") %></p>
+              </div>
+              <div class="flex items-center gap-2">
+                <% if exp.overall_rating %>
+                  <span class="text-sm font-bold text-cyan-600"><%= exp.overall_rating %>/5</span>
+                <% end %>
+                <% if exp.outcome %>
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-<%= exp.outcome_color %>-100 text-<%= exp.outcome_color %>-700"><%= exp.outcome.humanize %></span>
+                <% end %>
+              </div>
+            </div>
+            <% if exp.experience_summary.present? %>
+              <p class="text-sm text-gray-600 mt-3"><%= truncate(exp.experience_summary, length: 200) %></p>
+            <% end %>
+            <% if exp.tags.any? %>
+              <div class="flex flex-wrap gap-1 mt-3">
+                <% exp.tags.each do |tag| %>
+                  <span class="text-xs text-gray-500 bg-white px-2 py-0.5 rounded-full border border-gray-200"><%= tag %></span>
+                <% end %>
+              </div>
+            <% end %>
+            <%= link_to "Read more", interview_experience_path(exp), class: "text-xs text-cyan-600 font-medium hover:text-cyan-700 mt-2 inline-block" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% else %>
+    <div class="bg-white rounded-2xl border border-gray-100 p-12 text-center">
+      <div class="w-16 h-16 bg-cyan-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+      </div>
+      <h3 class="text-lg font-semibold text-gray-900 mb-2">No interview experiences yet</h3>
+      <p class="text-gray-500 mb-6">Be the first to share your experience and help others prepare.</p>
+      <%= link_to "Share Your Experience", new_interview_experience_path, class: "inline-flex items-center px-5 py-2.5 bg-cyan-500 text-white text-sm font-semibold rounded-xl hover:bg-cyan-600 transition-colors" %>
+    </div>
+  <% end %>
+</div>

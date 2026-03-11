@@ -32,7 +32,7 @@
         <p class="mt-1 text-gray-500">Personalized roadmap to market-leading compensation for <%= current_user.role %>s.</p>
       </div>
       <% unless @report.downloadable? %>
-        <span class="px-3 py-1 bg-cyan-50 text-cyan-600 text-sm font-semibold rounded-full">PREMIUM: &#8377;1,199</span>
+        <%= link_to pricing_path, class: "px-3 py-1 bg-cyan-50 text-cyan-600 text-sm font-semibold rounded-full hover:bg-cyan-100 transition-colors" do %>PREMIUM: &#8377;499/mo<% end %>
       <% end %>
     </div>
 

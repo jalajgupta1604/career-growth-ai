@@ -1,0 +1,122 @@
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="mb-6">
+    <%= link_to negotiations_path, class: "text-sm text-gray-500 hover:text-gray-700" do %>
+      &larr; Back to Negotiations
+    <% end %>
+  </div>
+
+  <!-- Header -->
+  <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Negotiation Strategy</h1>
+        <p class="text-sm text-gray-500 mt-1"><%= @session.company_name %> &middot; <%= @session.offer_role || current_user.role %></p>
+      </div>
+      <div class="text-right">
+        <% score = @session.negotiation_score.to_i %>
+        <p class="text-3xl font-bold <%= score >= 70 ? 'text-green-600' : score >= 40 ? 'text-yellow-600' : 'text-red-600' %>"><%= score %>/100</p>
+        <p class="text-xs text-gray-400">Negotiation Strength</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-3 gap-4 mt-6 pt-6 border-t border-gray-100">
+      <div>
+        <p class="text-xs text-gray-400">Current Offer</p>
+        <p class="text-lg font-bold text-gray-900">&#8377;<%= number_with_delimiter(@session.current_offer.to_i) %></p>
+      </div>
+      <div>
+        <p class="text-xs text-gray-400">Your Target</p>
+        <p class="text-lg font-bold text-cyan-600">&#8377;<%= number_with_delimiter(@session.expected_salary.to_i) %></p>
+      </div>
+      <div>
+        <p class="text-xs text-gray-400">Gap</p>
+        <p class="text-lg font-bold text-orange-600"><%= @session.salary_gap %>%</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Counter Offer -->
+  <% counter = @strategy["counter_offer"] || {} %>
+  <% if counter.any? %>
+    <div class="bg-cyan-50 rounded-2xl border border-cyan-100 p-6 mb-6">
+      <h2 class="text-lg font-semibold text-cyan-900 mb-2">Recommended Counter Offer</h2>
+      <p class="text-3xl font-bold text-cyan-700">&#8377;<%= number_with_delimiter(counter["amount"].to_i) %></p>
+      <p class="text-sm text-cyan-600 mt-2"><%= counter["reasoning"] %></p>
+    </div>
+  <% end %>
+
+  <!-- Talking Points -->
+  <% talking_points = @strategy["talking_points"] || @session.talking_points || [] %>
+  <% if talking_points.any? %>
+    <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Talking Points & Scripts</h2>
+      <div class="space-y-4">
+        <% talking_points.each_with_index do |point, idx| %>
+          <div class="bg-gray-50 rounded-xl p-4">
+            <div class="flex items-start gap-3">
+              <span class="w-7 h-7 bg-cyan-100 rounded-lg flex items-center justify-center text-xs font-bold text-cyan-600 shrink-0"><%= idx + 1 %></span>
+              <div>
+                <p class="text-sm font-semibold text-gray-900"><%= point["title"] %></p>
+                <p class="text-sm text-gray-600 mt-1 italic">"<%= point["script"] %>"</p>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Do's and Don'ts -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+    <% if (@strategy["dos"] || []).any? %>
+      <div class="bg-white rounded-2xl border border-gray-100 p-6">
+        <h2 class="text-lg font-semibold text-green-700 mb-4">Do's</h2>
+        <ul class="space-y-2">
+          <% (@strategy["dos"] || []).each do |item| %>
+            <li class="flex items-start gap-2 text-sm text-gray-700">
+              <svg class="w-4 h-4 text-green-500 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              <%= item %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <% if (@strategy["donts"] || []).any? %>
+      <div class="bg-white rounded-2xl border border-gray-100 p-6">
+        <h2 class="text-lg font-semibold text-red-700 mb-4">Don'ts</h2>
+        <ul class="space-y-2">
+          <% (@strategy["donts"] || []).each do |item| %>
+            <li class="flex items-start gap-2 text-sm text-gray-700">
+              <svg class="w-4 h-4 text-red-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+              <%= item %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Email Template -->
+  <% if @strategy["email_template"].present? %>
+    <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Negotiation Email Template</h2>
+      <div class="bg-gray-50 rounded-xl p-5">
+        <pre class="text-sm text-gray-700 whitespace-pre-wrap font-sans"><%= @strategy["email_template"] %></pre>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Timeline Advice -->
+  <% if @strategy["timeline_advice"].present? %>
+    <div class="bg-yellow-50 rounded-2xl border border-yellow-100 p-6">
+      <div class="flex items-start gap-3">
+        <svg class="w-5 h-5 text-yellow-500 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>
+        <div>
+          <h3 class="text-sm font-semibold text-yellow-900">Timeline Advice</h3>
+          <p class="text-sm text-yellow-700 mt-1"><%= @strategy["timeline_advice"] %></p>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

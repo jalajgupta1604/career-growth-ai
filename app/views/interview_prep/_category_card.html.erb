@@ -3,41 +3,28 @@
 <% total = category_data[:total_lessons] %>
 <% completed = category_data[:completed_count] %>
 <% progress = category_data[:progress_percentage] %>
+<% color = cat.color_class || "cyan" %>
+<% first_lesson = cat.prep_lessons.first %>
+<% is_mock = cat.icon_name == "video" %>
 
-<div class="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
-  <div class="p-4">
-    <!-- Thumbnail Area -->
-    <div class="w-full h-24 bg-gray-900 rounded-lg flex items-center justify-center mb-3">
-      <% case cat.icon_name %>
-      <% when "server" %>
-        <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"/></svg>
-      <% when "code" %>
-        <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
-      <% when "users" %>
-        <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-      <% when "video" %>
-        <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-      <% else %>
-        <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-      <% end %>
+<%= link_to (first_lesson ? interview_prep_lesson_path(first_lesson) : "#"), class: "block p-5 bg-white border border-gray-100 rounded-2xl hover:border-cyan-300 hover:shadow-md transition-all group" do %>
+  <div class="flex justify-between items-start mb-4">
+    <div class="w-10 h-10 rounded-lg <%= prep_color(color, :light) %> <%= prep_color(color, :text) %> flex items-center justify-center">
+      <span class="material-symbols-outlined"><%= prep_color(color, :icon) %></span>
     </div>
+    <span class="text-[11px] font-bold text-gray-400 group-hover:text-cyan-500 transition-colors"><%= completed %>/<%= total %> <%= is_mock ? "SESSIONS" : "LESSONS" %></span>
+  </div>
 
-    <!-- Lesson Count + Title -->
-    <div class="flex items-start justify-between mb-0.5">
-      <h3 class="text-[13px] font-bold text-gray-900"><%= cat.name %></h3>
-      <span class="text-[11px] text-gray-400 font-medium tracking-wide shrink-0 ml-2"><%= completed %>/<%= total %> LESSONS</span>
+  <h4 class="font-bold text-gray-900 mb-1"><%= cat.name %></h4>
+  <p class="text-xs text-gray-500 mb-4 line-clamp-2"><%= cat.description %></p>
+
+  <div class="space-y-2">
+    <div class="flex justify-between text-[10px] font-bold uppercase text-gray-400 tracking-wider">
+      <span>Progress</span>
+      <span><%= progress %>%</span>
     </div>
-    <p class="text-[11px] text-gray-400 mb-3 line-clamp-2 leading-relaxed"><%= cat.description %></p>
-
-    <!-- Progress Bar -->
-    <div>
-      <div class="flex justify-between items-center mb-1">
-        <span class="text-[11px] text-gray-400">Progress</span>
-        <span class="text-[11px] font-semibold text-gray-600"><%= progress %>%</span>
-      </div>
-      <div class="w-full bg-gray-100 rounded-full h-1">
-        <div class="<%= prep_color(cat.color_class, :bar) %> h-1 rounded-full transition-all duration-500" style="width: <%= progress %>%"></div>
-      </div>
+    <div class="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+      <div class="<%= prep_color(color, :bar) %> h-full transition-all duration-500" style="width: <%= progress %>%"></div>
     </div>
   </div>
-</div>
+<% end %>

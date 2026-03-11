@@ -72,7 +72,7 @@
       <% unless @subscription.cancelled? %>
         <div class="border-t border-gray-100 pt-6">
           <p class="text-sm text-gray-500 mb-4">Need to cancel? You'll retain access until the end of your current billing period.</p>
-          <%= button_to "Cancel Subscription", subscriptions_cancel_path, method: :post,
+          <%= button_to "Cancel Subscription", cancel_subscriptions_path, method: :post,
               class: "px-6 py-2.5 bg-red-50 text-red-600 font-semibold rounded-lg hover:bg-red-100 transition-colors cursor-pointer border border-red-200",
               data: { turbo_confirm: "Are you sure you want to cancel? You'll keep access until #{@subscription.current_period_end&.strftime("%B %d, %Y")}." } %>
         </div>

@@ -1,0 +1,75 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Mock Interviews</h1>
+      <p class="mt-1 text-gray-500">Practice with AI-powered interviews tailored to your profile</p>
+    </div>
+    <%= link_to new_mock_interview_path, class: "px-5 py-2.5 bg-cyan-500 text-white text-sm font-semibold rounded-xl hover:bg-cyan-600 transition-colors" do %>
+      Start New Interview
+    <% end %>
+  </div>
+
+  <!-- Stats -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-white rounded-2xl border border-gray-100 p-6">
+      <p class="text-sm font-medium text-gray-500">Interviews Completed</p>
+      <p class="mt-2 text-3xl font-bold text-gray-900"><%= @data[:total_completed] %></p>
+    </div>
+    <div class="bg-white rounded-2xl border border-gray-100 p-6">
+      <p class="text-sm font-medium text-gray-500">Average Score</p>
+      <p class="mt-2 text-3xl font-bold text-cyan-600"><%= @data[:average_score] %>/10</p>
+    </div>
+    <div class="bg-white rounded-2xl border border-gray-100 p-6">
+      <p class="text-sm font-medium text-gray-500">Best Score</p>
+      <p class="mt-2 text-3xl font-bold text-green-600"><%= @data[:best_score] %>/10</p>
+    </div>
+  </div>
+
+  <!-- Recent Interviews -->
+  <% if @data[:recent_interviews].any? %>
+    <div class="bg-white rounded-2xl border border-gray-100 p-6">
+      <h2 class="text-xl font-semibold text-gray-900 mb-4">Recent Interviews</h2>
+      <div class="divide-y divide-gray-50">
+        <% @data[:recent_interviews].each do |interview| %>
+          <div class="flex items-center justify-between py-4">
+            <div class="flex items-center gap-4">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center
+                <%= interview.completed? ? 'bg-green-100' : 'bg-yellow-100' %>">
+                <% if interview.completed? %>
+                  <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <% else %>
+                  <svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <% end %>
+              </div>
+              <div>
+                <p class="text-sm font-semibold text-gray-900"><%= interview.interview_type.humanize %> Interview</p>
+                <p class="text-xs text-gray-400"><%= interview.difficulty.capitalize %> &middot; <%= interview.created_at.strftime("%b %d, %Y") %></p>
+              </div>
+            </div>
+            <div class="flex items-center gap-4">
+              <% if interview.completed? %>
+                <span class="text-sm font-bold text-cyan-600"><%= interview.overall_score %>/10</span>
+              <% else %>
+                <span class="text-xs font-medium text-yellow-600 bg-yellow-50 px-2 py-1 rounded-full"><%= interview.answered_questions %>/<%= interview.total_questions %> answered</span>
+              <% end %>
+              <%= link_to mock_interview_path(interview), class: "text-sm text-cyan-600 font-medium hover:text-cyan-700" do %>
+                <%= interview.completed? ? "Review" : "Continue" %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% else %>
+    <div class="bg-white rounded-2xl border border-gray-100 p-12 text-center">
+      <div class="w-16 h-16 bg-cyan-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+      </div>
+      <h3 class="text-lg font-semibold text-gray-900 mb-2">No interviews yet</h3>
+      <p class="text-gray-500 mb-6">Start a mock interview to practice and improve your skills.</p>
+      <%= link_to new_mock_interview_path, class: "inline-flex items-center px-5 py-2.5 bg-cyan-500 text-white text-sm font-semibold rounded-xl hover:bg-cyan-600 transition-colors" do %>
+        Start Your First Interview
+      <% end %>
+    </div>
+  <% end %>
+</div>

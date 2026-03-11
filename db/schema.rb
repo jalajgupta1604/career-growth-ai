@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_03_100000) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_10_141004) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -55,6 +55,140 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_03_100000) do
     t.index ["user_id"], name: "index_career_reports_on_user_id"
   end
 
+  create_table "coach_conversations", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "title"
+    t.string "topic"
+    t.string "status", default: "active"
+    t.jsonb "context_data", default: {}
+    t.integer "messages_count", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["status"], name: "index_coach_conversations_on_status"
+    t.index ["user_id", "created_at"], name: "index_coach_conversations_on_user_id_and_created_at"
+    t.index ["user_id"], name: "index_coach_conversations_on_user_id"
+  end
+
+  create_table "coach_messages", force: :cascade do |t|
+    t.bigint "coach_conversation_id", null: false
+    t.string "role", null: false
+    t.text "content", null: false
+    t.jsonb "metadata", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["coach_conversation_id"], name: "index_coach_messages_on_coach_conversation_id"
+    t.index ["created_at"], name: "index_coach_messages_on_created_at"
+  end
+
+  create_table "companies", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "domain"
+    t.string "industry"
+    t.string "size_range"
+    t.string "city"
+    t.string "plan_type", default: "basic"
+    t.integer "max_seats", default: 10
+    t.jsonb "settings", default: {}
+    t.boolean "active", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["active"], name: "index_companies_on_active"
+    t.index ["domain"], name: "index_companies_on_domain", unique: true
+  end
+
+  create_table "company_analytics_snapshots", force: :cascade do |t|
+    t.bigint "company_id", null: false
+    t.string "period", null: false
+    t.jsonb "salary_data", default: {}
+    t.jsonb "skill_data", default: {}
+    t.jsonb "hiring_data", default: {}
+    t.jsonb "benchmark_data", default: {}
+    t.jsonb "attrition_data", default: {}
+    t.integer "team_size"
+    t.float "avg_salary"
+    t.float "avg_experience"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id", "period"], name: "idx_company_analytics_period", unique: true
+    t.index ["company_id"], name: "index_company_analytics_snapshots_on_company_id"
+  end
+
+  create_table "company_members", force: :cascade do |t|
+    t.bigint "company_id", null: false
+    t.bigint "user_id", null: false
+    t.string "role", default: "member"
+    t.datetime "invited_at"
+    t.datetime "joined_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id", "user_id"], name: "index_company_members_on_company_id_and_user_id", unique: true
+    t.index ["company_id"], name: "index_company_members_on_company_id"
+    t.index ["role"], name: "index_company_members_on_role"
+    t.index ["user_id"], name: "index_company_members_on_user_id"
+  end
+
+  create_table "interview_experiences", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "company_name", null: false
+    t.string "role", null: false
+    t.string "difficulty", default: "medium"
+    t.string "outcome"
+    t.integer "rounds_count"
+    t.integer "overall_rating"
+    t.text "experience_summary"
+    t.jsonb "rounds_data", default: []
+    t.jsonb "tags", default: []
+    t.boolean "anonymous", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_name", "role"], name: "idx_interview_exp_company_role"
+    t.index ["created_at"], name: "index_interview_experiences_on_created_at"
+    t.index ["difficulty"], name: "index_interview_experiences_on_difficulty"
+    t.index ["outcome"], name: "index_interview_experiences_on_outcome"
+    t.index ["user_id"], name: "index_interview_experiences_on_user_id"
+  end
+
+  create_table "job_listings", force: :cascade do |t|
+    t.string "title", null: false
+    t.string "company_name", null: false
+    t.string "location"
+    t.string "job_type"
+    t.decimal "min_salary", precision: 12, scale: 2
+    t.decimal "max_salary", precision: 12, scale: 2
+    t.text "description"
+    t.jsonb "required_skills", default: []
+    t.jsonb "preferred_skills", default: []
+    t.string "experience_range"
+    t.string "source"
+    t.string "source_url"
+    t.boolean "active", default: true
+    t.datetime "posted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["active"], name: "index_job_listings_on_active"
+    t.index ["location"], name: "index_job_listings_on_location"
+    t.index ["title", "company_name"], name: "index_job_listings_on_title_and_company_name"
+  end
+
+  create_table "job_recommendations", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "job_listing_id", null: false
+    t.float "match_score"
+    t.jsonb "match_reasons", default: []
+    t.jsonb "skill_matches", default: {}
+    t.string "status", default: "new"
+    t.datetime "viewed_at"
+    t.datetime "applied_at"
+    t.datetime "saved_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["job_listing_id"], name: "index_job_recommendations_on_job_listing_id"
+    t.index ["status"], name: "index_job_recommendations_on_status"
+    t.index ["user_id", "job_listing_id"], name: "idx_job_recs_user_listing", unique: true
+    t.index ["user_id", "match_score"], name: "index_job_recommendations_on_user_id_and_match_score"
+    t.index ["user_id"], name: "index_job_recommendations_on_user_id"
+  end
+
   create_table "lesson_progresses", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "prep_lesson_id", null: false
@@ -70,6 +204,83 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_03_100000) do
     t.index ["user_id"], name: "index_lesson_progresses_on_user_id"
   end
 
+  create_table "linkedin_profiles", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "linkedin_uid"
+    t.string "linkedin_url"
+    t.string "headline"
+    t.string "industry"
+    t.string "location"
+    t.integer "connections_count"
+    t.jsonb "positions_data", default: []
+    t.jsonb "education_data", default: []
+    t.jsonb "skills_data", default: []
+    t.jsonb "certifications_data", default: []
+    t.jsonb "raw_profile_data", default: {}
+    t.string "sync_status", default: "pending"
+    t.datetime "last_synced_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["linkedin_uid"], name: "index_linkedin_profiles_on_linkedin_uid", unique: true
+    t.index ["user_id"], name: "index_linkedin_profiles_on_user_id", unique: true
+  end
+
+  create_table "mock_interviews", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "interview_type", default: "technical", null: false
+    t.string "difficulty", default: "medium", null: false
+    t.string "target_role"
+    t.integer "status", default: 0, null: false
+    t.jsonb "questions_data", default: []
+    t.jsonb "responses_data", default: []
+    t.jsonb "feedback_data", default: {}
+    t.float "overall_score"
+    t.integer "total_questions", default: 5
+    t.integer "answered_questions", default: 0
+    t.datetime "started_at"
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["status"], name: "index_mock_interviews_on_status"
+    t.index ["user_id", "created_at"], name: "index_mock_interviews_on_user_id_and_created_at"
+    t.index ["user_id"], name: "index_mock_interviews_on_user_id"
+  end
+
+  create_table "negotiation_sessions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.decimal "current_offer", precision: 12, scale: 2
+    t.decimal "expected_salary", precision: 12, scale: 2
+    t.string "company_name"
+    t.string "offer_role"
+    t.jsonb "benefits_data", default: {}
+    t.jsonb "strategy_data", default: {}
+    t.jsonb "talking_points", default: []
+    t.jsonb "counter_offer_data", default: {}
+    t.float "negotiation_score"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "created_at"], name: "index_negotiation_sessions_on_user_id_and_created_at"
+    t.index ["user_id"], name: "index_negotiation_sessions_on_user_id"
+  end
+
+  create_table "offer_analyses", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "company_name"
+    t.string "offer_role"
+    t.decimal "base_salary", precision: 12, scale: 2
+    t.decimal "total_ctc", precision: 12, scale: 2
+    t.jsonb "components_data", default: {}
+    t.jsonb "analysis_data", default: {}
+    t.jsonb "red_flags", default: []
+    t.jsonb "green_flags", default: []
+    t.float "offer_score"
+    t.string "verdict"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "created_at"], name: "index_offer_analyses_on_user_id_and_created_at"
+    t.index ["user_id"], name: "index_offer_analyses_on_user_id"
+  end
+
   create_table "payments", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "career_report_id", null: false
@@ -81,6 +292,21 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_03_100000) do
     t.datetime "updated_at", null: false
     t.index ["career_report_id"], name: "index_payments_on_career_report_id"
     t.index ["user_id"], name: "index_payments_on_user_id"
+  end
+
+  create_table "peer_benchmarks", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.float "salary_percentile"
+    t.float "skill_percentile"
+    t.float "interview_percentile"
+    t.integer "peer_count"
+    t.jsonb "peer_distribution", default: {}
+    t.jsonb "comparison_data", default: {}
+    t.jsonb "ranking_data", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "created_at"], name: "index_peer_benchmarks_on_user_id_and_created_at"
+    t.index ["user_id"], name: "index_peer_benchmarks_on_user_id"
   end
 
   create_table "prep_categories", force: :cascade do |t|
@@ -114,6 +340,21 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_03_100000) do
     t.index ["prep_category_id"], name: "index_prep_lessons_on_prep_category_id"
   end
 
+  create_table "referral_rewards", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "referred_user_id", null: false
+    t.string "reward_type", null: false
+    t.integer "reward_days", default: 0
+    t.string "status", default: "pending"
+    t.datetime "credited_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["referred_user_id"], name: "index_referral_rewards_on_referred_user_id"
+    t.index ["status"], name: "index_referral_rewards_on_status"
+    t.index ["user_id", "referred_user_id"], name: "idx_referral_rewards_unique", unique: true
+    t.index ["user_id"], name: "index_referral_rewards_on_user_id"
+  end
+
   create_table "resumes", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "file_url"
@@ -121,6 +362,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_03_100000) do
     t.integer "parsing_status", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.float "ats_score"
+    t.jsonb "ats_data", default: {}
     t.index ["user_id"], name: "index_resumes_on_user_id"
   end
 
@@ -143,6 +386,43 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_03_100000) do
     t.string "company_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "salary_submissions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "role", null: false
+    t.string "city", null: false
+    t.integer "experience_years", null: false
+    t.decimal "base_salary", precision: 12, scale: 2, null: false
+    t.decimal "total_ctc", precision: 12, scale: 2
+    t.string "company_name"
+    t.string "company_type"
+    t.jsonb "components_data", default: {}
+    t.boolean "verified", default: false
+    t.boolean "anonymous", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_salary_submissions_on_created_at"
+    t.index ["role", "city", "experience_years"], name: "idx_salary_submissions_lookup"
+    t.index ["user_id"], name: "index_salary_submissions_on_user_id"
+    t.index ["verified"], name: "index_salary_submissions_on_verified"
+  end
+
+  create_table "skill_trends", force: :cascade do |t|
+    t.string "skill_name", null: false
+    t.string "role"
+    t.string "city"
+    t.integer "demand_score", default: 0
+    t.float "salary_premium_pct", default: 0.0
+    t.string "trend_direction", default: "stable"
+    t.integer "job_postings_count", default: 0
+    t.jsonb "monthly_data", default: []
+    t.string "period", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["demand_score"], name: "index_skill_trends_on_demand_score"
+    t.index ["skill_name", "role", "period"], name: "idx_skill_trends_unique", unique: true
+    t.index ["trend_direction"], name: "index_skill_trends_on_trend_direction"
   end
 
   create_table "skills", force: :cascade do |t|
@@ -192,19 +472,39 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_03_100000) do
     t.decimal "current_salary"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "referral_code"
+    t.bigint "referred_by_id"
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["referral_code"], name: "index_users_on_referral_code", unique: true
+    t.index ["referred_by_id"], name: "index_users_on_referred_by_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "career_reports", "users"
+  add_foreign_key "coach_conversations", "users"
+  add_foreign_key "coach_messages", "coach_conversations"
+  add_foreign_key "company_analytics_snapshots", "companies"
+  add_foreign_key "company_members", "companies"
+  add_foreign_key "company_members", "users"
+  add_foreign_key "interview_experiences", "users"
+  add_foreign_key "job_recommendations", "job_listings"
+  add_foreign_key "job_recommendations", "users"
   add_foreign_key "lesson_progresses", "prep_lessons"
   add_foreign_key "lesson_progresses", "users"
+  add_foreign_key "linkedin_profiles", "users"
+  add_foreign_key "mock_interviews", "users"
+  add_foreign_key "negotiation_sessions", "users"
+  add_foreign_key "offer_analyses", "users"
   add_foreign_key "payments", "career_reports"
   add_foreign_key "payments", "users"
+  add_foreign_key "peer_benchmarks", "users"
   add_foreign_key "prep_lessons", "prep_categories"
+  add_foreign_key "referral_rewards", "users"
+  add_foreign_key "referral_rewards", "users", column: "referred_user_id"
   add_foreign_key "resumes", "users"
   add_foreign_key "role_skill_mappings", "skills"
+  add_foreign_key "salary_submissions", "users"
   add_foreign_key "subscriptions", "users"
 end

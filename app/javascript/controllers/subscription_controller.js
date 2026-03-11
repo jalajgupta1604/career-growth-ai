@@ -67,6 +67,13 @@ export default class extends Controller {
         name: this.userNameValue,
         email: this.userEmailValue
       },
+      method: {
+        upi: true,
+        card: true,
+        netbanking: true,
+        wallet: true,
+        emandate: true
+      },
       theme: {
         color: "#06b6d4"
       },

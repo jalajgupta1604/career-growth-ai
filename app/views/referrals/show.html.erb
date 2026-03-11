@@ -1,0 +1,116 @@
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Referral Program</h1>
+    <p class="mt-1 text-gray-500">Invite friends and earn free Pro days</p>
+  </div>
+
+  <!-- Referral Code Card -->
+  <div class="bg-gradient-to-r from-cyan-500 to-cyan-600 rounded-2xl p-8 mb-6 text-white">
+    <h2 class="text-lg font-semibold mb-2">Your Referral Code</h2>
+    <div class="flex items-center gap-4 mb-4">
+      <div class="bg-white/20 backdrop-blur rounded-xl px-6 py-3">
+        <span class="text-2xl font-bold tracking-wider"><%= @data[:referral_code] %></span>
+      </div>
+      <button onclick="navigator.clipboard.writeText('<%= @data[:referral_code] %>'); this.textContent='Copied!'; setTimeout(() => this.textContent='Copy', 2000)" class="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm font-semibold transition-colors cursor-pointer">
+        Copy
+      </button>
+    </div>
+    <p class="text-sm text-cyan-100">Share this code with friends. When they sign up, you both benefit!</p>
+  </div>
+
+  <!-- Stats -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+    <div class="bg-white rounded-2xl border border-gray-100 p-5">
+      <p class="text-xs font-medium text-gray-500">Total Referrals</p>
+      <p class="mt-1 text-2xl font-bold text-gray-900"><%= @data[:total_referrals] %></p>
+    </div>
+    <div class="bg-white rounded-2xl border border-gray-100 p-5">
+      <p class="text-xs font-medium text-gray-500">Successful</p>
+      <p class="mt-1 text-2xl font-bold text-green-600"><%= @data[:successful_referrals] %></p>
+    </div>
+    <div class="bg-white rounded-2xl border border-gray-100 p-5">
+      <p class="text-xs font-medium text-gray-500">Pending</p>
+      <p class="mt-1 text-2xl font-bold text-yellow-600"><%= @data[:pending_referrals] %></p>
+    </div>
+    <div class="bg-white rounded-2xl border border-gray-100 p-5">
+      <p class="text-xs font-medium text-gray-500">Days Earned</p>
+      <p class="mt-1 text-2xl font-bold text-cyan-600"><%= @data[:total_reward_days] %></p>
+    </div>
+  </div>
+
+  <!-- Apply Referral Code -->
+  <% unless current_user.referred_by_id.present? %>
+    <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-3">Have a Referral Code?</h2>
+      <%= form_with url: apply_referral_path, method: :post, class: "flex items-end gap-3" do %>
+        <div class="flex-1">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Enter Code</label>
+          <input type="text" name="referral_code" class="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 uppercase" placeholder="e.g., CGABCD1234">
+        </div>
+        <button type="submit" class="px-6 py-3 bg-cyan-500 text-white font-semibold rounded-xl hover:bg-cyan-600 transition-colors cursor-pointer">
+          Apply
+        </button>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="bg-green-50 rounded-xl p-4 mb-6">
+      <div class="flex items-center gap-2">
+        <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+        <p class="text-sm text-green-700 font-medium">You were referred by a friend. Welcome aboard!</p>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- How It Works -->
+  <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4">How It Works</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="text-center">
+        <div class="w-12 h-12 bg-cyan-100 rounded-full flex items-center justify-center mx-auto mb-3">
+          <span class="text-lg font-bold text-cyan-600">1</span>
+        </div>
+        <h3 class="text-sm font-semibold text-gray-900">Share Your Code</h3>
+        <p class="text-xs text-gray-500 mt-1">Send your unique referral code to friends and colleagues</p>
+      </div>
+      <div class="text-center">
+        <div class="w-12 h-12 bg-cyan-100 rounded-full flex items-center justify-center mx-auto mb-3">
+          <span class="text-lg font-bold text-cyan-600">2</span>
+        </div>
+        <h3 class="text-sm font-semibold text-gray-900">They Sign Up</h3>
+        <p class="text-xs text-gray-500 mt-1">Your friend creates an account and enters your code</p>
+      </div>
+      <div class="text-center">
+        <div class="w-12 h-12 bg-cyan-100 rounded-full flex items-center justify-center mx-auto mb-3">
+          <span class="text-lg font-bold text-cyan-600">3</span>
+        </div>
+        <h3 class="text-sm font-semibold text-gray-900">Earn Rewards</h3>
+        <p class="text-xs text-gray-500 mt-1">Get 7 days of free Pro access for each successful referral</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Referrals -->
+  <% if @data[:recent_referrals].any? %>
+    <div class="bg-white rounded-2xl border border-gray-100 p-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Your Referrals</h2>
+      <div class="divide-y divide-gray-50">
+        <% @data[:recent_referrals].each do |ref| %>
+          <div class="flex items-center justify-between py-3">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                <span class="text-xs font-bold text-gray-500"><%= ref[:name]&.first&.upcase || "U" %></span>
+              </div>
+              <div>
+                <p class="text-sm font-medium text-gray-900"><%= ref[:name] %></p>
+                <p class="text-xs text-gray-400">Joined <%= time_ago_in_words(ref[:joined_at]) %> ago</p>
+              </div>
+            </div>
+            <span class="text-xs font-semibold px-2 py-1 rounded-full <%= ref[:subscribed] ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' %>">
+              <%= ref[:subscribed] ? "Subscribed" : "Free" %>
+            </span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

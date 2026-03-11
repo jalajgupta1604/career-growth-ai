@@ -1,36 +1,40 @@
 module InterviewPrepHelper
   COLOR_MAP = {
     "cyan" => {
-      bg: "bg-cyan-50",
-      bg_dark: "bg-cyan-500",
-      text: "text-cyan-600",
-      border: "border-cyan-200",
-      bar: "bg-cyan-500",
-      light: "bg-cyan-100"
+      bg: "bg-indigo-50",
+      bg_dark: "bg-indigo-500",
+      text: "text-indigo-500",
+      border: "border-indigo-200",
+      bar: "bg-indigo-500",
+      light: "bg-indigo-50",
+      icon: "account_tree"
     },
     "green" => {
-      bg: "bg-green-50",
-      bg_dark: "bg-green-500",
-      text: "text-green-600",
-      border: "border-green-200",
-      bar: "bg-green-500",
-      light: "bg-green-100"
+      bg: "bg-emerald-50",
+      bg_dark: "bg-emerald-500",
+      text: "text-emerald-500",
+      border: "border-emerald-200",
+      bar: "bg-emerald-500",
+      light: "bg-emerald-50",
+      icon: "code_blocks"
     },
     "purple" => {
-      bg: "bg-purple-50",
-      bg_dark: "bg-purple-500",
-      text: "text-purple-600",
-      border: "border-purple-200",
-      bar: "bg-purple-500",
-      light: "bg-purple-100"
-    },
-    "orange" => {
       bg: "bg-orange-50",
       bg_dark: "bg-orange-500",
-      text: "text-orange-600",
+      text: "text-orange-500",
       border: "border-orange-200",
       bar: "bg-orange-500",
-      light: "bg-orange-100"
+      light: "bg-orange-50",
+      icon: "forum"
+    },
+    "orange" => {
+      bg: "bg-rose-50",
+      bg_dark: "bg-rose-500",
+      text: "text-rose-500",
+      border: "border-rose-200",
+      bar: "bg-rose-500",
+      light: "bg-rose-50",
+      icon: "record_voice_over"
     }
   }.freeze
 

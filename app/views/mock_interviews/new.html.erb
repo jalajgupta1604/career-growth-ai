@@ -1,0 +1,93 @@
+<div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="mb-8">
+    <%= link_to mock_interviews_path, class: "text-sm text-gray-500 hover:text-gray-700" do %>
+      &larr; Back to Mock Interviews
+    <% end %>
+    <h1 class="text-3xl font-bold text-gray-900 mt-4">Start Mock Interview</h1>
+    <p class="mt-1 text-gray-500">Choose your interview type and difficulty level</p>
+  </div>
+
+  <%= form_with url: mock_interviews_path, method: :post, class: "space-y-6" do |f| %>
+    <!-- Interview Type -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Interview Type</h2>
+      <div class="grid grid-cols-2 gap-3">
+        <label class="relative cursor-pointer">
+          <input type="radio" name="interview_type" value="technical" class="peer sr-only" checked>
+          <div class="p-4 rounded-xl border-2 border-gray-100 peer-checked:border-cyan-500 peer-checked:bg-cyan-50 transition-all">
+            <div class="w-10 h-10 bg-cyan-100 rounded-lg flex items-center justify-center mb-3">
+              <svg class="w-5 h-5 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+            </div>
+            <p class="text-sm font-semibold text-gray-900">Technical</p>
+            <p class="text-xs text-gray-400 mt-1">DSA, coding, CS fundamentals</p>
+          </div>
+        </label>
+        <label class="relative cursor-pointer">
+          <input type="radio" name="interview_type" value="behavioral" class="peer sr-only">
+          <div class="p-4 rounded-xl border-2 border-gray-100 peer-checked:border-cyan-500 peer-checked:bg-cyan-50 transition-all">
+            <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mb-3">
+              <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            </div>
+            <p class="text-sm font-semibold text-gray-900">Behavioral</p>
+            <p class="text-xs text-gray-400 mt-1">STAR method, leadership, teamwork</p>
+          </div>
+        </label>
+        <label class="relative cursor-pointer">
+          <input type="radio" name="interview_type" value="system_design" class="peer sr-only">
+          <div class="p-4 rounded-xl border-2 border-gray-100 peer-checked:border-cyan-500 peer-checked:bg-cyan-50 transition-all">
+            <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mb-3">
+              <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+            </div>
+            <p class="text-sm font-semibold text-gray-900">System Design</p>
+            <p class="text-xs text-gray-400 mt-1">Architecture, scalability, trade-offs</p>
+          </div>
+        </label>
+        <label class="relative cursor-pointer">
+          <input type="radio" name="interview_type" value="mixed" class="peer sr-only">
+          <div class="p-4 rounded-xl border-2 border-gray-100 peer-checked:border-cyan-500 peer-checked:bg-cyan-50 transition-all">
+            <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mb-3">
+              <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+            </div>
+            <p class="text-sm font-semibold text-gray-900">Mixed</p>
+            <p class="text-xs text-gray-400 mt-1">All types combined</p>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <!-- Difficulty -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Difficulty Level</h2>
+      <div class="grid grid-cols-3 gap-3">
+        <label class="relative cursor-pointer">
+          <input type="radio" name="difficulty" value="easy" class="peer sr-only">
+          <div class="p-4 rounded-xl border-2 border-gray-100 peer-checked:border-green-500 peer-checked:bg-green-50 transition-all text-center">
+            <p class="text-sm font-semibold text-gray-900">Easy</p>
+            <p class="text-xs text-gray-400 mt-1">1-2 years exp</p>
+          </div>
+        </label>
+        <label class="relative cursor-pointer">
+          <input type="radio" name="difficulty" value="medium" class="peer sr-only" checked>
+          <div class="p-4 rounded-xl border-2 border-gray-100 peer-checked:border-yellow-500 peer-checked:bg-yellow-50 transition-all text-center">
+            <p class="text-sm font-semibold text-gray-900">Medium</p>
+            <p class="text-xs text-gray-400 mt-1">3-5 years exp</p>
+          </div>
+        </label>
+        <label class="relative cursor-pointer">
+          <input type="radio" name="difficulty" value="hard" class="peer sr-only">
+          <div class="p-4 rounded-xl border-2 border-gray-100 peer-checked:border-red-500 peer-checked:bg-red-50 transition-all text-center">
+            <p class="text-sm font-semibold text-gray-900">Hard</p>
+            <p class="text-xs text-gray-400 mt-1">5+ years exp</p>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-between">
+      <%= link_to "Cancel", mock_interviews_path, class: "text-sm text-gray-500 hover:text-gray-700" %>
+      <button type="submit" class="px-8 py-3 bg-cyan-500 text-white font-semibold rounded-xl hover:bg-cyan-600 transition-colors cursor-pointer">
+        Start Interview
+      </button>
+    </div>
+  <% end %>
+</div>

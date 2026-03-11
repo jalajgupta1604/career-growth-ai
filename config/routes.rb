@@ -17,6 +17,9 @@ Rails.application.routes.draw do
   # Dashboard
   get "dashboard", to: "dashboard#show"
 
+  # Profile
+  resource :profile, only: [:show, :edit, :update], controller: "profile"
+
   # Career Reports
   resources :career_reports, only: [:show, :create] do
     member do
@@ -46,6 +49,72 @@ Rails.application.routes.draw do
       post :webhook
       get :manage
       post :cancel
+    end
+  end
+
+  # Mock Interviews
+  resources :mock_interviews, only: [:index, :new, :create, :show] do
+    member do
+      post :answer
+    end
+  end
+
+  # Salary Negotiation
+  resources :negotiations, only: [:index, :new, :create, :show]
+
+  # ATS Scoring
+  resource :ats_score, only: [:show, :create]
+
+  # Offer Analysis
+  resources :offer_analyses, only: [:index, :new, :create, :show]
+
+  # Salary Crowdsourcing
+  resources :salary_submissions, only: [:index, :new, :create]
+
+  # Peer Benchmarks
+  resource :peer_benchmark, only: [:show, :create]
+
+  # Skill Demand Trends
+  resources :skill_trends, only: [:index, :show] do
+    collection do
+      post :seed
+    end
+  end
+
+  # Interview Experiences
+  resources :interview_experiences, only: [:index, :new, :create, :show]
+
+  # Referrals
+  resource :referral, only: [:show] do
+    post :apply
+  end
+
+  # LinkedIn Integration
+  resource :linkedin_profile, only: [:show, :new, :create]
+
+  # Job Recommendations
+  resources :job_recommendations, only: [:index, :show] do
+    collection do
+      post :generate
+    end
+    member do
+      post :save
+      post :apply
+    end
+  end
+
+  # Enterprise HR Analytics
+  get "enterprise", to: "enterprise#dashboard", as: :enterprise_dashboard
+  post "enterprise/refresh", to: "enterprise#refresh", as: :enterprise_refresh
+  get "enterprise/members", to: "enterprise#manage_members", as: :enterprise_members
+  post "enterprise/members", to: "enterprise#add_member", as: :enterprise_add_member
+  delete "enterprise/members/:member_id", to: "enterprise#remove_member", as: :enterprise_remove_member
+
+  # AI Career Coach
+  resources :career_coach, only: [:index, :show, :create] do
+    member do
+      post :message
+      post :archive
     end
   end
 

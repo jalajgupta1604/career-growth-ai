@@ -1,0 +1,55 @@
+<div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="mb-8">
+    <%= link_to negotiations_path, class: "text-sm text-gray-500 hover:text-gray-700" do %>
+      &larr; Back to Negotiations
+    <% end %>
+    <h1 class="text-3xl font-bold text-gray-900 mt-4">New Negotiation Strategy</h1>
+    <p class="mt-1 text-gray-500">Enter your offer details to get a personalized negotiation plan</p>
+  </div>
+
+  <%= form_with model: NegotiationSession.new, url: negotiations_path, method: :post, class: "space-y-6" do |f| %>
+    <div class="bg-white rounded-2xl border border-gray-100 p-6 space-y-5">
+      <h2 class="text-lg font-semibold text-gray-900">Offer Details</h2>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Company Name</label>
+        <%= f.text_field :company_name, class: "w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500", placeholder: "e.g., TCS, Infosys, Google" %>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Offered Role</label>
+        <%= f.text_field :offer_role, class: "w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500", placeholder: "e.g., Senior Software Engineer", value: current_user.role %>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Current Offer (&#8377; per annum)</label>
+          <%= f.number_field :current_offer, class: "w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500", placeholder: "e.g., 1200000", step: 1000 %>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Expected Salary (&#8377; per annum)</label>
+          <%= f.number_field :expected_salary, class: "w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500", placeholder: "e.g., 1500000", step: 1000 %>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Benefits & Perks (optional)</label>
+        <textarea name="negotiation_session[benefits]" rows="3" class="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 resize-y" placeholder="e.g., Health insurance, ESOPs, joining bonus, relocation allowance..."></textarea>
+      </div>
+    </div>
+
+    <div class="bg-cyan-50 rounded-xl p-4">
+      <div class="flex items-start gap-2">
+        <svg class="w-5 h-5 text-cyan-500 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
+        <p class="text-xs text-cyan-700">Your current salary (<strong>&#8377;<%= number_with_delimiter(current_user.current_salary.to_i) %></strong>) and market data will be used to generate the best negotiation strategy.</p>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-between">
+      <%= link_to "Cancel", negotiations_path, class: "text-sm text-gray-500 hover:text-gray-700" %>
+      <button type="submit" class="px-8 py-3 bg-cyan-500 text-white font-semibold rounded-xl hover:bg-cyan-600 transition-colors cursor-pointer">
+        Generate Strategy
+      </button>
+    </div>
+  <% end %>
+</div>

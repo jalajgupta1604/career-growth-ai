@@ -76,6 +76,183 @@ module GeminiPrompts
     PROMPT
   end
 
+  def mock_interview_prompt(interview_type, difficulty, role, user_profile)
+    <<~PROMPT
+      You are a senior technical interviewer at a top Indian tech company conducting a #{difficulty} #{interview_type} interview.
+
+      Candidate profile:
+      - Role: #{role}
+      - Experience: #{user_profile[:experience_years]} years
+      - City: #{user_profile[:city]}
+      - Skills: #{user_profile[:skills]&.join(', ')}
+
+      Generate exactly 5 interview questions for a #{interview_type} interview.
+      Each question should have:
+      - question: the interview question (clear, specific)
+      - category: topic category (e.g., "Data Structures", "System Design", "Leadership")
+      - expected_time_minutes: estimated time to answer (2-10 minutes)
+      - evaluation_criteria: array of 3-4 key points the interviewer looks for
+      - ideal_answer_outline: a 3-5 point outline of an ideal answer
+
+      Make questions progressively harder. Tailor to the Indian tech market.
+      Return well-structured JSON only.
+    PROMPT
+  end
+
+  def mock_interview_feedback_prompt(question, user_answer, role)
+    <<~PROMPT
+      You are a senior technical interviewer evaluating a candidate's answer.
+
+      Role: #{role}
+      Question: #{question}
+      Candidate's Answer: #{user_answer}
+
+      Evaluate and provide:
+      - score: number from 1-10
+      - strengths: array of 2-3 things done well
+      - improvements: array of 2-3 areas to improve
+      - model_answer: a concise ideal answer (3-5 sentences)
+      - tip: one actionable tip for next time
+
+      Be constructive and specific. Reference the Indian tech interview context.
+      Return well-structured JSON only.
+    PROMPT
+  end
+
+  def negotiation_strategy_prompt(user_profile, offer_data, market_data)
+    <<~PROMPT
+      You are an expert salary negotiation coach for Indian tech professionals.
+
+      Candidate profile:
+      - Role: #{user_profile[:role]}
+      - Experience: #{user_profile[:experience_years]} years
+      - City: #{user_profile[:city]}
+      - Current Salary: ₹#{user_profile[:current_salary]} per annum
+
+      Offer details:
+      - Company: #{offer_data[:company_name]}
+      - Offered Role: #{offer_data[:offer_role] || user_profile[:role]}
+      - Current Offer: ₹#{offer_data[:current_offer]} per annum
+      - Expected Salary: ₹#{offer_data[:expected_salary]} per annum
+      - Benefits: #{offer_data[:benefits]}
+
+      Market context:
+      - Market Median: ₹#{market_data[:median_salary]} per annum
+      - Market Max: ₹#{market_data[:max_salary]} per annum
+
+      Generate a comprehensive negotiation strategy with:
+      - negotiation_score: 1-100 score of the offer's strength
+      - verdict: one of "strong_position", "moderate_position", "weak_position"
+      - counter_offer: recommended counter-offer amount with reasoning
+      - talking_points: array of 5-6 specific negotiation talking points (each with title and script)
+      - email_template: a professional negotiation email template
+      - dos: array of 4-5 things to do during negotiation
+      - donts: array of 4-5 things to avoid during negotiation
+      - timeline_advice: recommended timeline/approach for the negotiation
+
+      Be specific to the Indian tech market. Include actual numbers and scripts.
+      Return well-structured JSON only.
+    PROMPT
+  end
+
+  def ats_scoring_prompt(resume_text, target_role)
+    <<~PROMPT
+      You are an expert ATS (Applicant Tracking System) analyzer for the Indian tech job market.
+
+      Resume text:
+      ---
+      #{resume_text}
+      ---
+
+      Target role: #{target_role}
+
+      Analyze this resume as an ATS system would and provide:
+      - ats_score: overall ATS compatibility score (0-100)
+      - keyword_score: keyword match score (0-100)
+      - format_score: formatting/structure score (0-100)
+      - content_score: content quality score (0-100)
+      - matched_keywords: array of keywords found that match the target role
+      - missing_keywords: array of important keywords missing for the target role
+      - format_issues: array of formatting issues (e.g., "Missing section headers", "No bullet points")
+      - content_suggestions: array of 5-6 specific improvements to boost ATS score
+      - section_scores: object with scores for each resume section (summary, experience, skills, education, projects)
+      - overall_verdict: one of "ats_optimized", "needs_improvement", "major_rework_needed"
+
+      Be specific and actionable. Reference Indian tech hiring standards.
+      Return well-structured JSON only.
+    PROMPT
+  end
+
+  def offer_analysis_prompt(offer_data, user_profile, market_data)
+    <<~PROMPT
+      You are an expert compensation analyst for Indian tech professionals.
+
+      Candidate profile:
+      - Role: #{user_profile[:role]}
+      - Experience: #{user_profile[:experience_years]} years
+      - City: #{user_profile[:city]}
+      - Current Salary: ₹#{user_profile[:current_salary]} per annum
+
+      Offer details:
+      - Company: #{offer_data[:company_name]}
+      - Offered Role: #{offer_data[:offer_role]}
+      - Base Salary: ₹#{offer_data[:base_salary]} per annum
+      - Total CTC: ₹#{offer_data[:total_ctc]} per annum
+      - Components: #{offer_data[:components]}
+
+      Market context:
+      - Market Median: ₹#{market_data[:median_salary]} per annum
+      - Market Max: ₹#{market_data[:max_salary]} per annum
+
+      Analyze this offer and provide:
+      - offer_score: overall score (0-100)
+      - verdict: one of "strong_accept", "accept", "negotiate", "caution", "decline"
+      - salary_analysis: comparison with market (above/below/at market, percentage)
+      - ctc_breakdown_analysis: analysis of CTC components (what's real take-home vs variable)
+      - red_flags: array of concerns with the offer (e.g., "High variable component", "Below market base")
+      - green_flags: array of positives (e.g., "Above market base", "Good ESOP component")
+      - recommendations: array of 4-5 specific actionable recommendations
+      - estimated_take_home: estimated monthly take-home after tax and deductions
+      - growth_potential: assessment of growth potential at this company/role
+
+      Be specific to Indian tax structure and tech compensation norms.
+      Return well-structured JSON only.
+    PROMPT
+  end
+
+  def job_recommendations_prompt(user_profile, user_skills)
+    <<~PROMPT
+      You are an expert job market analyst for the Indian tech industry.
+
+      Candidate profile:
+      - Role: #{user_profile[:role]}
+      - City: #{user_profile[:city]}
+      - Experience: #{user_profile[:experience_years]} years
+      - Current Salary: ₹#{user_profile[:current_salary]} per annum
+      - Skills: #{user_skills.join(', ')}
+
+      Generate 8-10 realistic job recommendations that match this profile.
+      For each job provide:
+      - title: job title
+      - company_name: realistic Indian tech company name
+      - location: city in India
+      - job_type: one of "full_time", "remote", "hybrid"
+      - min_salary: minimum annual salary in INR
+      - max_salary: maximum annual salary in INR
+      - description: 2-3 sentence job description
+      - required_skills: array of required skills
+      - experience_range: e.g., "3-5" or "5+"
+      - match_score: 1-100 how well this matches the candidate
+      - match_reasons: array of 2-3 reasons why this is a good match
+      - matched_skills: skills the candidate already has for this role
+      - missing_skills: skills the candidate would need to learn
+
+      Focus on realistic opportunities in the Indian tech market.
+      Include a mix of stretch roles and comfortable matches.
+      Return well-structured JSON only.
+    PROMPT
+  end
+
   def interview_questions_prompt(category_name, topic, difficulty, role)
     <<~PROMPT
       You are a senior technical interviewer at a top Indian tech company.

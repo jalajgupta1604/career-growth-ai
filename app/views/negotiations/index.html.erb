@@ -1,0 +1,55 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Salary Negotiation Tool</h1>
+      <p class="mt-1 text-gray-500">AI-powered negotiation strategies tailored to your profile</p>
+    </div>
+    <%= link_to new_negotiation_path, class: "px-5 py-2.5 bg-cyan-500 text-white text-sm font-semibold rounded-xl hover:bg-cyan-600 transition-colors" do %>
+      New Negotiation Strategy
+    <% end %>
+  </div>
+
+  <% if @sessions.any? %>
+    <div class="bg-white rounded-2xl border border-gray-100 p-6">
+      <h2 class="text-xl font-semibold text-gray-900 mb-4">Your Negotiation Sessions</h2>
+      <div class="divide-y divide-gray-50">
+        <% @sessions.each do |session| %>
+          <div class="flex items-center justify-between py-4">
+            <div class="flex items-center gap-4">
+              <div class="w-10 h-10 bg-cyan-100 rounded-xl flex items-center justify-center">
+                <svg class="w-5 h-5 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </div>
+              <div>
+                <p class="text-sm font-semibold text-gray-900"><%= session.company_name || "Company" %></p>
+                <p class="text-xs text-gray-400">
+                  Offer: &#8377;<%= number_with_delimiter(session.current_offer.to_i) %> &middot;
+                  Target: &#8377;<%= number_with_delimiter(session.expected_salary.to_i) %> &middot;
+                  <%= session.created_at.strftime("%b %d, %Y") %>
+                </p>
+              </div>
+            </div>
+            <div class="flex items-center gap-4">
+              <% if session.negotiation_score %>
+                <span class="text-sm font-bold <%= session.negotiation_score >= 70 ? 'text-green-600' : session.negotiation_score >= 40 ? 'text-yellow-600' : 'text-red-600' %>">
+                  Score: <%= session.negotiation_score.round %>/100
+                </span>
+              <% end %>
+              <%= link_to "View Strategy", negotiation_path(session), class: "text-sm text-cyan-600 font-medium hover:text-cyan-700" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% else %>
+    <div class="bg-white rounded-2xl border border-gray-100 p-12 text-center">
+      <div class="w-16 h-16 bg-cyan-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      </div>
+      <h3 class="text-lg font-semibold text-gray-900 mb-2">No negotiation sessions yet</h3>
+      <p class="text-gray-500 mb-6">Get AI-powered strategies to negotiate your best offer.</p>
+      <%= link_to new_negotiation_path, class: "inline-flex items-center px-5 py-2.5 bg-cyan-500 text-white text-sm font-semibold rounded-xl hover:bg-cyan-600 transition-colors" do %>
+        Create Your First Strategy
+      <% end %>
+    </div>
+  <% end %>
+</div>

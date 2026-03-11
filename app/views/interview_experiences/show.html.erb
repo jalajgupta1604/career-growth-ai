@@ -1,0 +1,70 @@
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="mb-6">
+    <%= link_to interview_experiences_path, class: "text-sm text-gray-500 hover:text-gray-700" do %>
+      &larr; Back to Experiences
+    <% end %>
+  </div>
+
+  <div class="bg-white rounded-2xl border border-gray-100 p-8 mb-6">
+    <div class="flex items-start justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900"><%= @experience.company_name %></h1>
+        <p class="text-sm text-gray-500 mt-1"><%= @experience.role %> &middot; <%= @experience.display_name %> &middot; <%= @experience.created_at.strftime("%B %Y") %></p>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-<%= @experience.difficulty_color %>-100 text-<%= @experience.difficulty_color %>-700"><%= @experience.difficulty.capitalize %></span>
+        <% if @experience.outcome %>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-<%= @experience.outcome_color %>-100 text-<%= @experience.outcome_color %>-700"><%= @experience.outcome.humanize %></span>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-3 gap-4 mt-6 pt-6 border-t border-gray-100">
+      <div>
+        <p class="text-xs text-gray-400">Total Rounds</p>
+        <p class="text-lg font-bold text-gray-900"><%= @experience.rounds_count || "-" %></p>
+      </div>
+      <div>
+        <p class="text-xs text-gray-400">Overall Rating</p>
+        <p class="text-lg font-bold text-cyan-600"><%= @experience.overall_rating || "-" %>/5</p>
+      </div>
+      <div>
+        <p class="text-xs text-gray-400">Difficulty</p>
+        <p class="text-lg font-bold text-gray-900"><%= @experience.difficulty.capitalize %></p>
+      </div>
+    </div>
+  </div>
+
+  <% if @experience.experience_summary.present? %>
+    <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-3">Experience Summary</h2>
+      <p class="text-sm text-gray-600 leading-relaxed"><%= simple_format(@experience.experience_summary) %></p>
+    </div>
+  <% end %>
+
+  <% rounds = @experience.rounds_data || [] %>
+  <% if rounds.any? %>
+    <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Interview Rounds</h2>
+      <div class="space-y-3">
+        <% rounds.each do |round| %>
+          <div class="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
+            <span class="w-8 h-8 bg-cyan-100 rounded-lg flex items-center justify-center text-xs font-bold text-cyan-600 shrink-0">R<%= round["round"] || rounds.index(round).to_i + 1 %></span>
+            <p class="text-sm text-gray-700"><%= round["description"] || round.to_s %></p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <% if @experience.tags.any? %>
+    <div class="bg-white rounded-2xl border border-gray-100 p-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-3">Tags</h2>
+      <div class="flex flex-wrap gap-2">
+        <% @experience.tags.each do |tag| %>
+          <span class="px-3 py-1 bg-cyan-50 text-cyan-700 border border-cyan-100 rounded-lg text-sm font-medium"><%= tag %></span>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

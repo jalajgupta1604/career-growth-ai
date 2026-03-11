@@ -49,10 +49,13 @@ professionals
   MVP           Month 0--2        Validation    ₹999 one-time
 
   Phase 2       Month 3--6        Revenue       Subscription + Upsells
-                                  Expansion     
+                                  Expansion
 
   Phase 3       Month 6--12       Data Network  Recurring + Intelligence
-                                  Effects       
+                                  Effects
+
+  Phase 4       Month 12--18      AI-Powered    Enterprise + B2B + API
+                                  Scale
   -----------------------------------------------------------------------
 
 ------------------------------------------------------------------------
@@ -155,7 +158,40 @@ Career Tool → Salary Intelligence Platform
 
 ------------------------------------------------------------------------
 
-# 7. System Architecture
+# 7. Phase 4 Requirements (Month 12--18)
+
+## Objectives
+
+-   Deepen user engagement with AI-first experiences
+-   Unlock B2B revenue via enterprise HR analytics
+-   Leverage LinkedIn data for personalized recommendations
+-   Increase retention and daily active usage
+
+## Features
+
+-   LinkedIn Integration (profile import, skill sync, connection insights)
+-   Personalized Job Recommendations (AI-matched jobs based on skills, salary, and career goals)
+-   Enterprise HR Analytics Version (company dashboard, team benchmarking, hiring intelligence)
+-   AI Career Coach Chatbot (conversational career guidance, goal tracking, proactive nudges)
+
+## Revenue Strategy
+
+-   Enterprise HR Dashboard ₹25,000--₹1,00,000/month per company
+-   Premium Job Recommendations ₹199/month add-on
+-   AI Career Coach unlimited access included in Pro
+-   B2B API licensing for recruitment platforms
+
+## Phase 4 Metrics
+
+-   50,000 users
+-   5,000 subscribers
+-   10+ enterprise clients
+-   ₹30L--₹50L MRR target
+-   Daily active user ratio > 25%
+
+------------------------------------------------------------------------
+
+# 9. System Architecture
 
 Frontend: - Rails 7 + Hotwire - TailwindCSS
 
@@ -172,7 +208,7 @@ Monitoring: - Sentry - NewRelic - Lograge
 
 ------------------------------------------------------------------------
 
-# 8. Data & Security
+# 10. Data & Security
 
 -   OAuth-only authentication
 -   Private S3 storage
@@ -183,7 +219,7 @@ Monitoring: - Sentry - NewRelic - Lograge
 
 ------------------------------------------------------------------------
 
-# 9. 12-Month Strategic Outcome
+# 11. 18-Month Strategic Outcome
 
 By end of Phase 3, platform owns:
 
@@ -193,12 +229,21 @@ By end of Phase 3, platform owns:
 -   Salary trend analytics engine
 -   Crowdsourced benchmarking intelligence
 
+By end of Phase 4, platform additionally owns:
+
+-   LinkedIn-enriched professional profiles
+-   AI-powered job matching engine
+-   Enterprise HR intelligence dashboard
+-   Conversational AI career coaching system
+-   B2B client base with recurring enterprise revenue
+
 Positioned for:
 
--   B2C scaling
--   B2B expansion
--   API monetization
--   Fundraising readiness
+-   Series A fundraising
+-   Southeast Asia expansion
+-   Recruitment marketplace
+-   API-as-a-product for HR tech ecosystem
+-   Strategic partnerships with job portals (Naukri, LinkedIn)
 
 ------------------------------------------------------------------------
 

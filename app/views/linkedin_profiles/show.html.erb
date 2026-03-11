@@ -1,0 +1,100 @@
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">LinkedIn Integration</h1>
+      <p class="mt-1 text-gray-500">Your LinkedIn profile insights and skill sync</p>
+    </div>
+    <%= link_to "Update Profile", new_linkedin_profile_path, class: "px-4 py-2 bg-cyan-500 text-white text-sm font-semibold rounded-xl hover:bg-cyan-600 transition-colors" %>
+  </div>
+
+  <% if @profile %>
+    <!-- Profile Summary -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
+      <div class="flex items-start gap-4">
+        <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center">
+          <svg class="w-7 h-7 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        </div>
+        <div class="flex-1">
+          <h2 class="text-lg font-semibold text-gray-900"><%= @profile.headline || "No headline" %></h2>
+          <p class="text-sm text-gray-500"><%= @profile.location || current_user.city %> &middot; <%= @profile.industry || "Tech" %></p>
+          <% if @profile.linkedin_url.present? %>
+            <a href="<%= @profile.linkedin_url %>" target="_blank" class="text-xs text-blue-600 hover:text-blue-700 mt-1 inline-block">View on LinkedIn &rarr;</a>
+          <% end %>
+          <p class="text-xs text-gray-400 mt-2">Last synced: <%= @profile.last_synced_at&.strftime("%B %d, %Y") || "Never" %></p>
+        </div>
+      </div>
+    </div>
+
+    <% if @insights %>
+      <!-- Skills Comparison -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <div class="bg-white rounded-2xl border border-gray-100 p-6 text-center">
+          <p class="text-3xl font-bold text-cyan-600"><%= @insights[:total_skills] %></p>
+          <p class="text-sm text-gray-500 mt-1">Total Skills</p>
+        </div>
+        <div class="bg-white rounded-2xl border border-gray-100 p-6 text-center">
+          <p class="text-3xl font-bold text-blue-600"><%= @insights[:linkedin_skills] %></p>
+          <p class="text-sm text-gray-500 mt-1">LinkedIn Skills</p>
+        </div>
+        <div class="bg-white rounded-2xl border border-gray-100 p-6 text-center">
+          <p class="text-3xl font-bold text-green-600"><%= @insights[:resume_skills] %></p>
+          <p class="text-sm text-gray-500 mt-1">Resume Skills</p>
+        </div>
+      </div>
+
+      <!-- Skill Gaps -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div class="bg-white rounded-2xl border border-gray-100 p-6">
+          <h3 class="text-sm font-semibold text-gray-900 mb-3">Only on LinkedIn</h3>
+          <p class="text-xs text-gray-400 mb-3">Skills on LinkedIn not in your resume — consider adding them</p>
+          <% if @insights[:only_on_linkedin].any? %>
+            <div class="flex flex-wrap gap-2">
+              <% @insights[:only_on_linkedin].each do |skill| %>
+                <span class="px-2.5 py-1 bg-blue-50 text-blue-700 border border-blue-100 rounded-md text-xs font-medium"><%= skill %></span>
+              <% end %>
+            </div>
+          <% else %>
+            <p class="text-sm text-gray-400">All synced!</p>
+          <% end %>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-gray-100 p-6">
+          <h3 class="text-sm font-semibold text-gray-900 mb-3">Only on Resume</h3>
+          <p class="text-xs text-gray-400 mb-3">Skills on resume not on LinkedIn — consider updating LinkedIn</p>
+          <% if @insights[:only_on_resume].any? %>
+            <div class="flex flex-wrap gap-2">
+              <% @insights[:only_on_resume].each do |skill| %>
+                <span class="px-2.5 py-1 bg-green-50 text-green-700 border border-green-100 rounded-md text-xs font-medium"><%= skill %></span>
+              <% end %>
+            </div>
+          <% else %>
+            <p class="text-sm text-gray-400">All synced!</p>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Common Skills -->
+      <div class="bg-white rounded-2xl border border-gray-100 p-6">
+        <h3 class="text-sm font-semibold text-gray-900 mb-3">Common Skills (Resume + LinkedIn)</h3>
+        <% if @insights[:common_skills].any? %>
+          <div class="flex flex-wrap gap-2">
+            <% @insights[:common_skills].each do |skill| %>
+              <span class="px-2.5 py-1 bg-cyan-50 text-cyan-700 border border-cyan-100 rounded-md text-xs font-medium"><%= skill %></span>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="text-sm text-gray-400">No common skills found. Import your LinkedIn profile to sync.</p>
+        <% end %>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="bg-white rounded-2xl border border-gray-100 p-12 text-center">
+      <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      </div>
+      <h3 class="text-lg font-semibold text-gray-900 mb-2">Connect Your LinkedIn Profile</h3>
+      <p class="text-sm text-gray-500 mb-6">Import your LinkedIn data to get skill gap insights and sync your professional profile.</p>
+      <%= link_to "Import LinkedIn Profile", new_linkedin_profile_path, class: "px-6 py-3 bg-cyan-500 text-white font-medium rounded-xl hover:bg-cyan-600 transition-colors" %>
+    </div>
+  <% end %>
+</div>

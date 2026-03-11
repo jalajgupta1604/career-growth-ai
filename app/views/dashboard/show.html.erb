@@ -5,7 +5,7 @@
       <% if current_user.subscribed? %>
         <span class="inline-flex items-center px-2.5 py-0.5 bg-amber-400 text-amber-900 text-xs font-bold rounded-full align-middle ml-2 shadow-sm">PRO</span>
         <% if current_user.active_subscription? %>
-          <%= link_to "Manage Subscription", subscriptions_manage_path, class: "text-xs text-cyan-600 font-medium hover:text-cyan-700 ml-2 align-middle" %>
+          <%= link_to "Manage Subscription", profile_path, class: "text-xs text-cyan-600 font-medium hover:text-cyan-700 ml-2 align-middle" %>
         <% end %>
       <% else %>
         <%= link_to pricing_path, class: "inline-flex items-center px-3 py-1 bg-cyan-500 text-white text-xs font-semibold rounded-full align-middle ml-2 hover:bg-cyan-600 transition-colors" do %>
@@ -250,21 +250,185 @@
     <% end %>
   </div>
 
-  <!-- Interview Preparation -->
-  <div class="bg-white rounded-2xl border border-gray-100 p-8 mb-8">
-    <div class="flex items-start justify-between">
-      <div>
-        <div class="flex items-center gap-2 mb-2">
-          <div class="w-10 h-10 bg-cyan-100 rounded-xl flex items-center justify-center">
-            <svg class="w-5 h-5 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
-          </div>
-          <h2 class="text-xl font-semibold text-gray-900">Interview Preparation</h2>
+  <!-- Phase 2 Pro Tools -->
+  <div class="mb-8">
+    <h2 class="text-xl font-semibold text-gray-900 mb-4">Pro Tools</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- Interview Prep -->
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-shadow">
+        <div class="w-10 h-10 bg-cyan-100 rounded-xl flex items-center justify-center mb-3">
+          <svg class="w-5 h-5 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
         </div>
-        <p class="mt-1 text-gray-500">Practice System Design, DSA, Behavioral questions, and take Mock Interviews to ace your next interview.</p>
+        <h3 class="text-sm font-semibold text-gray-900">Interview Prep</h3>
+        <p class="text-xs text-gray-500 mt-1">System Design, DSA & Behavioral prep</p>
+        <%= link_to "Start Preparing", interview_prep_path, class: "mt-3 inline-block text-xs text-cyan-600 font-semibold hover:text-cyan-700" %>
       </div>
-      <%= link_to interview_prep_path, class: "shrink-0 px-5 py-2.5 bg-cyan-500 text-white text-sm font-semibold rounded-xl hover:bg-cyan-600 transition-colors" do %>
-        Start Preparing
-      <% end %>
+
+      <!-- Mock Interviews -->
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-shadow">
+        <div class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center mb-3">
+          <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+        </div>
+        <h3 class="text-sm font-semibold text-gray-900">Mock Interview</h3>
+        <p class="text-xs text-gray-500 mt-1">AI-powered practice interviews</p>
+        <%= link_to "Take Interview", mock_interviews_path, class: "mt-3 inline-block text-xs text-cyan-600 font-semibold hover:text-cyan-700" %>
+        <% unless current_user.subscribed? %>
+          <span class="ml-2 text-[10px] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded-full">PRO</span>
+        <% end %>
+      </div>
+
+      <!-- Salary Negotiation -->
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-shadow">
+        <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center mb-3">
+          <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <h3 class="text-sm font-semibold text-gray-900">Salary Negotiation</h3>
+        <p class="text-xs text-gray-500 mt-1">AI strategies & talking points</p>
+        <%= link_to "Negotiate", negotiations_path, class: "mt-3 inline-block text-xs text-cyan-600 font-semibold hover:text-cyan-700" %>
+        <% unless current_user.subscribed? %>
+          <span class="ml-2 text-[10px] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded-full">PRO</span>
+        <% end %>
+      </div>
+
+      <!-- ATS Score -->
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-shadow">
+        <div class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center mb-3">
+          <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        </div>
+        <h3 class="text-sm font-semibold text-gray-900">ATS Score</h3>
+        <p class="text-xs text-gray-500 mt-1">Check resume ATS compatibility</p>
+        <%= link_to "Check Score", ats_score_path, class: "mt-3 inline-block text-xs text-cyan-600 font-semibold hover:text-cyan-700" %>
+        <% unless current_user.subscribed? %>
+          <span class="ml-2 text-[10px] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded-full">PRO</span>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Offer Analyzer - full width -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-6 mt-4 hover:shadow-md transition-shadow">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <div class="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
+            <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+          </div>
+          <div>
+            <h3 class="text-sm font-semibold text-gray-900">Offer Letter Analyzer</h3>
+            <p class="text-xs text-gray-500 mt-0.5">Get AI analysis of job offers with red/green flags, market comparison, and recommendations</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <% unless current_user.subscribed? %>
+            <span class="text-[10px] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded-full">PRO</span>
+          <% end %>
+          <%= link_to "Analyze Offer", offer_analyses_path, class: "px-4 py-2 bg-cyan-500 text-white text-xs font-semibold rounded-lg hover:bg-cyan-600 transition-colors" %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Community & Intelligence -->
+  <div class="mb-8">
+    <h2 class="text-xl font-semibold text-gray-900 mb-4">Community & Intelligence</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-shadow">
+        <div class="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center mb-3">
+          <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <h3 class="text-sm font-semibold text-gray-900">Salary Explorer</h3>
+        <p class="text-xs text-gray-500 mt-1">Crowdsourced salary data from the community</p>
+        <%= link_to "Explore Salaries", salary_submissions_path, class: "mt-3 inline-block text-xs text-cyan-600 font-semibold hover:text-cyan-700" %>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-shadow">
+        <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mb-3">
+          <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        </div>
+        <h3 class="text-sm font-semibold text-gray-900">Peer Benchmark</h3>
+        <p class="text-xs text-gray-500 mt-1">Compare yourself against peers in your role</p>
+        <%= link_to "View Benchmark", peer_benchmark_path, class: "mt-3 inline-block text-xs text-cyan-600 font-semibold hover:text-cyan-700" %>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-shadow">
+        <div class="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center mb-3">
+          <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        </div>
+        <h3 class="text-sm font-semibold text-gray-900">Skill Trends</h3>
+        <p class="text-xs text-gray-500 mt-1">Track rising & declining skill demand</p>
+        <%= link_to "View Trends", skill_trends_path, class: "mt-3 inline-block text-xs text-cyan-600 font-semibold hover:text-cyan-700" %>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-shadow">
+        <div class="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center mb-3">
+          <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+        </div>
+        <h3 class="text-sm font-semibold text-gray-900">Interview Experiences</h3>
+        <p class="text-xs text-gray-500 mt-1">Real interview stories from the community</p>
+        <%= link_to "Browse Experiences", interview_experiences_path, class: "mt-3 inline-block text-xs text-cyan-600 font-semibold hover:text-cyan-700" %>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-shadow">
+        <div class="w-10 h-10 bg-pink-100 rounded-xl flex items-center justify-center mb-3">
+          <svg class="w-5 h-5 text-pink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/></svg>
+        </div>
+        <h3 class="text-sm font-semibold text-gray-900">Refer & Earn</h3>
+        <p class="text-xs text-gray-500 mt-1">Invite friends, earn free Pro days</p>
+        <%= link_to "Your Referrals", referral_path, class: "mt-3 inline-block text-xs text-cyan-600 font-semibold hover:text-cyan-700" %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phase 4: Advanced Tools -->
+  <div class="mb-8">
+    <h2 class="text-xl font-semibold text-gray-900 mb-4">Advanced Tools</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- LinkedIn Integration -->
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-shadow">
+        <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mb-3">
+          <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        </div>
+        <h3 class="text-sm font-semibold text-gray-900">LinkedIn Sync</h3>
+        <p class="text-xs text-gray-500 mt-1">Import & sync your LinkedIn profile</p>
+        <%= link_to "View Profile", linkedin_profile_path, class: "mt-3 inline-block text-xs text-cyan-600 font-semibold hover:text-cyan-700" %>
+        <% unless current_user.subscribed? %>
+          <span class="ml-2 text-[10px] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded-full">PRO</span>
+        <% end %>
+      </div>
+
+      <!-- Job Recommendations -->
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-shadow">
+        <div class="w-10 h-10 bg-teal-100 rounded-xl flex items-center justify-center mb-3">
+          <svg class="w-5 h-5 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        </div>
+        <h3 class="text-sm font-semibold text-gray-900">Job Matches</h3>
+        <p class="text-xs text-gray-500 mt-1">AI-powered job recommendations</p>
+        <%= link_to "View Jobs", job_recommendations_path, class: "mt-3 inline-block text-xs text-cyan-600 font-semibold hover:text-cyan-700" %>
+        <% unless current_user.subscribed? %>
+          <span class="ml-2 text-[10px] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded-full">PRO</span>
+        <% end %>
+      </div>
+
+      <!-- AI Career Coach -->
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-shadow">
+        <div class="w-10 h-10 bg-violet-100 rounded-xl flex items-center justify-center mb-3">
+          <svg class="w-5 h-5 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+        </div>
+        <h3 class="text-sm font-semibold text-gray-900">AI Career Coach</h3>
+        <p class="text-xs text-gray-500 mt-1">Chat with your personal career advisor</p>
+        <%= link_to "Start Chat", career_coach_index_path, class: "mt-3 inline-block text-xs text-cyan-600 font-semibold hover:text-cyan-700" %>
+        <% unless current_user.subscribed? %>
+          <span class="ml-2 text-[10px] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded-full">PRO</span>
+        <% end %>
+      </div>
+
+      <!-- Enterprise Analytics -->
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-shadow">
+        <div class="w-10 h-10 bg-rose-100 rounded-xl flex items-center justify-center mb-3">
+          <svg class="w-5 h-5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+        </div>
+        <h3 class="text-sm font-semibold text-gray-900">Enterprise HR</h3>
+        <p class="text-xs text-gray-500 mt-1">Team analytics & workforce insights</p>
+        <%= link_to "Dashboard", enterprise_dashboard_path, class: "mt-3 inline-block text-xs text-cyan-600 font-semibold hover:text-cyan-700" %>
+      </div>
     </div>
   </div>
 

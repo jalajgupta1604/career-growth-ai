@@ -1,0 +1,143 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Salary Explorer</h1>
+      <p class="mt-1 text-gray-500">Crowdsourced salary data from Indian tech professionals</p>
+    </div>
+    <%= link_to new_salary_submission_path, class: "px-5 py-2.5 bg-cyan-500 text-white text-sm font-semibold rounded-xl hover:bg-cyan-600 transition-colors" do %>
+      Share Your Salary
+    <% end %>
+  </div>
+
+  <!-- Filters -->
+  <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
+    <%= form_with url: salary_submissions_path, method: :get, class: "flex flex-wrap items-end gap-4" do |f| %>
+      <div>
+        <label class="block text-xs font-medium text-gray-500 mb-1">Role</label>
+        <select name="role" class="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-cyan-500">
+          <option value="">All Roles</option>
+          <% @available_roles.each do |role| %>
+            <option value="<%= role %>" <%= "selected" if @filters[:role] == role %>><%= role %></option>
+          <% end %>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-gray-500 mb-1">City</label>
+        <select name="city" class="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-cyan-500">
+          <option value="">All Cities</option>
+          <% @available_cities.each do |city| %>
+            <option value="<%= city %>" <%= "selected" if @filters[:city] == city %>><%= city %></option>
+          <% end %>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-gray-500 mb-1">Experience</label>
+        <select name="experience_years" class="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-cyan-500">
+          <option value="">All Levels</option>
+          <% [["0-2 years", 1], ["3-5 years", 4], ["6-8 years", 7], ["9-12 years", 10], ["12+ years", 13]].each do |label, val| %>
+            <option value="<%= val %>" <%= "selected" if @filters[:experience_years] == val.to_s %>><%= label %></option>
+          <% end %>
+        </select>
+      </div>
+      <button type="submit" class="px-4 py-2 bg-cyan-500 text-white text-sm font-semibold rounded-lg hover:bg-cyan-600 transition-colors cursor-pointer">
+        Filter
+      </button>
+    <% end %>
+  </div>
+
+  <!-- Stats -->
+  <% stats = @data[:stats] %>
+  <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+    <div class="bg-white rounded-2xl border border-gray-100 p-5">
+      <p class="text-xs font-medium text-gray-500">Submissions</p>
+      <p class="mt-1 text-2xl font-bold text-gray-900"><%= stats[:count] %></p>
+    </div>
+    <div class="bg-white rounded-2xl border border-gray-100 p-5">
+      <p class="text-xs font-medium text-gray-500">Min Salary</p>
+      <p class="mt-1 text-2xl font-bold text-gray-900">&#8377;<%= number_with_delimiter(stats[:min]) %></p>
+    </div>
+    <div class="bg-white rounded-2xl border border-gray-100 p-5">
+      <p class="text-xs font-medium text-gray-500">Median</p>
+      <p class="mt-1 text-2xl font-bold text-cyan-600">&#8377;<%= number_with_delimiter(stats[:median]) %></p>
+    </div>
+    <div class="bg-white rounded-2xl border border-gray-100 p-5">
+      <p class="text-xs font-medium text-gray-500">Average</p>
+      <p class="mt-1 text-2xl font-bold text-gray-900">&#8377;<%= number_with_delimiter(stats[:average]) %></p>
+    </div>
+    <div class="bg-white rounded-2xl border border-gray-100 p-5">
+      <p class="text-xs font-medium text-gray-500">Max Salary</p>
+      <p class="mt-1 text-2xl font-bold text-green-600">&#8377;<%= number_with_delimiter(stats[:max]) %></p>
+    </div>
+  </div>
+
+  <!-- Distribution -->
+  <% distribution = @data[:distribution] %>
+  <% if distribution.any? { |d| d[:count] > 0 } %>
+    <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Salary Distribution</h2>
+      <div class="space-y-3">
+        <% max_count = distribution.map { |d| d[:count] }.max.to_f %>
+        <% distribution.each do |bucket| %>
+          <div class="flex items-center gap-4">
+            <span class="text-sm font-medium text-gray-600 w-16"><%= bucket[:label] %></span>
+            <div class="flex-1 bg-gray-100 rounded-full h-6 relative">
+              <% width = max_count > 0 ? (bucket[:count] / max_count * 100).round : 0 %>
+              <div class="h-6 rounded-full bg-cyan-500 flex items-center justify-end px-2" style="width: <%= [width, 2].max %>%">
+                <% if width > 10 %>
+                  <span class="text-xs font-bold text-white"><%= bucket[:count] %></span>
+                <% end %>
+              </div>
+              <% if width <= 10 && bucket[:count] > 0 %>
+                <span class="absolute left-[<%= width + 2 %>%] top-1 text-xs font-medium text-gray-500"><%= bucket[:count] %></span>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Submissions List -->
+  <% if @data[:submissions].any? %>
+    <div class="bg-white rounded-2xl border border-gray-100 p-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Recent Submissions</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="text-xs font-semibold text-gray-400 uppercase tracking-wide border-b border-gray-100">
+              <th class="text-left py-3 px-2">Role</th>
+              <th class="text-left py-3 px-2">City</th>
+              <th class="text-left py-3 px-2">Exp</th>
+              <th class="text-right py-3 px-2">Base Salary</th>
+              <th class="text-right py-3 px-2">Total CTC</th>
+              <th class="text-left py-3 px-2">Company</th>
+              <th class="text-left py-3 px-2">Date</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-50">
+            <% @data[:submissions].each do |sub| %>
+              <tr class="hover:bg-gray-50">
+                <td class="py-3 px-2 font-medium text-gray-900"><%= sub.role %></td>
+                <td class="py-3 px-2 text-gray-500"><%= sub.city %></td>
+                <td class="py-3 px-2 text-gray-500"><%= sub.experience_years %> yrs</td>
+                <td class="py-3 px-2 text-right font-semibold text-gray-900">&#8377;<%= number_with_delimiter(sub.base_salary.to_i) %></td>
+                <td class="py-3 px-2 text-right text-gray-500"><%= sub.total_ctc ? "&#8377;#{number_with_delimiter(sub.total_ctc.to_i)}".html_safe : "-" %></td>
+                <td class="py-3 px-2 text-gray-500"><%= sub.company_name.present? ? sub.company_name : "-" %></td>
+                <td class="py-3 px-2 text-gray-400"><%= sub.created_at.strftime("%b %d") %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% else %>
+    <div class="bg-white rounded-2xl border border-gray-100 p-12 text-center">
+      <div class="w-16 h-16 bg-cyan-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      </div>
+      <h3 class="text-lg font-semibold text-gray-900 mb-2">No salary data yet</h3>
+      <p class="text-gray-500 mb-6">Be the first to contribute! Share your salary anonymously to help the community.</p>
+      <%= link_to "Share Your Salary", new_salary_submission_path, class: "inline-flex items-center px-5 py-2.5 bg-cyan-500 text-white text-sm font-semibold rounded-xl hover:bg-cyan-600 transition-colors" %>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,144 @@
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="mb-6">
+    <%= link_to dashboard_path, class: "text-sm text-gray-500 hover:text-gray-700" do %>
+      &larr; Back to Dashboard
+    <% end %>
+  </div>
+
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Resume ATS Score</h1>
+      <p class="mt-1 text-gray-500">See how your resume performs with Applicant Tracking Systems</p>
+    </div>
+    <% if @resume %>
+      <%= button_to "Recalculate Score", ats_score_path, method: :post, class: "px-5 py-2.5 bg-cyan-500 text-white text-sm font-semibold rounded-xl hover:bg-cyan-600 transition-colors cursor-pointer" %>
+    <% end %>
+  </div>
+
+  <% if @ats_data.present? %>
+    <!-- Overall Score -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-8 mb-6 text-center">
+      <%
+        score = @ats_score.to_i
+        color = score >= 70 ? 'cyan' : score >= 40 ? 'yellow' : 'red'
+        verdict = @ats_data["overall_verdict"]
+      %>
+      <div class="inline-flex items-center justify-center w-32 h-32 rounded-full border-8 border-<%= color %>-100 mb-4">
+        <span class="text-4xl font-bold text-<%= color %>-600"><%= score %></span>
+      </div>
+      <p class="text-lg font-semibold text-gray-900">ATS Compatibility Score</p>
+      <span class="inline-flex items-center px-3 py-1 mt-2 rounded-full text-sm font-semibold
+        <%= case verdict
+            when 'ats_optimized' then 'bg-green-100 text-green-700'
+            when 'needs_improvement' then 'bg-yellow-100 text-yellow-700'
+            else 'bg-red-100 text-red-700'
+            end %>">
+        <%= verdict&.humanize || "Pending" %>
+      </span>
+    </div>
+
+    <!-- Sub-scores -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <% [
+        { label: "Keyword Match", score: @ats_data["keyword_score"], color: "cyan" },
+        { label: "Format Quality", score: @ats_data["format_score"], color: "purple" },
+        { label: "Content Quality", score: @ats_data["content_score"], color: "green" }
+      ].each do |item| %>
+        <div class="bg-white rounded-2xl border border-gray-100 p-6">
+          <p class="text-sm font-medium text-gray-500"><%= item[:label] %></p>
+          <p class="mt-2 text-2xl font-bold text-gray-900"><%= item[:score] %>/100</p>
+          <div class="w-full bg-gray-100 rounded-full h-2 mt-3">
+            <div class="bg-<%= item[:color] %>-500 h-2 rounded-full" style="width: <%= [item[:score].to_i, 100].min %>%"></div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Section Scores -->
+    <% section_scores = @ats_data["section_scores"] || {} %>
+    <% if section_scores.any? %>
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Section Breakdown</h2>
+        <div class="space-y-3">
+          <% section_scores.each do |section, score| %>
+            <div class="flex items-center gap-4">
+              <span class="text-sm font-medium text-gray-600 w-24"><%= section.humanize %></span>
+              <div class="flex-1 bg-gray-100 rounded-full h-3">
+                <div class="h-3 rounded-full transition-all
+                  <%= score.to_i >= 70 ? 'bg-green-500' : score.to_i >= 40 ? 'bg-yellow-500' : 'bg-red-500' %>"
+                  style="width: <%= [score.to_i, 100].min %>%"></div>
+              </div>
+              <span class="text-sm font-bold text-gray-900 w-12 text-right"><%= score %></span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Keywords -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+      <% if (@ats_data["matched_keywords"] || []).any? %>
+        <div class="bg-white rounded-2xl border border-gray-100 p-6">
+          <h2 class="text-lg font-semibold text-green-700 mb-3">Matched Keywords</h2>
+          <div class="flex flex-wrap gap-2">
+            <% (@ats_data["matched_keywords"] || []).each do |kw| %>
+              <span class="px-2.5 py-1 bg-green-50 text-green-700 border border-green-100 rounded-md text-xs font-medium"><%= kw %></span>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <% if (@ats_data["missing_keywords"] || []).any? %>
+        <div class="bg-white rounded-2xl border border-gray-100 p-6">
+          <h2 class="text-lg font-semibold text-red-700 mb-3">Missing Keywords</h2>
+          <div class="flex flex-wrap gap-2">
+            <% (@ats_data["missing_keywords"] || []).each do |kw| %>
+              <span class="px-2.5 py-1 bg-red-50 text-red-700 border border-red-100 rounded-md text-xs font-medium"><%= kw %></span>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Format Issues -->
+    <% if (@ats_data["format_issues"] || []).any? %>
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-3">Format Issues</h2>
+        <ul class="space-y-2">
+          <% (@ats_data["format_issues"] || []).each do |issue| %>
+            <li class="flex items-start gap-2 text-sm text-gray-700">
+              <svg class="w-4 h-4 text-yellow-500 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+              <%= issue %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <!-- Suggestions -->
+    <% if (@ats_data["content_suggestions"] || []).any? %>
+      <div class="bg-cyan-50 rounded-2xl border border-cyan-100 p-6">
+        <h2 class="text-lg font-semibold text-cyan-900 mb-3">Improvement Suggestions</h2>
+        <ul class="space-y-2">
+          <% (@ats_data["content_suggestions"] || []).each_with_index do |suggestion, idx| %>
+            <li class="flex items-start gap-3 text-sm text-cyan-700">
+              <span class="w-6 h-6 bg-cyan-100 rounded-full flex items-center justify-center text-xs font-bold text-cyan-600 shrink-0"><%= idx + 1 %></span>
+              <%= suggestion %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+  <% else %>
+    <!-- No Score Yet -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-12 text-center">
+      <div class="w-16 h-16 bg-cyan-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      </div>
+      <h3 class="text-lg font-semibold text-gray-900 mb-2">No ATS Score Yet</h3>
+      <p class="text-gray-500 mb-6">Calculate your resume's ATS compatibility score to see how it performs with automated systems.</p>
+      <%= button_to "Calculate ATS Score", ats_score_path, method: :post, class: "inline-flex items-center px-6 py-3 bg-cyan-500 text-white font-semibold rounded-xl hover:bg-cyan-600 transition-colors cursor-pointer" %>
+    </div>
+  <% end %>
+</div>

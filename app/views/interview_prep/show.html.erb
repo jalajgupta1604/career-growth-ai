@@ -1,162 +1,190 @@
-<div class="min-h-screen bg-gray-50" data-controller="interview-prep">
+<div class="flex min-h-screen bg-gray-50" data-controller="interview-prep">
   <!-- Mobile Header -->
-  <div class="lg:hidden bg-white border-b border-gray-100 px-4 py-3 flex items-center justify-between">
+  <div class="lg:hidden bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between fixed top-0 left-0 right-0 z-40">
     <button data-action="click->interview-prep#toggleSidebar" class="p-2 rounded-lg hover:bg-gray-100">
-      <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      <span class="material-symbols-outlined text-gray-600">menu</span>
     </button>
     <span class="text-sm font-bold text-gray-900">PrepMaster</span>
-    <div class="w-8 h-8 bg-cyan-100 rounded-full flex items-center justify-center">
+    <div class="w-8 h-8 bg-cyan-50 rounded-full flex items-center justify-center">
       <span class="text-xs font-semibold text-cyan-600"><%= current_user.full_name&.first&.upcase || "U" %></span>
     </div>
   </div>
 
   <%= render "interview_prep/sidebar" %>
 
-  <!-- Main Content Area -->
-  <div class="lg:ml-60">
-    <div class="flex flex-col lg:flex-row min-h-screen">
-      <!-- Center Column -->
-      <div class="flex-1 px-5 lg:px-8 py-5 min-w-0">
-        <!-- Header -->
-        <div class="mb-5">
-          <h1 class="text-xl font-bold text-gray-900">Interview Preparation Module</h1>
-          <div class="flex flex-wrap items-center gap-3 mt-2">
-            <span class="text-xs text-gray-500">Overall Progress</span>
-            <span class="text-xs font-bold text-gray-900"><%= @data[:overall_progress] %>%</span>
-            <div class="flex-1 max-w-[200px] bg-gray-100 rounded-full h-1.5">
-              <div class="bg-cyan-500 h-1.5 rounded-full transition-all duration-700" style="width: <%= @data[:overall_progress] %>%"></div>
-            </div>
-            <%
-              op = @data[:overall_progress]
-              next_milestone_pct, next_milestone_level = if op < 35
-                [35, "Junior Architect"]
-              elsif op < 60
-                [60, "Senior"]
-              elsif op < 85
-                [85, "Staff"]
-              else
-                [100, "Staff"]
-              end
-            %>
-            <span class="text-[11px] text-gray-400">
-              Next Milestone: <%= next_milestone_pct %>% (<%= next_milestone_level %>)
-            </span>
-          </div>
-        </div>
+  <!-- Main Content -->
+  <main class="flex-1 ml-0 lg:ml-64 p-4 lg:p-8 mt-14 lg:mt-0">
 
-        <!-- Action Buttons -->
-        <div class="flex flex-wrap gap-2.5 mb-5">
-          <% if @data[:last_session_lesson] %>
-            <%= link_to interview_prep_lesson_path(@data[:last_session_lesson]), class: "inline-flex items-center gap-2 px-4 py-2 bg-cyan-500 text-white text-xs font-semibold rounded-full hover:bg-cyan-600 transition-colors" do %>
-              <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/></svg>
+    <!-- Header Section -->
+    <header class="mb-10">
+      <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4 mb-4">
+        <h1 class="text-3xl font-black tracking-tight text-gray-900">Interview Preparation Module</h1>
+        <div class="flex flex-wrap gap-3 shrink-0">
+          <% resume_lesson = @data[:last_session_lesson] || @data[:next_lesson] %>
+          <% if resume_lesson %>
+            <%= link_to interview_prep_lesson_path(resume_lesson), class: "flex items-center gap-2 px-6 py-3 bg-cyan-500 text-white font-bold rounded-xl shadow-lg shadow-cyan-500/20 hover:bg-cyan-600 transition-all" do %>
+              <span class="material-symbols-outlined text-[20px]">play_circle</span>
               Resume Last Session
             <% end %>
           <% else %>
-            <span class="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500 text-white text-xs font-semibold rounded-full">
-              <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/></svg>
+            <span class="flex items-center gap-2 px-6 py-3 bg-cyan-500 text-white font-bold rounded-xl shadow-lg shadow-cyan-500/20 opacity-60 cursor-default">
+              <span class="material-symbols-outlined text-[20px]">play_circle</span>
               Resume Last Session
             </span>
           <% end %>
 
-          <a href="#mock-interviews" class="inline-flex items-center gap-2 px-4 py-2 bg-white text-gray-600 text-xs font-medium rounded-full border border-gray-200 hover:bg-gray-50 transition-colors">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+          <%= link_to mock_interviews_path, class: "flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 font-bold rounded-xl hover:bg-gray-50 transition-all text-gray-700" do %>
+            <span class="material-symbols-outlined text-[20px]">videocam</span>
             Take Mock Interview
-          </a>
+          <% end %>
         </div>
+      </div>
+      <div class="flex flex-wrap items-center gap-3">
+        <span class="text-sm font-medium text-gray-500">Overall Progress</span>
+        <span class="text-sm font-bold text-cyan-500"><%= @data[:overall_progress] %>%</span>
+        <div class="w-48 h-2 bg-gray-200 rounded-full overflow-hidden">
+          <div class="bg-cyan-500 h-full transition-all duration-700" style="width: <%= @data[:overall_progress] %>%"></div>
+        </div>
+        <%
+          op = @data[:overall_progress]
+          next_milestone_pct, next_milestone_level = if op < 25
+            [25, "Junior Architect"]
+          elsif op < 50
+            [50, "Senior"]
+          elsif op < 75
+            [75, "Staff"]
+          else
+            [100, "Principal"]
+          end
+        %>
+        <span class="text-xs text-gray-400">Next Milestone: <%= next_milestone_pct %>% (<%= next_milestone_level %>)</span>
+      </div>
+    </header>
 
-        <!-- Next Up Card -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Left Column (Main Prep) -->
+      <div class="lg:col-span-2 space-y-8">
+
+        <!-- Immediate Task Card -->
         <% if @data[:next_lesson] %>
           <% next_lesson = @data[:next_lesson] %>
-          <div class="bg-white rounded-xl border border-gray-100 p-4 mb-5">
-            <div class="flex items-start gap-3">
-              <div class="w-24 h-16 bg-gray-900 rounded-lg flex items-center justify-center shrink-0 overflow-hidden">
-                <svg class="w-8 h-8 text-gray-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/></svg>
+          <section class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm overflow-hidden relative group">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full -mr-16 -mt-16 blur-3xl group-hover:bg-cyan-500/20 transition-all"></div>
+            <div class="flex flex-col sm:flex-row gap-6">
+              <div class="w-full sm:w-48 h-32 rounded-xl bg-gray-900 flex items-center justify-center shrink-0 overflow-hidden">
+                <svg class="w-12 h-12 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"/></svg>
               </div>
-              <div class="flex-1 min-w-0">
-                <p class="text-[11px] font-semibold text-cyan-500 uppercase tracking-wider mb-0.5">Immediate Task</p>
-                <h3 class="text-sm font-bold text-gray-900"><%= next_lesson.title %></h3>
-                <p class="text-xs text-gray-400 mt-0.5">Topic: <%= next_lesson.topic %></p>
-                <div class="flex items-center gap-3 mt-1.5">
-                  <span class="text-[11px] text-gray-400"><%= next_lesson.duration_minutes %> min</span>
-                  <span class="text-[11px] text-gray-400"><%= next_lesson.difficulty_label %> Difficulty</span>
+              <div class="flex-1 flex flex-col justify-between min-w-0">
+                <div>
+                  <div class="flex items-center gap-2 mb-1">
+                    <span class="text-[10px] font-bold text-cyan-600 uppercase tracking-widest bg-cyan-50 px-2 py-0.5 rounded">Immediate Task</span>
+                  </div>
+                  <h3 class="text-xl font-bold text-gray-900 mb-1">Next Up: <%= next_lesson.title %></h3>
+                  <p class="text-gray-500 text-sm">Topic: <%= next_lesson.topic %></p>
+                </div>
+                <div class="flex flex-wrap items-center justify-between gap-3 mt-4">
+                  <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-1.5 text-xs text-gray-500 font-medium">
+                      <span class="material-symbols-outlined text-sm">schedule</span>
+                      <%= next_lesson.duration_minutes %> mins
+                    </div>
+                    <div class="flex items-center gap-1.5 text-xs text-gray-500 font-medium">
+                      <span class="material-symbols-outlined text-sm">bar_chart</span>
+                      <%= next_lesson.difficulty_label %> Difficulty
+                    </div>
+                  </div>
+                  <%= button_to "Start Lesson", interview_prep_start_lesson_path(next_lesson), method: :post, class: "px-5 py-2 bg-cyan-50 text-cyan-600 hover:bg-cyan-500 hover:text-white font-bold rounded-lg text-sm transition-all cursor-pointer" %>
                 </div>
               </div>
-              <%= link_to interview_prep_start_lesson_path(next_lesson), method: :post, class: "self-center px-3.5 py-1.5 bg-cyan-500 text-white text-xs font-semibold rounded-lg hover:bg-cyan-600 transition-colors shrink-0" do %>
-                Start Lesson
-              <% end %>
             </div>
-          </div>
+          </section>
         <% end %>
 
-        <!-- Preparation Categories Grid -->
-        <div class="mb-5">
-          <div class="flex items-center justify-between mb-3">
-            <div class="flex items-center gap-2">
-              <h2 class="text-base font-bold text-gray-900">Preparation Categories</h2>
-              <span class="text-[11px] text-gray-400"><%= @data[:categories_with_progress].sum { |c| c[:total_lessons] } %> modules in progress</span>
-            </div>
-          </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <!-- Prep Categories -->
+        <section class="space-y-6" id="categories">
+          <h2 class="text-xl font-bold tracking-tight text-gray-900 flex items-center gap-2">
+            Preparation Categories
+            <span class="text-xs font-normal text-gray-400">(<%= @data[:categories_with_progress].size %> modules in progress)</span>
+          </h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <% @data[:categories_with_progress].each do |cat_data| %>
               <%= render "interview_prep/category_card", category_data: cat_data %>
             <% end %>
           </div>
-        </div>
+        </section>
       </div>
 
-      <!-- Right Sidebar -->
-      <div class="w-full lg:w-72 shrink-0 px-5 lg:px-0 lg:pr-5 py-5 lg:border-l lg:border-gray-100 bg-gray-50">
+      <!-- Right Column (Resources & Motivation) -->
+      <div class="space-y-8" id="resources">
+
         <!-- Expert Tip -->
-        <div class="bg-cyan-50 rounded-xl p-4 mb-5">
-          <div class="flex items-center gap-1.5 mb-2">
-            <svg class="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-            <span class="text-xs font-bold text-cyan-700 uppercase tracking-wider">Expert Tip</span>
+        <div class="bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-2xl p-6 text-white shadow-lg">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="material-symbols-outlined">lightbulb</span>
+            <span class="text-xs font-black uppercase tracking-widest">Expert Tip</span>
           </div>
-          <p class="text-xs text-cyan-800 leading-relaxed italic">"<%= @data[:expert_tip][:text] %>"</p>
-          <p class="text-[11px] text-cyan-600 font-semibold mt-2">&mdash;<%= @data[:expert_tip][:attribution] %></p>
+          <p class="text-sm font-medium leading-relaxed mb-4">
+            "<%= @data[:expert_tip][:text] %>"
+          </p>
+          <div class="text-[10px] font-bold border-t border-white/20 pt-3 opacity-80 uppercase tracking-tighter italic">
+            &mdash; <%= @data[:expert_tip][:attribution].gsub("_", " ") %>
+          </div>
         </div>
 
         <!-- Resources -->
-        <div class="mb-5">
-          <div class="flex items-center justify-between mb-2.5">
-            <h3 class="text-sm font-bold text-gray-900">Resources</h3>
-            <a href="#" class="text-[11px] text-cyan-600 font-medium hover:text-cyan-700">View all</a>
+        <section>
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-bold text-gray-900">Resources</h3>
+            <a href="#" class="text-xs font-bold text-cyan-500 hover:underline">View all</a>
           </div>
-          <div class="space-y-2">
-            <% @data[:resources].each do |resource| %>
-              <div class="flex items-center gap-2.5 p-2 bg-white rounded-lg border border-gray-100 hover:shadow-sm transition-shadow">
-                <div class="w-9 h-9 rounded-lg flex items-center justify-center bg-gray-800 shrink-0">
-                  <% case resource[:icon] %>
-                  <% when "database" %>
-                    <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/></svg>
-                  <% when "chart" %>
-                    <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-                  <% when "users" %>
-                    <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                  <% end %>
+          <div class="space-y-4">
+            <% resource_icons = ["database", "code_blocks", "groups"] %>
+            <% resource_colors = ["bg-indigo-500", "bg-emerald-500", "bg-orange-500"] %>
+            <% resource_meta = [
+              { type: "Article", time: "12 min", badge: "New" },
+              { type: "Video", time: "24 min", badge: nil },
+              { type: "Guide", time: "8 min", badge: nil }
+            ] %>
+            <% @data[:resources].each_with_index do |resource, idx| %>
+              <% meta = resource_meta[idx] || { type: "Article", time: "10 min", badge: nil } %>
+              <div class="flex gap-4 p-3 rounded-xl bg-white border border-gray-100 hover:shadow-md transition-all cursor-pointer">
+                <div class="w-16 h-16 shrink-0 rounded-lg <%= resource_colors[idx] || 'bg-gray-200' %> flex items-center justify-center overflow-hidden">
+                  <span class="material-symbols-outlined text-white text-[28px]"><%= resource_icons[idx] || "article" %></span>
                 </div>
-                <p class="text-xs font-medium text-gray-700"><%= resource[:title] %></p>
+                <div class="flex flex-col justify-center min-w-0">
+                  <h4 class="text-xs font-bold text-gray-900 mb-1 line-clamp-1"><%= resource[:title] %></h4>
+                  <div class="flex items-center gap-2">
+                    <span class="text-[10px] text-gray-400 font-medium"><%= meta[:type] %> &bull; <%= meta[:time] %></span>
+                    <% if meta[:badge] %>
+                      <span class="w-1 h-1 rounded-full bg-gray-300"></span>
+                      <span class="text-[10px] text-cyan-500 font-bold"><%= meta[:badge] %></span>
+                    <% end %>
+                  </div>
+                </div>
               </div>
             <% end %>
           </div>
-        </div>
+        </section>
 
         <!-- Weekly Summary -->
-        <div class="bg-white rounded-xl border border-gray-100 p-4">
-          <h3 class="text-sm font-bold text-gray-900 mb-2">Weekly Summary</h3>
-          <p class="text-xs text-gray-500 leading-relaxed">
+        <div class="p-6 rounded-2xl border-2 border-dashed border-gray-200 flex flex-col items-center text-center">
+          <div class="w-12 h-12 bg-cyan-50 rounded-full flex items-center justify-center text-cyan-500 mb-3">
+            <span class="material-symbols-outlined">analytics</span>
+          </div>
+          <h4 class="font-bold text-sm text-gray-900 mb-1">Weekly Summary</h4>
+          <p class="text-xs text-gray-500 mb-4">
             You completed <span class="font-semibold text-gray-900"><%= @data[:weekly_summary][:completed_count] %></span> modules this week.
             <% if @data[:weekly_summary][:improvement_percentage] > 0 %>
-              That's <span class="font-semibold text-green-600"><%= @data[:weekly_summary][:improvement_percentage] %>%</span> more than last week!
+              That's <span class="font-semibold text-cyan-500"><%= @data[:weekly_summary][:improvement_percentage] %>%</span> more than last week!
             <% elsif @data[:weekly_summary][:improvement_percentage] < 0 %>
               That's <span class="font-semibold text-red-500"><%= @data[:weekly_summary][:improvement_percentage].abs %>%</span> less than last week.
             <% else %>
-              Same as last week — keep it up!
+              Same as last week &mdash; keep going!
             <% end %>
           </p>
-          <a href="#" class="text-[11px] text-cyan-600 font-medium hover:text-cyan-700 mt-2 inline-block">Check Detailed Stats</a>
+          <a href="#" class="text-xs font-bold text-cyan-500 hover:text-cyan-600">Check Detailed Stats</a>
         </div>
       </div>
     </div>
-  </div>
+  </main>
 </div>
