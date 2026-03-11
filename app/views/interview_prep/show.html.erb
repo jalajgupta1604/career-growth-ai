@@ -133,33 +133,30 @@
         <section>
           <div class="flex items-center justify-between mb-4">
             <h3 class="font-bold text-gray-900">Resources</h3>
-            <a href="#" class="text-xs font-bold text-cyan-500 hover:underline">View all</a>
+            <a href="#categories" class="text-xs font-bold text-cyan-500 hover:underline">View all</a>
           </div>
           <div class="space-y-4">
             <% resource_icons = ["database", "code_blocks", "groups"] %>
             <% resource_colors = ["bg-indigo-500", "bg-emerald-500", "bg-orange-500"] %>
-            <% resource_meta = [
-              { type: "Article", time: "12 min", badge: "New" },
-              { type: "Video", time: "24 min", badge: nil },
-              { type: "Guide", time: "8 min", badge: nil }
-            ] %>
             <% @data[:resources].each_with_index do |resource, idx| %>
-              <% meta = resource_meta[idx] || { type: "Article", time: "10 min", badge: nil } %>
-              <div class="flex gap-4 p-3 rounded-xl bg-white border border-gray-100 hover:shadow-md transition-all cursor-pointer">
+              <%= link_to interview_prep_lesson_path(resource[:lesson]), class: "flex gap-4 p-3 rounded-xl bg-white border border-gray-100 hover:shadow-md hover:border-cyan-200 transition-all" do %>
                 <div class="w-16 h-16 shrink-0 rounded-lg <%= resource_colors[idx] || 'bg-gray-200' %> flex items-center justify-center overflow-hidden">
                   <span class="material-symbols-outlined text-white text-[28px]"><%= resource_icons[idx] || "article" %></span>
                 </div>
                 <div class="flex flex-col justify-center min-w-0">
                   <h4 class="text-xs font-bold text-gray-900 mb-1 line-clamp-1"><%= resource[:title] %></h4>
                   <div class="flex items-center gap-2">
-                    <span class="text-[10px] text-gray-400 font-medium"><%= meta[:type] %> &bull; <%= meta[:time] %></span>
-                    <% if meta[:badge] %>
+                    <span class="text-[10px] text-gray-400 font-medium"><%= resource[:description] %> &bull; <%= resource[:duration] %> min</span>
+                    <% if resource[:status] == "completed" %>
                       <span class="w-1 h-1 rounded-full bg-gray-300"></span>
-                      <span class="text-[10px] text-cyan-500 font-bold"><%= meta[:badge] %></span>
+                      <span class="text-[10px] text-green-500 font-bold">Completed</span>
+                    <% elsif resource[:status] == "not_started" %>
+                      <span class="w-1 h-1 rounded-full bg-gray-300"></span>
+                      <span class="text-[10px] text-cyan-500 font-bold">Start</span>
                     <% end %>
                   </div>
                 </div>
-              </div>
+              <% end %>
             <% end %>
           </div>
         </section>

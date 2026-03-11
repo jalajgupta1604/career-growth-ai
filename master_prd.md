@@ -57,7 +57,10 @@ professionals
   Phase 4       Month 12--18      AI-Powered    Enterprise + B2B + API
                                   Scale
 
-  Phase 5       Month 18--24      Marketplace   Marketplace + API +
+  Phase 5       Month 18--24      Interview     Engagement + Gamification
+                                  Mastery       + AI Simulation
+
+  Phase 6       Month 24--30      Marketplace   Marketplace + API +
                                   & Community   Community
   -----------------------------------------------------------------------
 
@@ -198,15 +201,103 @@ Career Tool → Salary Intelligence Platform
 
 ## Objectives
 
+-   Transform interview prep into the most comprehensive AI-powered interview training platform in India
+-   Drive daily active usage through gamification and streaks
+-   Increase Pro conversion via premium interview features
+-   Build company-specific intelligence from community data
+
+## Features
+
+### 8.1 AI Interview Simulator
+
+-   Conversational AI interviewer that asks follow-up questions based on user answers
+-   Role-specific interview modes: System Design, DSA, Behavioral, HR
+-   Company-specific interview styles (Google, Amazon, Microsoft, Flipkart, etc.)
+-   Real-time feedback on answer quality, communication clarity, and technical depth
+-   Post-interview scorecard with detailed breakdown and improvement suggestions
+
+### 8.2 Interview Readiness Score
+
+-   Aggregate score combining: lessons completed, mock interview performance, practice question accuracy, weak area coverage
+-   "You are X% ready for [Company/Role]" widget on dashboard
+-   Actionable recommendations to improve score (e.g., "Complete 2 more System Design lessons to reach 80%")
+-   Score history graph tracking improvement over time
+
+### 8.3 Daily Challenge & Streak System
+
+-   One question per day (rotating: DSA, system design, behavioral)
+-   Streak counter with visual fire/badge indicators
+-   Gamification: badges for 7-day, 30-day, 100-day streaks
+-   Weekly leaderboard among users at similar experience level
+-   Push/email notifications to maintain streaks
+
+### 8.4 Company-Specific Interview Packs
+
+-   Curated prep paths for top 20 companies (MAANG, Flipkart, Razorpay, Swiggy, etc.)
+-   Real interview questions sourced from community (Interview Experience data)
+-   Company culture fit tips and common behavioral question patterns
+-   Difficulty calibration per company (e.g., Google L4 vs Amazon SDE-2)
+-   Success rate statistics per company from platform data
+
+### 8.5 Spaced Repetition & Smart Revision
+
+-   Track which questions users got wrong or struggled with
+-   Automatically resurface weak topics at optimal intervals (SM-2 algorithm)
+-   Daily "5-minute revision" mode with previously failed questions
+-   Weakness heatmap showing topics that need more practice
+
+### 8.6 Coding Playground
+
+-   Embedded code editor within DSA lessons (Monaco editor)
+-   Support for Python, JavaScript, Java, C++
+-   AI evaluates code for correctness, time/space complexity, and code quality
+-   Progressive hints system that reveals approach step-by-step
+-   Test cases with expected vs actual output comparison
+
+### 8.7 Peer Practice & Study Groups
+
+-   Match users for live mock interview practice with each other
+-   Peer feedback and rating system after each session
+-   Study groups by target company or role
+-   Leaderboard by category or overall score
+
+### 8.8 Post-Interview Debrief AI
+
+-   User logs what questions were asked in a real interview
+-   AI analyzes: what went well, what to improve, model answers for questions they struggled with
+-   Company-specific tips based on aggregated debrief data
+-   Feeds back into personalized prep plan automatically
+
+## Revenue Strategy
+
+-   AI Interview Simulator: 3 free sessions/month, unlimited for Pro
+-   Company-Specific Packs: ₹299 per pack or included in Pro
+-   Coding Playground: Basic free, AI evaluation for Pro only
+-   Peer Practice: Free matching, premium scheduling and recording for Pro
+-   Daily Challenge: Free, but streak recovery (miss a day) costs ₹49 or Pro
+
+## Phase 5 Metrics
+
+-   Daily active user ratio > 30%
+-   Average session duration > 15 minutes
+-   70% of Pro users engage with interview prep weekly
+-   50,000+ daily challenge attempts/month
+-   Interview success rate improvement > 40% for active users
+
+------------------------------------------------------------------------
+
+# 9. Phase 6 Requirements (Month 24--30)
+
+## Objectives
+
 -   Launch recruitment marketplace connecting vetted candidates with employers
 -   Monetize platform intelligence via public API for HR tech ecosystem
--   Expand to Southeast Asia (starting with Singapore, UAE)
 -   Build community-driven career growth features
 -   Achieve Series A readiness with strong unit economics
 
 ## Features
 
-### 8.1 Talent Marketplace
+### 9.1 Talent Marketplace
 
 -   Employer Portal: Companies can post roles, search candidate profiles (anonymized until mutual interest)
 -   Smart Matching: AI ranks candidates by skill fit, salary alignment, and career trajectory
@@ -214,7 +305,7 @@ Career Tool → Salary Intelligence Platform
 -   Verified Skills Badges: AI-assessed skill badges from mock interviews and resume analysis displayed on profiles
 -   Salary Transparency: Roles show verified salary ranges from crowdsourced data
 
-### 8.2 Public API & Developer Platform
+### 9.2 Public API & Developer Platform
 
 -   Salary Intelligence API: Role + city + experience → salary range (REST & GraphQL)
 -   Skill Demand API: Real-time skill demand trends by market and role
@@ -222,14 +313,14 @@ Career Tool → Salary Intelligence Platform
 -   API Key management dashboard with usage analytics and rate limiting
 -   Tiered pricing: Free (100 calls/month), Starter (₹4,999/month), Enterprise (custom)
 
-### 8.3 Community & Social Features
+### 9.3 Community & Social Features
 
 -   Career Growth Feed: Users share salary milestones, job switches, and learnings (anonymized)
 -   Mentor Matching: Senior professionals opt-in to mentor juniors based on role and skill overlap
 -   Company Reviews: Verified employee reviews on salary accuracy, growth opportunities, interview process
 -   Discussion Forums: Role-specific Q&A boards (e.g., "Backend Engineers", "Data Analysts")
 
-### 8.4 Advanced AI Features
+### 9.4 Advanced AI Features
 
 -   Career Path Simulator: "What-if" scenarios (e.g., "If I learn Kubernetes + switch to Bangalore, my salary could be ₹X")
 -   Salary Trajectory Forecasting: 3-year salary projection based on skill plan and market trends
@@ -243,7 +334,7 @@ Career Tool → Salary Intelligence Platform
 -   Premium Community: ₹199/month add-on for mentor access and exclusive content
 -   Resume Builder: Included in Pro, ₹299 one-time for free users
 
-## Phase 5 Metrics
+## Phase 6 Metrics
 
 -   1,00,000 users
 -   10,000 subscribers
@@ -254,7 +345,7 @@ Career Tool → Salary Intelligence Platform
 
 ------------------------------------------------------------------------
 
-# 9. System Architecture
+# 10. System Architecture
 
 Frontend: - Rails 7 + Hotwire - TailwindCSS
 
@@ -271,7 +362,7 @@ Monitoring: - Sentry - NewRelic - Lograge
 
 ------------------------------------------------------------------------
 
-# 10. Data & Security
+# 11. Data & Security
 
 -   OAuth-only authentication
 -   Private S3 storage
@@ -282,7 +373,7 @@ Monitoring: - Sentry - NewRelic - Lograge
 
 ------------------------------------------------------------------------
 
-# 11. 24-Month Strategic Outcome
+# 12. 30-Month Strategic Outcome
 
 By end of Phase 3, platform owns:
 
@@ -301,6 +392,14 @@ By end of Phase 4, platform additionally owns:
 -   B2B client base with recurring enterprise revenue
 
 By end of Phase 5, platform additionally owns:
+
+-   India's most comprehensive AI interview training system
+-   Company-specific interview intelligence database
+-   High daily engagement via gamification and streaks
+-   Peer practice network creating organic growth
+-   Coding assessment and evaluation engine
+
+By end of Phase 6, platform additionally owns:
 
 -   Two-sided talent marketplace with employer revenue
 -   Public API platform with external developer adoption

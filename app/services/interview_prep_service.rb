@@ -131,11 +131,19 @@ class InterviewPrepService
   end
 
   def resources
-    [
-      { title: "Scaling Databases: LB Level", icon: "database", color: "cyan" },
-      { title: "Big-O Complexity Mastery", icon: "chart", color: "green" },
-      { title: "Handling Conflict Situations", icon: "users", color: "orange" }
-    ]
+    categories = PrepCategory.ordered.includes(:prep_lessons).limit(3)
+    categories.map do |cat|
+      first_lesson = cat.prep_lessons.first
+      next nil unless first_lesson
+
+      {
+        title: first_lesson.title,
+        description: cat.name,
+        lesson: first_lesson,
+        duration: first_lesson.duration_minutes,
+        status: first_lesson.status_for(@user)
+      }
+    end.compact
   end
 
   def interview_questions_schema
