@@ -56,6 +56,9 @@ professionals
 
   Phase 4       Month 12--18      AI-Powered    Enterprise + B2B + API
                                   Scale
+
+  Phase 5       Month 18--24      Marketplace   Marketplace + API +
+                                  & Community   Community
   -----------------------------------------------------------------------
 
 ------------------------------------------------------------------------
@@ -191,6 +194,66 @@ Career Tool → Salary Intelligence Platform
 
 ------------------------------------------------------------------------
 
+# 8. Phase 5 Requirements (Month 18--24)
+
+## Objectives
+
+-   Launch recruitment marketplace connecting vetted candidates with employers
+-   Monetize platform intelligence via public API for HR tech ecosystem
+-   Expand to Southeast Asia (starting with Singapore, UAE)
+-   Build community-driven career growth features
+-   Achieve Series A readiness with strong unit economics
+
+## Features
+
+### 8.1 Talent Marketplace
+
+-   Employer Portal: Companies can post roles, search candidate profiles (anonymized until mutual interest)
+-   Smart Matching: AI ranks candidates by skill fit, salary alignment, and career trajectory
+-   Application Tracker: Candidates track applications, interviews, and offers in one place
+-   Verified Skills Badges: AI-assessed skill badges from mock interviews and resume analysis displayed on profiles
+-   Salary Transparency: Roles show verified salary ranges from crowdsourced data
+
+### 8.2 Public API & Developer Platform
+
+-   Salary Intelligence API: Role + city + experience → salary range (REST & GraphQL)
+-   Skill Demand API: Real-time skill demand trends by market and role
+-   Resume Parsing API: Upload resume → structured JSON (skills, experience, certifications)
+-   API Key management dashboard with usage analytics and rate limiting
+-   Tiered pricing: Free (100 calls/month), Starter (₹4,999/month), Enterprise (custom)
+
+### 8.3 Community & Social Features
+
+-   Career Growth Feed: Users share salary milestones, job switches, and learnings (anonymized)
+-   Mentor Matching: Senior professionals opt-in to mentor juniors based on role and skill overlap
+-   Company Reviews: Verified employee reviews on salary accuracy, growth opportunities, interview process
+-   Discussion Forums: Role-specific Q&A boards (e.g., "Backend Engineers", "Data Analysts")
+
+### 8.4 Advanced AI Features
+
+-   Career Path Simulator: "What-if" scenarios (e.g., "If I learn Kubernetes + switch to Bangalore, my salary could be ₹X")
+-   Salary Trajectory Forecasting: 3-year salary projection based on skill plan and market trends
+-   AI Resume Builder: Generate ATS-optimized resumes from profile data with role-specific tailoring
+-   Interview Debrief AI: Post-interview analysis — what went well, what to improve, company-specific tips
+
+## Revenue Strategy
+
+-   Talent Marketplace: ₹15,000--₹50,000 per successful hire (employer pays)
+-   API Licensing: ₹4,999--₹49,999/month tiered plans
+-   Premium Community: ₹199/month add-on for mentor access and exclusive content
+-   Resume Builder: Included in Pro, ₹299 one-time for free users
+
+## Phase 5 Metrics
+
+-   1,00,000 users
+-   10,000 subscribers
+-   50+ employer accounts on marketplace
+-   20+ API customers
+-   ₹50L--₹1Cr MRR target
+-   Series A fundraise readiness
+
+------------------------------------------------------------------------
+
 # 9. System Architecture
 
 Frontend: - Rails 7 + Hotwire - TailwindCSS
@@ -219,7 +282,7 @@ Monitoring: - Sentry - NewRelic - Lograge
 
 ------------------------------------------------------------------------
 
-# 11. 18-Month Strategic Outcome
+# 11. 24-Month Strategic Outcome
 
 By end of Phase 3, platform owns:
 
@@ -237,13 +300,21 @@ By end of Phase 4, platform additionally owns:
 -   Conversational AI career coaching system
 -   B2B client base with recurring enterprise revenue
 
+By end of Phase 5, platform additionally owns:
+
+-   Two-sided talent marketplace with employer revenue
+-   Public API platform with external developer adoption
+-   Community-driven content and mentorship network
+-   AI resume builder and career path simulation engine
+-   Verified skills badge ecosystem trusted by employers
+
 Positioned for:
 
--   Series A fundraising
--   Southeast Asia expansion
--   Recruitment marketplace
+-   Series A fundraising (₹5--10Cr target)
+-   Recruitment marketplace with hiring fee revenue
 -   API-as-a-product for HR tech ecosystem
--   Strategic partnerships with job portals (Naukri, LinkedIn)
+-   Strategic partnerships with job portals (Naukri, LinkedIn, Indeed)
+-   Potential acqui-hire interest from major HR tech players
 
 ------------------------------------------------------------------------
 
