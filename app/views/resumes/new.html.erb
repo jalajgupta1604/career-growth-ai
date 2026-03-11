@@ -64,24 +64,26 @@
 
       <%= form_with(model: @resume, url: resumes_path, method: :post, multipart: true, class: "mt-8 space-y-6") do |f| %>
         <!-- Upload Zone -->
-        <div id="drop-zone" class="border-2 border-dashed border-cyan-200 bg-cyan-50/30 rounded-2xl p-10 text-center hover:border-cyan-400 transition-all cursor-pointer relative">
-          <div class="w-16 h-16 bg-cyan-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg class="w-8 h-8 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-            </svg>
+        <div data-controller="file-drop">
+          <div data-file-drop-target="zone" class="border-2 border-dashed border-cyan-200 bg-cyan-50/30 rounded-2xl p-10 text-center hover:border-cyan-400 transition-all cursor-pointer relative">
+            <div class="w-16 h-16 bg-cyan-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg class="w-8 h-8 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+              </svg>
+            </div>
+            <p class="text-gray-700 font-semibold">
+              <label for="resume_file" class="cursor-pointer text-cyan-600 hover:text-cyan-700">Click to upload</label>
+              or drag and drop
+            </p>
+            <p class="mt-2 text-sm text-gray-400">PDF or DOCX (Max 10MB)</p>
+            <div data-file-drop-target="fileName" class="mt-3 hidden">
+              <span class="inline-flex items-center gap-2 px-4 py-2 bg-cyan-100 text-cyan-700 rounded-lg text-sm font-medium">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>
+                <span data-file-drop-target="fileNameText"></span>
+              </span>
+            </div>
+            <%= f.file_field :file, accept: ".pdf,.docx", id: "resume_file", class: "sr-only", data: { file_drop_target: "input", action: "change->file-drop#selected" } %>
           </div>
-          <p class="text-gray-700 font-semibold">
-            <label for="resume_file" class="cursor-pointer text-cyan-600 hover:text-cyan-700">Click to upload</label>
-            or drag and drop
-          </p>
-          <p class="mt-2 text-sm text-gray-400">PDF or DOCX (Max 10MB)</p>
-          <div id="file-name" class="mt-3 hidden">
-            <span class="inline-flex items-center gap-2 px-4 py-2 bg-cyan-100 text-cyan-700 rounded-lg text-sm font-medium">
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>
-              <span id="file-name-text"></span>
-            </span>
-          </div>
-          <%= f.file_field :file, accept: ".pdf,.docx", id: "resume_file", class: "sr-only", onchange: "showFileName(this)" %>
         </div>
 
         <!-- What we extract -->
@@ -150,11 +152,3 @@
   </div>
 </div>
 
-<script>
-  function showFileName(input) {
-    if (input.files && input.files[0]) {
-      document.getElementById('file-name').classList.remove('hidden');
-      document.getElementById('file-name-text').textContent = input.files[0].name;
-    }
-  }
-</script>
