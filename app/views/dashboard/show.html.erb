@@ -184,29 +184,37 @@
 
       <!-- Upload / Change Resume -->
       <div>
-        <div class="bg-cyan-50 border-2 border-dashed border-cyan-200 rounded-xl p-6 text-center hover:border-cyan-400 transition-colors">
-          <div class="w-12 h-12 bg-cyan-100 rounded-full flex items-center justify-center mx-auto mb-3">
-            <svg class="w-6 h-6 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
-          </div>
-          <% if @resume %>
-            <p class="text-sm font-semibold text-gray-900 mb-1">Change Resume</p>
-            <p class="text-xs text-gray-500 mb-4">Upload a new resume to update your skills profile. Your next report will use this resume.</p>
-          <% else %>
-            <p class="text-sm font-semibold text-gray-900 mb-1">Upload Resume</p>
-            <p class="text-xs text-gray-500 mb-4">Upload your resume for AI-powered skill extraction and career analysis.</p>
-          <% end %>
-
-          <%= form_with(url: resumes_path, method: :post, multipart: true, class: "space-y-3") do |f| %>
-            <div class="relative">
-              <label for="dashboard_resume_file" class="block w-full px-4 py-3 bg-white border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
-                <span id="dashboard-file-label" class="text-sm text-gray-400">Choose PDF or DOCX...</span>
-              </label>
-              <input type="file" name="resume[file]" id="dashboard_resume_file" accept=".pdf,.docx" class="sr-only" onchange="document.getElementById('dashboard-file-label').textContent = this.files[0] ? this.files[0].name : 'Choose PDF or DOCX...'">
+        <div data-controller="file-drop">
+          <div data-file-drop-target="zone" class="bg-cyan-50 border-2 border-dashed border-cyan-200 rounded-xl p-6 text-center hover:border-cyan-400 transition-colors">
+            <div class="w-12 h-12 bg-cyan-100 rounded-full flex items-center justify-center mx-auto mb-3">
+              <svg class="w-6 h-6 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
             </div>
-            <%= f.submit "Upload & Analyze", class: "w-full py-2.5 bg-cyan-500 text-white text-sm font-semibold rounded-lg hover:bg-cyan-600 transition-colors cursor-pointer" %>
-          <% end %>
+            <% if @resume %>
+              <p class="text-sm font-semibold text-gray-900 mb-1">Change Resume</p>
+              <p class="text-xs text-gray-500 mb-4">Upload a new resume to update your skills profile. Your next report will use this resume.</p>
+            <% else %>
+              <p class="text-sm font-semibold text-gray-900 mb-1">Upload Resume</p>
+              <p class="text-xs text-gray-500 mb-4">Upload your resume for AI-powered skill extraction and career analysis.</p>
+            <% end %>
 
-          <p class="mt-3 text-xs text-gray-400">PDF or DOCX up to 10MB</p>
+            <%= form_with(url: resumes_path, method: :post, multipart: true, class: "space-y-3") do |f| %>
+              <div class="relative">
+                <label for="dashboard_resume_file" class="block w-full px-4 py-3 bg-white border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                  <span class="text-sm text-gray-400">Choose PDF or DOCX...</span>
+                </label>
+                <input type="file" name="resume[file]" id="dashboard_resume_file" accept=".pdf,.docx" class="sr-only" data-file-drop-target="input" data-action="change->file-drop#selected">
+              </div>
+              <div data-file-drop-target="fileName" class="hidden">
+                <span class="inline-flex items-center gap-2 px-4 py-2 bg-cyan-100 text-cyan-700 rounded-lg text-sm font-medium">
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>
+                  <span data-file-drop-target="fileNameText"></span>
+                </span>
+              </div>
+              <%= f.submit "Upload & Analyze", class: "w-full py-2.5 bg-cyan-500 text-white text-sm font-semibold rounded-lg hover:bg-cyan-600 transition-colors cursor-pointer" %>
+            <% end %>
+
+            <p class="mt-3 text-xs text-gray-400">PDF or DOCX up to 10MB &mdash; drop here or click to browse</p>
+          </div>
         </div>
 
         <% if @resume %>
