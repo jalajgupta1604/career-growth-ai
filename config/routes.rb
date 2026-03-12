@@ -34,6 +34,18 @@ Rails.application.routes.draw do
   post "interview-prep/lessons/:lesson_id/start", to: "interview_prep#start_lesson", as: :interview_prep_start_lesson
   post "interview-prep/lessons/:lesson_id/complete", to: "interview_prep#complete_lesson", as: :interview_prep_complete_lesson
 
+  # Daily Challenge & Streaks
+  resource :daily_challenge, only: [:show] do
+    post :submit
+  end
+
+  # Company Interview Packs
+  get "company-packs", to: "company_packs#index", as: :company_packs
+  get "company-packs/:slug", to: "company_packs#show", as: :company_pack
+
+  # Interview Debriefs
+  resources :interview_debriefs, only: [:index, :new, :create, :show]
+
   # Payments (legacy)
   resources :payments, only: [:create] do
     collection do

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_10_141004) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_12_124759) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -53,6 +53,19 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_10_141004) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_career_reports_on_user_id"
+  end
+
+  create_table "challenge_attempts", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "daily_challenge_id", null: false
+    t.jsonb "answer_data", default: {}
+    t.integer "score", default: 0
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["daily_challenge_id"], name: "index_challenge_attempts_on_daily_challenge_id"
+    t.index ["user_id", "daily_challenge_id"], name: "index_challenge_attempts_on_user_id_and_daily_challenge_id", unique: true
+    t.index ["user_id"], name: "index_challenge_attempts_on_user_id"
   end
 
   create_table "coach_conversations", force: :cascade do |t|
@@ -125,6 +138,46 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_10_141004) do
     t.index ["company_id"], name: "index_company_members_on_company_id"
     t.index ["role"], name: "index_company_members_on_role"
     t.index ["user_id"], name: "index_company_members_on_user_id"
+  end
+
+  create_table "company_packs", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "slug", null: false
+    t.text "description"
+    t.string "logo_icon"
+    t.string "difficulty_level", default: "medium"
+    t.jsonb "interview_rounds", default: []
+    t.jsonb "tips_data", default: []
+    t.jsonb "questions_data", default: []
+    t.integer "position", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["slug"], name: "index_company_packs_on_slug", unique: true
+  end
+
+  create_table "daily_challenges", force: :cascade do |t|
+    t.date "challenge_date", null: false
+    t.string "challenge_type", null: false
+    t.jsonb "question_data", default: {}, null: false
+    t.string "difficulty", default: "medium", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["challenge_date"], name: "index_daily_challenges_on_challenge_date", unique: true
+  end
+
+  create_table "interview_debriefs", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "company_name", null: false
+    t.string "role_applied"
+    t.date "interview_date"
+    t.jsonb "questions_data", default: []
+    t.text "user_notes"
+    t.jsonb "ai_analysis", default: {}
+    t.integer "status", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "created_at"], name: "index_interview_debriefs_on_user_id_and_created_at"
+    t.index ["user_id"], name: "index_interview_debriefs_on_user_id"
   end
 
   create_table "interview_experiences", force: :cascade do |t|
@@ -340,6 +393,20 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_10_141004) do
     t.index ["prep_category_id"], name: "index_prep_lessons_on_prep_category_id"
   end
 
+  create_table "readiness_scores", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.float "overall_score", default: 0.0
+    t.jsonb "category_scores", default: {}
+    t.float "mock_interview_score", default: 0.0
+    t.float "lesson_score", default: 0.0
+    t.float "streak_score", default: 0.0
+    t.datetime "calculated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "calculated_at"], name: "index_readiness_scores_on_user_id_and_calculated_at"
+    t.index ["user_id"], name: "index_readiness_scores_on_user_id"
+  end
+
   create_table "referral_rewards", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "referred_user_id", null: false
@@ -456,6 +523,16 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_10_141004) do
     t.index ["user_id"], name: "index_subscriptions_on_user_id", unique: true
   end
 
+  create_table "user_streaks", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.integer "current_streak", default: 0, null: false
+    t.integer "longest_streak", default: 0, null: false
+    t.date "last_completed_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_user_streaks_on_user_id", unique: true
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -483,11 +560,14 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_10_141004) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "career_reports", "users"
+  add_foreign_key "challenge_attempts", "daily_challenges"
+  add_foreign_key "challenge_attempts", "users"
   add_foreign_key "coach_conversations", "users"
   add_foreign_key "coach_messages", "coach_conversations"
   add_foreign_key "company_analytics_snapshots", "companies"
   add_foreign_key "company_members", "companies"
   add_foreign_key "company_members", "users"
+  add_foreign_key "interview_debriefs", "users"
   add_foreign_key "interview_experiences", "users"
   add_foreign_key "job_recommendations", "job_listings"
   add_foreign_key "job_recommendations", "users"
@@ -501,10 +581,12 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_10_141004) do
   add_foreign_key "payments", "users"
   add_foreign_key "peer_benchmarks", "users"
   add_foreign_key "prep_lessons", "prep_categories"
+  add_foreign_key "readiness_scores", "users"
   add_foreign_key "referral_rewards", "users"
   add_foreign_key "referral_rewards", "users", column: "referred_user_id"
   add_foreign_key "resumes", "users"
   add_foreign_key "role_skill_mappings", "skills"
   add_foreign_key "salary_submissions", "users"
   add_foreign_key "subscriptions", "users"
+  add_foreign_key "user_streaks", "users"
 end

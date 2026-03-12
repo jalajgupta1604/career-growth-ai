@@ -1,0 +1,191 @@
+<div class="min-h-screen bg-gray-50">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">Daily Challenge</h1>
+        <p class="mt-1 text-sm text-gray-500"><%= Date.current.strftime("%A, %B %d, %Y") %></p>
+      </div>
+      <%= link_to interview_prep_path, class: "text-sm text-cyan-600 font-medium hover:text-cyan-700" do %>
+        <span class="inline-flex items-center gap-1">
+          <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+          Back to Prep
+        </span>
+      <% end %>
+    </div>
+
+    <!-- Streak Banner -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 rounded-full flex items-center justify-center <%= @streak[:current_streak] > 0 ? 'bg-orange-100' : 'bg-gray-100' %>">
+            <span class="material-symbols-outlined text-[28px] <%= @streak[:current_streak] > 0 ? 'text-orange-500' : 'text-gray-400' %>">local_fire_department</span>
+          </div>
+          <div>
+            <p class="text-2xl font-bold text-gray-900"><%= @streak[:current_streak] %> day streak</p>
+            <p class="text-sm text-gray-500">Longest: <%= @streak[:longest_streak] %> days</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-6 text-center">
+          <div>
+            <p class="text-lg font-bold text-gray-900"><%= @recent_attempts.size %></p>
+            <p class="text-xs text-gray-400">This week</p>
+          </div>
+          <div>
+            <p class="text-lg font-bold text-gray-900"><%= @recent_attempts.select(&:correct?).size %></p>
+            <p class="text-xs text-gray-400">Correct</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Challenge Card -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-8 mb-6">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-10 h-10 rounded-lg flex items-center justify-center
+          <%= case @challenge.challenge_type
+              when 'dsa' then 'bg-indigo-100'
+              when 'system_design' then 'bg-emerald-100'
+              else 'bg-orange-100'
+              end %>">
+          <span class="material-symbols-outlined text-[22px]
+            <%= case @challenge.challenge_type
+                when 'dsa' then 'text-indigo-500'
+                when 'system_design' then 'text-emerald-500'
+                else 'text-orange-500'
+                end %>">
+            <%= case @challenge.challenge_type
+                when 'dsa' then 'code'
+                when 'system_design' then 'account_tree'
+                else 'record_voice_over'
+                end %>
+          </span>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-gray-400"><%= @challenge.challenge_type.humanize %></span>
+            <span class="px-2 py-0.5 text-xs font-medium rounded-full
+              <%= case @challenge.difficulty
+                  when 'easy' then 'bg-green-50 text-green-600'
+                  when 'hard' then 'bg-red-50 text-red-600'
+                  else 'bg-yellow-50 text-yellow-600'
+                  end %>"><%= @challenge.difficulty.capitalize %></span>
+          </div>
+        </div>
+      </div>
+
+      <% question = @challenge.question_data %>
+      <h2 class="text-xl font-bold text-gray-900 mb-3"><%= question["question"] %></h2>
+      <% if question["context"].present? %>
+        <p class="text-sm text-gray-500 mb-6 leading-relaxed"><%= question["context"] %></p>
+      <% end %>
+
+      <% if @attempt %>
+        <!-- Already answered -->
+        <div class="mb-6">
+          <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Your Answer</p>
+          <div class="bg-gray-50 rounded-xl p-4 text-sm text-gray-700"><%= @attempt.answer_data["answer"] %></div>
+        </div>
+
+        <!-- Score -->
+        <div class="flex items-center gap-4 mb-6 p-4 rounded-xl <%= @attempt.correct? ? 'bg-green-50 border border-green-200' : 'bg-yellow-50 border border-yellow-200' %>">
+          <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg <%= @attempt.correct? ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' %>">
+            <%= @attempt.score %>/10
+          </div>
+          <div>
+            <p class="text-sm font-semibold <%= @attempt.correct? ? 'text-green-900' : 'text-yellow-900' %>"><%= @attempt.correct? ? "Great job!" : "Good effort!" %></p>
+            <p class="text-xs <%= @attempt.correct? ? 'text-green-700' : 'text-yellow-700' %>"><%= @attempt.answer_data.dig("feedback", "feedback") %></p>
+          </div>
+        </div>
+
+        <% feedback = @attempt.answer_data["feedback"] || {} %>
+        <% if feedback["strengths"].present? %>
+          <div class="mb-4">
+            <p class="text-xs font-bold text-green-600 uppercase tracking-wider mb-2">Strengths</p>
+            <ul class="space-y-1">
+              <% feedback["strengths"].each do |s| %>
+                <li class="flex items-start gap-2 text-sm text-gray-600">
+                  <span class="material-symbols-outlined text-green-500 text-[16px] mt-0.5 shrink-0">check</span>
+                  <%= s %>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <% if feedback["improvements"].present? %>
+          <div class="mb-4">
+            <p class="text-xs font-bold text-orange-600 uppercase tracking-wider mb-2">Areas to Improve</p>
+            <ul class="space-y-1">
+              <% feedback["improvements"].each do |s| %>
+                <li class="flex items-start gap-2 text-sm text-gray-600">
+                  <span class="material-symbols-outlined text-orange-500 text-[16px] mt-0.5 shrink-0">arrow_forward</span>
+                  <%= s %>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <!-- Ideal Answer -->
+        <% if question["ideal_answer"].present? %>
+          <div class="mt-6 bg-cyan-50 rounded-xl p-5">
+            <p class="text-xs font-bold text-cyan-700 uppercase tracking-wider mb-2">Model Answer</p>
+            <p class="text-sm text-cyan-800 leading-relaxed"><%= question["ideal_answer"] %></p>
+          </div>
+        <% end %>
+
+      <% else %>
+        <!-- Answer Form -->
+        <% if question["hints"].present? %>
+          <div class="mb-6" data-controller="accordion">
+            <button data-action="click->accordion#toggle" class="flex items-center gap-2 text-sm font-medium text-cyan-600 hover:text-cyan-700">
+              <span class="material-symbols-outlined text-[18px]">lightbulb</span>
+              Show Hints
+              <span data-accordion-target="icon" class="material-symbols-outlined text-[18px] transition-transform">expand_more</span>
+            </button>
+            <div data-accordion-target="content" class="hidden mt-3 space-y-2">
+              <% question["hints"].each_with_index do |hint, i| %>
+                <p class="text-sm text-gray-500 pl-4 border-l-2 border-cyan-200">Hint <%= i + 1 %>: <%= hint %></p>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+
+        <%= form_with url: submit_daily_challenge_path, method: :post, data: { controller: "loading-button", loading_button_text_value: "Evaluating...", action: "submit->loading-button#submit" } do |f| %>
+          <div class="mb-4">
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Your Answer</label>
+            <%= f.text_area :answer, rows: 6, class: "w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-900 focus:border-cyan-500 focus:ring-cyan-500 transition-colors resize-none", placeholder: "Type your answer here..." %>
+          </div>
+          <%= f.submit "Submit Answer", class: "w-full py-3 bg-cyan-500 text-white font-semibold rounded-xl hover:bg-cyan-600 transition-colors cursor-pointer" %>
+        <% end %>
+      <% end %>
+    </div>
+
+    <!-- Recent History -->
+    <% if @recent_attempts.any? %>
+      <div class="bg-white rounded-2xl border border-gray-100 p-6">
+        <h3 class="font-bold text-gray-900 mb-4">Recent Challenges</h3>
+        <div class="space-y-3">
+          <% @recent_attempts.each do |attempt| %>
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+              <div class="flex items-center gap-3">
+                <span class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold
+                  <%= attempt.correct? ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' %>">
+                  <%= attempt.score %>
+                </span>
+                <div>
+                  <p class="text-sm font-medium text-gray-900"><%= attempt.daily_challenge.challenge_type.humanize %></p>
+                  <p class="text-xs text-gray-400"><%= attempt.daily_challenge.challenge_date.strftime("%b %d") %> &bull; <%= attempt.daily_challenge.difficulty.capitalize %></p>
+                </div>
+              </div>
+              <span class="material-symbols-outlined text-[18px] <%= attempt.correct? ? 'text-green-500' : 'text-yellow-500' %>">
+                <%= attempt.correct? ? 'check_circle' : 'info' %>
+              </span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

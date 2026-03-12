@@ -253,6 +253,67 @@ module GeminiPrompts
     PROMPT
   end
 
+  def daily_challenge_prompt(challenge_type, difficulty, role)
+    type_label = { "dsa" => "Data Structures & Algorithms", "system_design" => "System Design", "behavioral" => "Behavioral" }[challenge_type] || challenge_type
+    <<~PROMPT
+      You are a senior technical interviewer creating a daily interview challenge.
+
+      Generate ONE #{difficulty} #{type_label} interview question for a #{role}.
+
+      Provide:
+      - question: a clear, specific interview question
+      - context: 1-2 sentences explaining what this question tests
+      - hints: array of 2 progressive hints (don't give away the answer)
+      - ideal_answer: a comprehensive model answer (4-6 sentences)
+
+      Make it realistic for Indian tech interviews. Return well-structured JSON only.
+    PROMPT
+  end
+
+  def daily_challenge_feedback_prompt(question_data, user_answer)
+    <<~PROMPT
+      You are a senior technical interviewer evaluating a candidate's answer to a daily challenge.
+
+      Question: #{question_data["question"]}
+      Context: #{question_data["context"]}
+      Ideal Answer: #{question_data["ideal_answer"]}
+
+      Candidate's Answer: #{user_answer}
+
+      Evaluate and provide:
+      - score: number from 1-10
+      - feedback: 2-3 sentences of constructive feedback
+      - strengths: array of 1-3 things done well
+      - improvements: array of 1-3 areas to improve
+
+      Be encouraging but honest. Return well-structured JSON only.
+    PROMPT
+  end
+
+  def interview_debrief_prompt(company_name, role, questions_text, user_notes)
+    <<~PROMPT
+      You are an expert interview coach analyzing a candidate's real interview experience.
+
+      Company: #{company_name}
+      Role: #{role}
+      Questions asked:
+      - #{questions_text}
+
+      Candidate's notes: #{user_notes.presence || "None provided"}
+
+      Analyze this interview and provide:
+      - overall_assessment: 2-3 sentence assessment of the interview difficulty and pattern
+      - difficulty_rating: one of "Easy", "Medium", "Hard", "Very Hard"
+      - question_analysis: for each question provide category, difficulty, a model_answer (3-5 sentences), and specific tips
+      - strengths_detected: array of 2-3 strengths this interview tested
+      - areas_to_improve: array of 2-3 areas to focus on
+      - prep_recommendations: array of 3-4 specific study recommendations
+      - company_insights: 2-3 sentences about this company's interview pattern/culture
+
+      Be specific to #{company_name} and the Indian tech market. Return well-structured JSON only.
+    PROMPT
+  end
+
   def interview_questions_prompt(category_name, topic, difficulty, role)
     <<~PROMPT
       You are a senior technical interviewer at a top Indian tech company.

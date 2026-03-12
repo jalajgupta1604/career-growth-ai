@@ -1,0 +1,45 @@
+<div class="min-h-screen bg-gray-50">
+  <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">Log Interview Debrief</h1>
+      <p class="mt-1 text-sm text-gray-500">Enter the details of your interview and our AI will analyze it for you.</p>
+    </div>
+
+    <%= form_with model: @debrief, url: interview_debriefs_path, class: "space-y-6", data: { controller: "loading-button", loading_button_text_value: "Analyzing Interview...", action: "submit->loading-button#submit" } do |f| %>
+      <div class="bg-white rounded-2xl border border-gray-100 p-8 space-y-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div>
+            <%= f.label :company_name, "Company Name", class: "block text-sm font-semibold text-gray-700 mb-1" %>
+            <%= f.text_field :company_name, class: "w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-900 focus:border-cyan-500 focus:ring-cyan-500 transition-colors", placeholder: "e.g. Google, Amazon, Flipkart", required: true %>
+          </div>
+          <div>
+            <%= f.label :role_applied, "Role Applied For", class: "block text-sm font-semibold text-gray-700 mb-1" %>
+            <%= f.text_field :role_applied, class: "w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-900 focus:border-cyan-500 focus:ring-cyan-500 transition-colors", placeholder: "e.g. SDE-2, Senior Backend Engineer" %>
+          </div>
+        </div>
+
+        <div>
+          <%= f.label :interview_date, "Interview Date", class: "block text-sm font-semibold text-gray-700 mb-1" %>
+          <%= f.date_field :interview_date, class: "w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-900 focus:border-cyan-500 focus:ring-cyan-500 transition-colors", value: Date.current %>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Questions Asked</label>
+          <p class="text-xs text-gray-400 mb-2">Enter each question on a new line. Include as many as you remember.</p>
+          <%= f.text_area :questions_text, rows: 8, class: "w-full px-4 py-3 border border-gray-200 rounded-lg text-sm text-gray-900 focus:border-cyan-500 focus:ring-cyan-500 transition-colors resize-none", placeholder: "Design a URL shortener like bit.ly\nHow would you handle a database migration with zero downtime?\nTell me about a time you led a difficult project..." %>
+        </div>
+
+        <div>
+          <%= f.label :user_notes, "Your Notes (optional)", class: "block text-sm font-semibold text-gray-700 mb-1" %>
+          <p class="text-xs text-gray-400 mb-2">How did you feel? What went well? What was tricky?</p>
+          <%= f.text_area :user_notes, rows: 4, class: "w-full px-4 py-3 border border-gray-200 rounded-lg text-sm text-gray-900 focus:border-cyan-500 focus:ring-cyan-500 transition-colors resize-none", placeholder: "I felt confident about the system design round but struggled with the DP question..." %>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between pt-2">
+        <%= link_to "Cancel", interview_debriefs_path, class: "text-sm font-medium text-gray-500 hover:text-gray-700" %>
+        <%= f.submit "Analyze Interview", class: "px-6 py-2.5 bg-cyan-500 text-white font-semibold rounded-lg hover:bg-cyan-600 transition-colors cursor-pointer" %>
+      </div>
+    <% end %>
+  </div>
+</div>

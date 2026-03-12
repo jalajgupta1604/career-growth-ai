@@ -35,15 +35,29 @@
         <span>Mock Interviews</span>
       <% end %>
 
-      <%= link_to interview_prep_path(anchor: "resources"), class: "flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors" do %>
-        <span class="material-symbols-outlined text-[24px]">library_books</span>
-        <span>Resources</span>
+      <%= link_to daily_challenge_path, class: "flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors" do %>
+        <span class="material-symbols-outlined text-[24px]">bolt</span>
+        <span>Daily Challenge</span>
+      <% end %>
+
+      <%= link_to company_packs_path, class: "flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors" do %>
+        <span class="material-symbols-outlined text-[24px]">business</span>
+        <span>Company Packs</span>
+      <% end %>
+
+      <%= link_to interview_debriefs_path, class: "flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors" do %>
+        <span class="material-symbols-outlined text-[24px]">rate_review</span>
+        <span>Debriefs</span>
       <% end %>
 
       <div class="pt-4 mt-4 border-t border-gray-100">
+        <%= link_to interview_prep_path(anchor: "resources"), class: "flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors" do %>
+          <span class="material-symbols-outlined text-[24px]">library_books</span>
+          <span>Resources</span>
+        <% end %>
         <%= link_to dashboard_path, class: "flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors" do %>
-          <span class="material-symbols-outlined text-[24px]">settings</span>
-          <span>Settings</span>
+          <span class="material-symbols-outlined text-[24px]">arrow_back</span>
+          <span>Main Dashboard</span>
         <% end %>
       </div>
     </nav>

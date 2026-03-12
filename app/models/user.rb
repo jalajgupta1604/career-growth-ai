@@ -20,6 +20,10 @@ class User < ApplicationRecord
   has_many :companies, through: :company_members
   has_one  :linkedin_profile, dependent: :destroy
   has_one  :subscription, dependent: :destroy
+  has_one  :user_streak, dependent: :destroy
+  has_many :challenge_attempts, dependent: :destroy
+  has_many :interview_debriefs, dependent: :destroy
+  has_many :readiness_scores, dependent: :destroy
   has_one_attached :profile_photo
 
   belongs_to :referrer, class_name: "User", foreign_key: :referred_by_id, optional: true

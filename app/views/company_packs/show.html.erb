@@ -1,0 +1,138 @@
+<div class="min-h-screen bg-gray-50">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-sm mb-6">
+      <%= link_to "Company Packs", company_packs_path, class: "text-gray-400 hover:text-cyan-500 transition-colors" %>
+      <span class="material-symbols-outlined text-gray-300 text-[16px]">chevron_right</span>
+      <span class="text-gray-900 font-medium"><%= @pack.name %></span>
+    </nav>
+
+    <!-- Header -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-8 mb-6">
+      <div class="flex items-start gap-5">
+        <div class="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center shrink-0">
+          <span class="material-symbols-outlined text-[32px] text-gray-500"><%= @pack.logo_icon || "business" %></span>
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold text-gray-900 mb-1"><%= @pack.name %> Interview Pack</h1>
+          <p class="text-sm text-gray-500 mb-3"><%= @pack.description %></p>
+          <div class="flex items-center gap-4 text-xs text-gray-400">
+            <span class="px-2 py-0.5 text-xs font-medium rounded-full
+              <%= case @pack.difficulty_level
+                  when 'easy' then 'bg-green-50 text-green-600'
+                  when 'hard' then 'bg-red-50 text-red-600'
+                  else 'bg-yellow-50 text-yellow-600'
+                  end %>"><%= @pack.difficulty_level&.capitalize || "Medium" %></span>
+            <span><%= @pack.question_count %> questions</span>
+            <span><%= @pack.round_count %> interview rounds</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Main Content -->
+      <div class="lg:col-span-2 space-y-6">
+        <!-- Interview Rounds -->
+        <% if @pack.interview_rounds.present? %>
+          <div class="bg-white rounded-2xl border border-gray-100 p-6">
+            <h2 class="text-lg font-bold text-gray-900 mb-4">Interview Process</h2>
+            <div class="space-y-4">
+              <% @pack.interview_rounds.each_with_index do |round, idx| %>
+                <div class="flex gap-4">
+                  <div class="flex flex-col items-center">
+                    <div class="w-8 h-8 bg-cyan-50 text-cyan-600 rounded-full flex items-center justify-center text-xs font-bold shrink-0"><%= idx + 1 %></div>
+                    <% unless idx == @pack.interview_rounds.size - 1 %>
+                      <div class="w-0.5 h-full bg-gray-100 mt-1"></div>
+                    <% end %>
+                  </div>
+                  <div class="pb-4">
+                    <h3 class="text-sm font-bold text-gray-900"><%= round["name"] %></h3>
+                    <p class="text-xs text-gray-500 mt-1"><%= round["description"] %></p>
+                    <% if round["duration"].present? %>
+                      <span class="inline-flex items-center gap-1 mt-2 text-xs text-gray-400">
+                        <span class="material-symbols-outlined text-[14px]">schedule</span>
+                        <%= round["duration"] %>
+                      </span>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- Common Questions -->
+        <% if @pack.questions_data.present? %>
+          <div class="bg-white rounded-2xl border border-gray-100 p-6">
+            <h2 class="text-lg font-bold text-gray-900 mb-4">Common Interview Questions</h2>
+            <div class="space-y-3">
+              <% @pack.questions_data.each_with_index do |q, idx| %>
+                <div class="border border-gray-100 rounded-xl overflow-hidden" data-controller="accordion">
+                  <button data-action="click->accordion#toggle" class="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors">
+                    <div class="flex items-center gap-3">
+                      <span class="w-7 h-7 bg-cyan-50 text-cyan-600 rounded-full flex items-center justify-center text-xs font-bold shrink-0"><%= idx + 1 %></span>
+                      <span class="text-sm font-medium text-gray-900"><%= q["question"] %></span>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0 ml-3">
+                      <% if q["category"].present? %>
+                        <span class="px-2 py-0.5 text-[11px] font-medium rounded-full bg-gray-100 text-gray-500"><%= q["category"] %></span>
+                      <% end %>
+                      <span data-accordion-target="icon" class="material-symbols-outlined text-gray-400 text-[20px] transition-transform">expand_more</span>
+                    </div>
+                  </button>
+                  <div data-accordion-target="content" class="hidden border-t border-gray-100 p-4 bg-gray-50">
+                    <% if q["tip"].present? %>
+                      <p class="text-xs font-bold text-cyan-600 uppercase tracking-wider mb-1">Tip</p>
+                      <p class="text-sm text-gray-600 mb-3"><%= q["tip"] %></p>
+                    <% end %>
+                    <% if q["model_answer"].present? %>
+                      <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Model Answer</p>
+                      <p class="text-sm text-gray-600 leading-relaxed"><%= q["model_answer"] %></p>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="space-y-6">
+        <!-- Tips -->
+        <% if @pack.tips_data.present? %>
+          <div class="bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-2xl p-6 text-white">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="material-symbols-outlined">lightbulb</span>
+              <span class="text-xs font-black uppercase tracking-widest">Interview Tips</span>
+            </div>
+            <ul class="space-y-3">
+              <% @pack.tips_data.each do |tip| %>
+                <li class="flex items-start gap-2 text-sm leading-relaxed">
+                  <span class="material-symbols-outlined text-cyan-200 text-[16px] mt-0.5 shrink-0">check</span>
+                  <%= tip %>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <!-- Actions -->
+        <div class="bg-white rounded-2xl border border-gray-100 p-6">
+          <h3 class="font-bold text-gray-900 mb-4">Practice Now</h3>
+          <div class="space-y-3">
+            <%= link_to new_mock_interview_path, class: "flex items-center gap-3 px-4 py-3 bg-cyan-50 text-cyan-600 rounded-xl hover:bg-cyan-100 transition-colors font-medium text-sm" do %>
+              <span class="material-symbols-outlined text-[20px]">videocam</span>
+              Start Mock Interview
+            <% end %>
+            <%= link_to daily_challenge_path, class: "flex items-center gap-3 px-4 py-3 bg-gray-50 text-gray-600 rounded-xl hover:bg-gray-100 transition-colors font-medium text-sm" do %>
+              <span class="material-symbols-outlined text-[20px]">bolt</span>
+              Daily Challenge
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

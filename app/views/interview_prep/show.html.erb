@@ -59,6 +59,61 @@
       </div>
     </header>
 
+    <!-- Phase 5: Quick Stats Row -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <!-- Readiness Score -->
+      <div class="bg-white rounded-2xl border border-gray-100 p-5">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Readiness</span>
+          <span class="material-symbols-outlined text-cyan-500 text-[20px]">speed</span>
+        </div>
+        <p class="text-3xl font-black text-gray-900"><%= @readiness.overall_score.round(0) %>%</p>
+        <p class="text-xs text-gray-400 mt-1">Interview ready</p>
+      </div>
+
+      <!-- Daily Challenge -->
+      <%= link_to daily_challenge_path, class: "bg-white rounded-2xl border border-gray-100 p-5 hover:border-cyan-200 transition-all" do %>
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Daily Challenge</span>
+          <% if @challenge_attempted %>
+            <span class="material-symbols-outlined text-green-500 text-[20px]">check_circle</span>
+          <% else %>
+            <span class="material-symbols-outlined text-orange-500 text-[20px]">bolt</span>
+          <% end %>
+        </div>
+        <p class="text-sm font-bold text-gray-900"><%= @challenge_attempted ? "Completed!" : @challenge.challenge_type.humanize %></p>
+        <p class="text-xs text-gray-400 mt-1"><%= @challenge_attempted ? "Come back tomorrow" : "Tap to attempt" %></p>
+      <% end %>
+
+      <!-- Streak -->
+      <div class="bg-white rounded-2xl border border-gray-100 p-5">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Streak</span>
+          <span class="material-symbols-outlined text-[20px] <%= @streak[:current_streak] > 0 ? 'text-orange-500' : 'text-gray-300' %>">local_fire_department</span>
+        </div>
+        <p class="text-3xl font-black text-gray-900"><%= @streak[:current_streak] %></p>
+        <p class="text-xs text-gray-400 mt-1">day<%= @streak[:current_streak] == 1 ? '' : 's' %> &bull; Best: <%= @streak[:longest_streak] %></p>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="bg-white rounded-2xl border border-gray-100 p-5">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Quick Links</span>
+          <span class="material-symbols-outlined text-gray-400 text-[20px]">widgets</span>
+        </div>
+        <div class="space-y-2">
+          <%= link_to company_packs_path, class: "flex items-center gap-2 text-sm text-gray-600 hover:text-cyan-600 transition-colors" do %>
+            <span class="material-symbols-outlined text-[16px]">business</span>
+            Company Packs
+          <% end %>
+          <%= link_to interview_debriefs_path, class: "flex items-center gap-2 text-sm text-gray-600 hover:text-cyan-600 transition-colors" do %>
+            <span class="material-symbols-outlined text-[16px]">rate_review</span>
+            Interview Debriefs
+          <% end %>
+        </div>
+      </div>
+    </div>
+
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <!-- Left Column (Main Prep) -->
       <div class="lg:col-span-2 space-y-8">

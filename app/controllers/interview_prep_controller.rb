@@ -4,6 +4,15 @@ class InterviewPrepController < ApplicationController
   def show
     service = InterviewPrepService.new(current_user)
     @data = service.dashboard_data
+
+    # Phase 5 features
+    readiness_service = ReadinessScoreService.new(current_user)
+    @readiness = readiness_service.current_score || readiness_service.calculate
+
+    challenge_service = DailyChallengeService.new(current_user)
+    @challenge = challenge_service.today_challenge
+    @streak = challenge_service.streak_data
+    @challenge_attempted = @challenge.attempted_by?(current_user)
   end
 
   def lesson

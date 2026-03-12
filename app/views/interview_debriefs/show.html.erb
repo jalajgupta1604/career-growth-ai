@@ -1,0 +1,197 @@
+<div class="min-h-screen bg-gray-50">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-sm mb-6">
+      <%= link_to "Debriefs", interview_debriefs_path, class: "text-gray-400 hover:text-cyan-500 transition-colors" %>
+      <span class="material-symbols-outlined text-gray-300 text-[16px]">chevron_right</span>
+      <span class="text-gray-900 font-medium"><%= @debrief.company_name %></span>
+    </nav>
+
+    <!-- Header -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-8 mb-6">
+      <div class="flex items-start justify-between">
+        <div class="flex items-start gap-5">
+          <div class="w-14 h-14 bg-gray-100 rounded-xl flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined text-[28px] text-gray-500">business</span>
+          </div>
+          <div>
+            <h1 class="text-2xl font-bold text-gray-900"><%= @debrief.company_name %></h1>
+            <p class="text-sm text-gray-500 mt-1"><%= @debrief.role_applied || "Role not specified" %></p>
+            <p class="text-xs text-gray-400 mt-1"><%= @debrief.interview_date&.strftime("%B %d, %Y") %> &bull; <%= ((@debrief.questions_data || []).size) %> questions logged</p>
+          </div>
+        </div>
+        <span class="px-3 py-1.5 text-xs font-semibold rounded-full
+          <%= case @debrief.status
+              when 'completed' then 'bg-green-50 text-green-600'
+              when 'analyzing' then 'bg-yellow-50 text-yellow-600'
+              when 'failed' then 'bg-red-50 text-red-600'
+              else 'bg-gray-100 text-gray-500'
+              end %>">
+          <%= @debrief.status.capitalize %>
+        </span>
+      </div>
+    </div>
+
+    <% if @debrief.analyzed? %>
+      <% analysis = @debrief.ai_analysis %>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Main Content -->
+        <div class="lg:col-span-2 space-y-6">
+          <!-- Overall Assessment -->
+          <div class="bg-white rounded-2xl border border-gray-100 p-6">
+            <div class="flex items-center gap-3 mb-4">
+              <span class="material-symbols-outlined text-cyan-500">analytics</span>
+              <h2 class="text-lg font-bold text-gray-900">Overall Assessment</h2>
+              <% if analysis["difficulty_rating"].present? %>
+                <span class="px-2 py-0.5 text-xs font-medium rounded-full bg-gray-100 text-gray-600"><%= analysis["difficulty_rating"] %></span>
+              <% end %>
+            </div>
+            <p class="text-sm text-gray-600 leading-relaxed"><%= analysis["overall_assessment"] %></p>
+          </div>
+
+          <!-- Question Analysis -->
+          <% if analysis["question_analysis"].present? %>
+            <div class="bg-white rounded-2xl border border-gray-100 p-6">
+              <h2 class="text-lg font-bold text-gray-900 mb-4">Question-by-Question Analysis</h2>
+              <div class="space-y-3">
+                <% analysis["question_analysis"].each_with_index do |qa, idx| %>
+                  <div class="border border-gray-100 rounded-xl overflow-hidden" data-controller="accordion">
+                    <button data-action="click->accordion#toggle" class="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors">
+                      <div class="flex items-center gap-3">
+                        <span class="w-7 h-7 bg-cyan-50 text-cyan-600 rounded-full flex items-center justify-center text-xs font-bold shrink-0"><%= idx + 1 %></span>
+                        <span class="text-sm font-medium text-gray-900"><%= qa["question"] %></span>
+                      </div>
+                      <div class="flex items-center gap-2 shrink-0 ml-3">
+                        <% if qa["category"].present? %>
+                          <span class="px-2 py-0.5 text-[11px] font-medium rounded-full bg-gray-100 text-gray-500"><%= qa["category"] %></span>
+                        <% end %>
+                        <span data-accordion-target="icon" class="material-symbols-outlined text-gray-400 text-[20px] transition-transform">expand_more</span>
+                      </div>
+                    </button>
+                    <div data-accordion-target="content" class="hidden border-t border-gray-100 p-4 bg-gray-50 space-y-3">
+                      <% if qa["model_answer"].present? %>
+                        <div>
+                          <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Model Answer</p>
+                          <p class="text-sm text-gray-600 leading-relaxed"><%= qa["model_answer"] %></p>
+                        </div>
+                      <% end %>
+                      <% if qa["tips"].present? %>
+                        <div>
+                          <p class="text-xs font-bold text-cyan-600 uppercase tracking-wider mb-1">Tips</p>
+                          <p class="text-sm text-gray-600"><%= qa["tips"] %></p>
+                        </div>
+                      <% end %>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="space-y-6">
+          <!-- Strengths -->
+          <% if analysis["strengths_detected"].present? %>
+            <div class="bg-white rounded-2xl border border-gray-100 p-6">
+              <h3 class="font-bold text-gray-900 mb-3 flex items-center gap-2">
+                <span class="material-symbols-outlined text-green-500 text-[20px]">thumb_up</span>
+                Strengths Tested
+              </h3>
+              <ul class="space-y-2">
+                <% analysis["strengths_detected"].each do |s| %>
+                  <li class="flex items-start gap-2 text-sm text-gray-600">
+                    <span class="material-symbols-outlined text-green-500 text-[16px] mt-0.5 shrink-0">check</span>
+                    <%= s %>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <!-- Areas to Improve -->
+          <% if analysis["areas_to_improve"].present? %>
+            <div class="bg-white rounded-2xl border border-gray-100 p-6">
+              <h3 class="font-bold text-gray-900 mb-3 flex items-center gap-2">
+                <span class="material-symbols-outlined text-orange-500 text-[20px]">trending_up</span>
+                Focus Areas
+              </h3>
+              <ul class="space-y-2">
+                <% analysis["areas_to_improve"].each do |s| %>
+                  <li class="flex items-start gap-2 text-sm text-gray-600">
+                    <span class="material-symbols-outlined text-orange-500 text-[16px] mt-0.5 shrink-0">arrow_forward</span>
+                    <%= s %>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <!-- Prep Recommendations -->
+          <% if analysis["prep_recommendations"].present? %>
+            <div class="bg-cyan-50 rounded-2xl p-6 border border-cyan-100">
+              <h3 class="font-bold text-cyan-700 mb-3 flex items-center gap-2">
+                <span class="material-symbols-outlined text-[20px]">school</span>
+                Study Recommendations
+              </h3>
+              <ul class="space-y-2">
+                <% analysis["prep_recommendations"].each do |r| %>
+                  <li class="flex items-start gap-2 text-sm text-cyan-800">
+                    <span class="material-symbols-outlined text-cyan-500 text-[16px] mt-0.5 shrink-0">bolt</span>
+                    <%= r %>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <!-- Company Insights -->
+          <% if analysis["company_insights"].present? %>
+            <div class="bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-2xl p-6 text-white">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="material-symbols-outlined">insights</span>
+                <span class="text-xs font-black uppercase tracking-widest">Company Insight</span>
+              </div>
+              <p class="text-sm leading-relaxed"><%= analysis["company_insights"] %></p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+    <% elsif @debrief.analyzing? %>
+      <div class="bg-white rounded-2xl border border-gray-100 p-16 text-center">
+        <div class="w-16 h-16 bg-yellow-50 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg class="animate-spin h-8 w-8 text-yellow-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+          </svg>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">Analyzing your interview...</h3>
+        <p class="text-sm text-gray-500">Our AI is reviewing the questions and preparing your personalized analysis. This usually takes a few seconds.</p>
+      </div>
+
+    <% elsif @debrief.failed? %>
+      <div class="bg-white rounded-2xl border border-red-100 p-16 text-center">
+        <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+          <span class="material-symbols-outlined text-red-500 text-[32px]">error</span>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">Analysis failed</h3>
+        <p class="text-sm text-gray-500 mb-4">Something went wrong during analysis. Your interview data is saved.</p>
+      </div>
+
+    <% else %>
+      <div class="bg-white rounded-2xl border border-gray-100 p-16 text-center">
+        <p class="text-sm text-gray-500">Analysis pending...</p>
+      </div>
+    <% end %>
+
+    <!-- User Notes -->
+    <% if @debrief.user_notes.present? %>
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 mt-6">
+        <h3 class="font-bold text-gray-900 mb-3">Your Notes</h3>
+        <p class="text-sm text-gray-600 leading-relaxed"><%= @debrief.user_notes %></p>
+      </div>
+    <% end %>
+  </div>
+</div>
