@@ -4,9 +4,6 @@
       Welcome back, <%= current_user.full_name || current_user.email %>
       <% if current_user.subscribed? %>
         <span class="inline-flex items-center px-2.5 py-0.5 bg-amber-400 text-amber-900 text-xs font-bold rounded-full align-middle ml-2 shadow-sm">PRO</span>
-        <% if current_user.active_subscription? %>
-          <%= link_to "Manage Subscription", profile_path, class: "text-xs text-cyan-600 font-medium hover:text-cyan-700 ml-2 align-middle" %>
-        <% end %>
       <% else %>
         <%= link_to pricing_path, class: "inline-flex items-center px-3 py-1 bg-cyan-500 text-white text-xs font-semibold rounded-full align-middle ml-2 hover:bg-cyan-600 transition-colors" do %>
           Go Pro
