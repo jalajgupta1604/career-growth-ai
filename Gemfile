@@ -59,6 +59,9 @@ gem "aws-sdk-s3", require: false
 # Payment
 gem "razorpay"
 
+# Pagination
+gem "kaminari"
+
 # PDF Generation
 gem "wicked_pdf"
 gem "wkhtmltopdf-binary"

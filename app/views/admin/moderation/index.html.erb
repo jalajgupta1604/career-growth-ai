@@ -1,0 +1,59 @@
+<% content_for :page_title, "Content Moderation" %>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+  <div class="bg-white rounded-xl border border-gray-200 p-5">
+    <p class="text-sm text-gray-500">Pending Flags</p>
+    <p class="text-2xl font-bold text-yellow-600 mt-1"><%= @flags.total_count rescue @flags.length %></p>
+  </div>
+  <div class="bg-white rounded-xl border border-gray-200 p-5">
+    <p class="text-sm text-gray-500">Resolved</p>
+    <p class="text-2xl font-bold text-green-600 mt-1"><%= @resolved_count %></p>
+  </div>
+  <div class="bg-white rounded-xl border border-gray-200 p-5">
+    <p class="text-sm text-gray-500">Total Flags</p>
+    <p class="text-2xl font-bold text-gray-900 mt-1"><%= ContentFlag.count %></p>
+  </div>
+</div>
+
+<div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+  <table class="w-full">
+    <thead class="bg-gray-50 border-b border-gray-200">
+      <tr>
+        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Content</th>
+        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Flagged By</th>
+        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Reason</th>
+        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Status</th>
+        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Date</th>
+        <th class="px-5 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Actions</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-100">
+      <% @flags.each do |flag| %>
+        <tr class="hover:bg-gray-50 transition">
+          <td class="px-5 py-3">
+            <p class="text-sm font-medium text-gray-900"><%= flag.flaggable_type %></p>
+            <p class="text-xs text-gray-400">#<%= flag.flaggable_id %></p>
+          </td>
+          <td class="px-5 py-3 text-sm text-gray-600"><%= flag.user.email %></td>
+          <td class="px-5 py-3 text-sm text-gray-600"><%= flag.reason %></td>
+          <td class="px-5 py-3"><%= flag_status_badge(flag.status) %></td>
+          <td class="px-5 py-3 text-sm text-gray-500"><%= flag.created_at.strftime("%b %d") %></td>
+          <td class="px-5 py-3 text-right">
+            <div class="flex items-center justify-end gap-2">
+              <%= button_to "Resolve", resolve_admin_moderation_path(flag), method: :post, class: "px-3 py-1 text-xs font-medium bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition" %>
+              <%= button_to "Dismiss", dismiss_admin_moderation_path(flag), method: :post, class: "px-3 py-1 text-xs font-medium bg-gray-50 text-gray-600 rounded-lg hover:bg-gray-100 transition" %>
+            </div>
+          </td>
+        </tr>
+      <% end %>
+      <% if @flags.empty? %>
+        <tr>
+          <td colspan="6" class="px-5 py-12 text-center">
+            <span class="material-symbols-outlined text-4xl text-gray-300">verified</span>
+            <p class="text-sm text-gray-400 mt-2">No pending flags — all clear!</p>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

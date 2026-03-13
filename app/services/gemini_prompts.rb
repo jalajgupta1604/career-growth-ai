@@ -314,6 +314,169 @@ module GeminiPrompts
     PROMPT
   end
 
+  def career_simulation_prompt(role, city, experience_years, current_salary, scenario_params)
+    <<~PROMPT
+      You are an expert career strategist for Indian tech professionals.
+
+      Current profile:
+      - Role: #{role}
+      - City: #{city}
+      - Experience: #{experience_years} years
+      - Current Salary: ₹#{current_salary} per annum
+
+      Scenario: #{scenario_params[:scenario_type]}
+      Details: #{scenario_params[:description]}
+      #{scenario_params[:target_role].present? ? "Target Role: #{scenario_params[:target_role]}" : ""}
+      #{scenario_params[:target_company_type].present? ? "Target Company Type: #{scenario_params[:target_company_type]}" : ""}
+
+      Simulate this career scenario and provide:
+      - projected_salary: projected annual salary after executing this plan (integer)
+      - salary_increase_percentage: expected salary increase percentage
+      - timeline_months: estimated months to achieve this
+      - confidence_level: one of "High", "Medium", "Low"
+      - steps: array of monthly action items with month number, action, and impact
+      - risks: array of 3-4 potential risks
+      - opportunities: array of 3-4 opportunities this opens
+      - summary: 3-4 sentence summary of the simulation outcome
+
+      Be realistic and specific to the Indian tech market. Return well-structured JSON only.
+    PROMPT
+  end
+
+  def resume_builder_prompt(name, email, target_role, experience_years, city, skills, experience)
+    <<~PROMPT
+      You are an expert resume writer specializing in Indian tech professionals.
+
+      Candidate:
+      - Name: #{name}
+      - Email: #{email}
+      - Target Role: #{target_role}
+      - Experience: #{experience_years} years
+      - City: #{city}
+      - Skills: #{skills.join(', ')}
+
+      Existing experience:
+      #{experience.map { |e| "- #{e['title']} at #{e['company']} (#{e['duration']})" }.join("\n")}
+
+      Generate a tailored, ATS-optimized resume for the #{target_role} role:
+      - summary: 3-4 sentence professional summary highlighting key strengths
+      - skills: array of skill categories, each with category name and array of skill items
+      - experience: array of experience entries with title, company, duration, and 3-4 bullet points (use action verbs, quantify impact)
+      - projects: array of 2-3 relevant projects with name, description, and technologies
+      - certifications: array of recommended certifications
+      - ats_keywords: array of 10-15 important ATS keywords for this role
+      - tips: array of 3-4 resume improvement tips specific to this role
+
+      Optimize for Indian tech hiring. Use strong action verbs and quantifiable achievements.
+      Return well-structured JSON only.
+    PROMPT
+  end
+
+  def code_evaluation_prompt(problem, code, language)
+    <<~PROMPT
+      You are an expert code reviewer and DSA interviewer.
+
+      Problem: #{problem[:title]}
+      Description: #{problem[:description]}
+      Constraints: #{problem[:constraints]&.join(', ')}
+
+      Language: #{language}
+      Submitted Code:
+      ```#{language}
+      #{code}
+      ```
+
+      Evaluate this code and provide:
+      - score: overall score 1-10
+      - correctness: "correct", "partially_correct", or "incorrect" with brief explanation
+      - time_complexity: Big O time complexity (e.g., "O(n)", "O(n log n)")
+      - space_complexity: Big O space complexity
+      - code_quality: 1-10 score for code style, readability, naming
+      - strengths: array of 2-3 things done well
+      - improvements: array of 2-3 specific improvements
+      - test_results: array of 3-4 test cases, each with test_case description, passed (boolean), and explanation
+      - optimized_solution: if the solution isn't optimal, provide a brief optimized approach in 2-3 sentences
+      - hints_for_improvement: array of 2-3 progressive hints to help improve the solution
+
+      Be constructive and educational. Return well-structured JSON only.
+    PROMPT
+  end
+
+  def salary_forecast_prompt(role, city, experience_years, current_salary, skills)
+    <<~PROMPT
+      You are an expert compensation analyst for Indian tech professionals.
+
+      Profile:
+      - Role: #{role}
+      - City: #{city}
+      - Experience: #{experience_years} years
+      - Current Salary: ₹#{current_salary} per annum
+      - Skills: #{skills.join(', ')}
+
+      Generate a 3-year salary trajectory forecast:
+
+      - projections: for year_1, year_2, year_3 each with min, max, likely salary (integer, annual INR)
+      - skill_plan: array of 4-5 skills to learn, each with skill name, impact description, and salary_boost_percentage
+      - market_factors: array of 3-4 market factors affecting salary (factor name, impact description, direction: "positive"/"negative"/"neutral")
+      - summary: 3-4 sentence summary of the forecast
+
+      Base projections on realistic Indian tech market growth rates.
+      Account for skill acquisition impact and market trends.
+      Return well-structured JSON only.
+    PROMPT
+  end
+
+  def simulator_interview_prompt(interview_type, difficulty, role, user_profile, company)
+    <<~PROMPT
+      You are a senior interviewer at #{company[:name]} conducting a #{difficulty} #{interview_type} interview.
+      Interview style focus: #{company[:focus]}
+      Interview rounds: #{company[:rounds]}
+
+      Candidate profile:
+      - Role: #{role}
+      - Experience: #{user_profile[:experience_years]} years
+      - City: #{user_profile[:city]}
+      - Skills: #{user_profile[:skills]&.join(', ')}
+
+      Generate exactly 5 interview questions in #{company[:name]}'s interview style.
+      Each question should reflect how #{company[:name]} actually interviews candidates.
+
+      Each question should have:
+      - question: the interview question (clear, specific, in #{company[:name]}'s style)
+      - category: topic category (e.g., "Data Structures", "System Design", "Leadership Principles")
+      - expected_time_minutes: estimated time to answer (2-10 minutes)
+      - evaluation_criteria: array of 3-4 key points the interviewer looks for
+      - ideal_answer_outline: a 3-5 point outline of an ideal answer
+
+      Make questions progressively harder. Be authentic to #{company[:name]}'s interview culture.
+      Return well-structured JSON only.
+    PROMPT
+  end
+
+  def simulator_feedback_prompt(question, answer_text, role, company)
+    <<~PROMPT
+      You are a senior interviewer at #{company[:name]} evaluating a candidate's answer.
+      You interview in #{company[:name]}'s style, focusing on: #{company[:focus]}
+
+      Role: #{role}
+      Question: #{question}
+      Candidate's Answer: #{answer_text}
+
+      Evaluate and provide:
+      - score: number from 1-10
+      - strengths: array of 2-3 things done well
+      - improvements: array of 2-3 areas to improve
+      - model_answer: a concise ideal answer (3-5 sentences)
+      - tip: one actionable tip
+      - follow_up_question: a natural follow-up question based on the candidate's answer (as a real interviewer would ask to dig deeper). This should probe a gap or interesting point in their answer.
+      - communication_score: 1-10 rating of clarity and structure
+      - technical_depth_score: 1-10 rating of technical depth
+
+      Be constructive. Generate a follow_up_question that feels natural and conversational.
+      Return well-structured JSON only.
+    PROMPT
+  end
+
   def interview_questions_prompt(category_name, topic, difficulty, role)
     <<~PROMPT
       You are a senior technical interviewer at a top Indian tech company.

@@ -62,6 +62,12 @@ professionals
 
   Phase 6       Month 24--30      Marketplace   Marketplace + API +
                                   & Community   Community
+
+  Phase 7       Month 30--36      Operational   Admin + Employer +
+                                  Excellence    Notifications + Billing
+
+  Phase 8       Month 36--42      Growth &      Analytics + CMS +
+                                  Intelligence  Mobile + Integrations
   -----------------------------------------------------------------------
 
 ------------------------------------------------------------------------
@@ -345,35 +351,251 @@ Career Tool → Salary Intelligence Platform
 
 ------------------------------------------------------------------------
 
-# 10. System Architecture
+# 10. Phase 7 Requirements (Month 30--36)
 
-Frontend: - Rails 7 + Hotwire - TailwindCSS
+## Objectives
 
-Backend: - Ruby on Rails - PostgreSQL (JSONB heavy usage) - Redis -
-Sidekiq
+-   Build operational infrastructure to run, monitor, and scale the platform
+-   Launch dedicated Employer Portal to unlock marketplace hiring revenue
+-   Implement notification engine to drive retention and re-engagement
+-   Achieve billing compliance (GST invoices) and payment reliability
+-   Establish content moderation to protect community trust and safety
+-   Enable platform-wide search and discovery across 50+ feature surfaces
 
-AI Layer: - External LLM API (Structured JSON Output)
+## Features
 
-Payments: - Razorpay (One-time + Subscription)
+### 10.1 Admin Dashboard & Site Operations
 
-Storage: - AWS S3 (Private Buckets)
+-   **Admin role system** — Super admin, support agent, content moderator roles with scoped permissions
+-   **User management** — Search, view, suspend, reactivate, impersonate users; view user activity timeline
+-   **Revenue dashboard** — Real-time MRR, churn rate, ARPU, LTV, subscription analytics with date range filters
+-   **Content moderation queue** — Flagged community posts, reviews, discussions with approve/remove/warn actions
+-   **Feature usage analytics** — Heatmap of feature adoption, daily/weekly/monthly active users per feature
+-   **System health monitor** — Background job queue depth, API response times, error rates, storage usage
+-   **Audit logs** — Immutable log of admin actions, user-sensitive operations, payment events, data access
 
-Monitoring: - Sentry - NewRelic - Lograge
+### 10.2 Notification Engine
+
+-   **In-app notification center** — Bell icon with unread badge, categorized notification feed (career, community, system)
+-   **Email notification system** — Transactional emails via SendGrid/Postmark:
+    -   Welcome & onboarding sequence (Day 0, 1, 3, 7)
+    -   Report ready / PDF generated
+    -   Payment receipts & subscription confirmations
+    -   Streak reminders ("Don't lose your 15-day streak!")
+    -   Weekly career digest (new jobs, salary trends, community highlights)
+    -   Re-engagement campaigns (inactive 7/14/30 days)
+-   **Smart nudges** — Context-aware prompts:
+    -   "3 new jobs match your profile"
+    -   "Your readiness score improved 12% this week"
+    -   "Someone replied to your discussion thread"
+    -   "New company pack available: [Company]"
+-   **Real-time delivery** — ActionCable channels for live notification push (infrastructure already configured)
+-   **Notification preferences** — Per-category opt-in/opt-out settings on profile page
+
+### 10.3 Employer Portal (Dedicated Experience)
+
+-   **Employer registration** — Separate signup flow with company verification (domain-based email verification)
+-   **Employer dashboard** — Active job postings, applicant pipeline, hiring analytics
+-   **Candidate search** — Filter anonymized profiles by skills, experience, city, readiness score, salary expectations
+-   **Applicant tracking pipeline** — Kanban board: Applied → Screening → Interview → Offer → Hired/Rejected
+-   **Candidate reveal** — Unlock candidate identity on mutual interest (employer requests, candidate approves)
+-   **Hiring analytics** — Time to hire, source quality, cost per hire, conversion rates per stage
+-   **Employer branding** — Public company profile pages with reviews, interview tips, salary ranges
+-   **Billing** — Per-hire fee (₹15,000--₹50,000) or monthly employer subscription (₹25,000--₹1,00,000)
+
+### 10.4 Billing & Payment Infrastructure
+
+-   **GST-compliant invoice generation** — Auto-generated for every payment with GSTIN, HSN codes, tax breakdowns
+-   **Payment history page** — User-facing transaction history with download links for all invoices
+-   **Dunning management** — Automated failed payment recovery:
+    -   Day 0: Payment failed notification
+    -   Day 3: Gentle reminder with retry link
+    -   Day 7: Urgent notice, features start degrading
+    -   Day 14: Subscription paused, data preserved
+-   **Plan change flows** — Upgrade (immediate) / downgrade (end of cycle) with proration calculations
+-   **Refund workflow** — Admin-initiated refunds with audit trail, automatic Razorpay refund API
+-   **Revenue recognition** — Track recognized vs deferred revenue for accounting compliance
+
+### 10.5 Search & Discovery
+
+-   **Global search** — Unified search bar across jobs, discussions, company reviews, community posts, interview experiences, company packs, mentors
+-   **Search infrastructure** — PostgreSQL full-text search with tsvector/tsquery (upgradeable to Elasticsearch later)
+-   **Smart recommendations** — "People like you also..." based on role/city/skills collaborative filtering
+-   **Trending content** — Most discussed threads, most liked posts, most applied jobs, trending skills
+-   **Search analytics** — Track what users search for to identify content gaps and feature demand
+
+### 10.6 Content Moderation & Trust
+
+-   **Report/flag system** — Users can flag posts, reviews, discussions, job postings as spam/inappropriate/misleading
+-   **Moderation queue** — Admin panel showing all flagged content with context, reporter info, and action buttons
+-   **Auto-moderation** — AI-powered content screening for spam, profanity, fake reviews, misleading salary data
+-   **Trust scores** — User reputation based on verified email, completed profile, contribution quality, account age
+-   **Community guidelines** — Published guidelines with enforcement tiers (warn → mute → suspend → ban)
+-   **Verified badges** — Verified employee badge for company reviews (email domain verification)
+
+### 10.7 Data Compliance & Security
+
+-   **GDPR/DPDP compliance** — Account deletion workflow (right to be forgotten), full data export (JSON/CSV download)
+-   **Privacy controls** — Granular visibility settings: salary, profile, activity (public/connections/private)
+-   **Sensitive data encryption** — Encrypt salary data, personal info at rest using Rails encrypted attributes
+-   **Request rate limiting** — Rack::Attack middleware for DDoS protection and abuse prevention
+-   **Session management** — View/revoke active sessions, force logout on password change
+-   **Security audit log** — Login attempts, profile changes, payment actions, data exports
+
+### 10.8 Performance & Reliability
+
+-   **Caching layer** — Fragment caching for dashboard widgets, Russian doll caching for feeds, counter caches for counts
+-   **Background job expansion** — Email delivery jobs, scheduled digest jobs, data cleanup jobs, webhook retry with exponential backoff
+-   **Error tracking** — Sentry integration for production error monitoring with source maps
+-   **Uptime monitoring** — Health check endpoints, external monitoring (UptimeRobot/Pingdom), alerting via Slack/PagerDuty
+-   **Database optimization** — N+1 query detection, query analysis, connection pooling, read replicas preparation
+-   **CDN for assets** — CloudFront/Cloudflare for static assets, uploaded files, and generated PDFs
+
+## Revenue Strategy
+
+-   Employer Portal subscriptions: ₹25,000--₹1,00,000/month per company
+-   Per-hire fees: ₹15,000--₹50,000 per successful placement
+-   Invoice/billing compliance unlocks enterprise sales (GST requirement)
+-   Notification engine drives 20-30% improvement in retention → more renewals
+
+## Phase 7 Metrics
+
+-   Admin dashboard operational with <5 min incident response
+-   50+ employer accounts onboarded
+-   Email open rate > 25%, notification CTR > 8%
+-   Content moderation response time < 4 hours
+-   Invoice compliance: 100% of payments have GST-compliant invoices
+-   Search usage: 30% of active users use global search weekly
+-   GDPR compliance: Account deletion within 72 hours
+-   Uptime: 99.9% availability
 
 ------------------------------------------------------------------------
 
-# 11. Data & Security
+# 11. Phase 8 Requirements (Month 36--42)
 
--   OAuth-only authentication
--   Private S3 storage
--   Signed URLs for file access
--   Webhook validation
--   Encrypted credentials
+## Objectives
+
+-   Build internal business intelligence for data-driven decision making
+-   Reduce content management dependency on engineering deploys
+-   Launch mobile presence to capture daily-use habits
+-   Create integration ecosystem to embed into existing workflows
+-   Achieve Series A metrics with defensible unit economics
+
+## Features
+
+### 11.1 Analytics & Business Intelligence Portal
+
+-   **Cohort analysis** — Retention curves by signup month, acquisition channel, plan type
+-   **Conversion funnels** — Signup → Onboarding → First Report → Subscription → Renewal with drop-off analysis
+-   **Feature adoption matrix** — Which features drive retention vs. which are dead weight
+-   **Revenue forecasting** — Predict MRR/ARR based on growth trends, churn patterns, seasonal effects
+-   **User health scoring** — Composite score identifying at-risk users before they churn (activity, engagement, NPS)
+-   **A/B testing infrastructure** — Feature flag system with experiment tracking and statistical significance
+-   **Exportable reports** — PDF/CSV exports of all analytics for board meetings and investor updates
+
+### 11.2 Content Management System
+
+-   **Lesson editor** — Rich text editor for creating/editing interview prep content without code deploys
+-   **Company pack builder** — Form-based tool to add new company interview packs with rounds, tips, questions
+-   **Challenge scheduler** — Queue up daily challenges weeks in advance with difficulty balancing
+-   **Skill trend importer** — Semi-automated data pipeline from job boards (Naukri, LinkedIn) to update trends
+-   **Banner & announcement system** — Admin can publish site-wide banners, feature announcements, maintenance notices
+-   **Content versioning** — Track changes to lessons, packs, and challenges with rollback capability
+
+### 11.3 Mobile App (PWA → Native)
+
+-   **Progressive Web App** — Add to home screen, offline access for cached content, push notifications
+-   **Mobile-optimized flows** — Daily challenge, quick 5-min revision, notification center, community feed
+-   **Native app wrapper** — React Native or Capacitor shell for Play Store/App Store presence
+-   **Mobile-specific features** — Swipe-based daily challenges, voice-based mock interview practice
+-   **Offline mode** — Cache lesson content, saved problems, study materials for offline access
+-   **Deep linking** — Open specific pages from notifications, emails, and shared links
+
+### 11.4 AI Personalization Engine
+
+-   **Personalized dashboard** — Dynamically reorder dashboard sections based on user behavior patterns
+-   **Smart onboarding paths** — Different journeys for "job seekers" vs "skill builders" vs "salary negotiators"
+-   **Predictive career insights** — "Based on your trajectory, you should focus on [Skill] this month"
+-   **Engagement scoring** — Predict optimal time/channel to send notifications per user
+-   **Content recommendations** — "Users in your role found these resources most helpful"
+-   **Adaptive difficulty** — Interview prep, challenges, and coding problems adjust to user skill level
+
+### 11.5 Integration Ecosystem
+
+-   **Outgoing webhooks** — Let employers/API users subscribe to events (new candidates, application updates)
+-   **Zapier/Make integration** — Connect with 1000+ apps for workflow automation
+-   **Calendar integration** — Sync peer practice sessions, mock interviews, study group meetings with Google/Outlook Calendar
+-   **Slack/Teams bot** — Daily challenges in workspace channels, streak reminders, team leaderboards
+-   **Job board syndication** — Auto-post marketplace jobs to external boards (LinkedIn Jobs, Naukri, Indeed)
+-   **SSO for Enterprise** — SAML/OIDC single sign-on for enterprise HR dashboard customers
+
+### 11.6 Advanced Marketplace Features
+
+-   **Candidate matching algorithm** — ML-powered scoring: skill fit (40%), salary alignment (25%), career trajectory (20%), cultural fit (15%)
+-   **Skill verification badges** — Auto-awarded from mock interview scores, coding playground results, peer ratings
+-   **Employer analytics dashboard** — Talent pool insights: available candidates by skill/city, salary benchmarks, hiring velocity
+-   **Referral hiring** — Employees can refer candidates through the platform with commission tracking
+-   **Interview scheduling** — Integrated calendar booking between employer and candidate
+-   **Offer management** — Employers create offers in-platform, candidates compare offers side-by-side
+
+## Revenue Strategy
+
+-   Analytics portal: Included for enterprise tier, drives enterprise upgrades
+-   CMS: Internal efficiency gain (reduce engineering hours on content)
+-   Mobile app: Drives daily engagement → higher retention → more renewals
+-   Integration ecosystem: Stickiness multiplier, reduces churn
+-   Advanced marketplace: Per-hire fee increase to ₹25,000--₹75,000 with matching quality
+
+## Phase 8 Metrics
+
+-   Mobile installs: 25,000+ (Play Store + PWA)
+-   Daily active user ratio > 40%
+-   Churn rate < 5% monthly
+-   Enterprise clients: 25+
+-   Employer accounts: 100+
+-   Successful placements: 500+ (marketplace)
+-   API customers: 50+
+-   ARR: ₹2Cr+ (Series A ready)
+
+------------------------------------------------------------------------
+
+# 12. System Architecture
+
+Frontend: - Rails 8 + Hotwire (Turbo + Stimulus) - TailwindCSS v4.2
+
+Backend: - Ruby on Rails 8.0 - PostgreSQL (JSONB heavy usage) -
+Solid Queue - Solid Cache - Solid Cable
+
+AI Layer: - Google Gemini API (Structured JSON Output with Response Schemas)
+
+Payments: - Razorpay (One-time + Subscription + Webhooks)
+
+Storage: - AWS S3 (Private Buckets) - Active Storage
+
+Auth: - Devise + Google OAuth2
+
+Monitoring: - Sentry (Phase 7) - NewRelic (Phase 7) - Lograge
+
+Deployment: - Kamal (Docker-based)
+
+------------------------------------------------------------------------
+
+# 13. Data & Security
+
+-   OAuth-only authentication (Google)
+-   Private S3 storage with signed URLs
+-   Webhook signature validation (Razorpay)
+-   Rails encrypted credentials
 -   Rate limiting on AI endpoints
+-   API key authentication for public APIs
+-   GDPR/DPDP compliance workflows (Phase 7)
+-   Sensitive data encryption at rest (Phase 7)
+-   Rack::Attack request rate limiting (Phase 7)
+-   Audit logging for sensitive operations (Phase 7)
 
 ------------------------------------------------------------------------
 
-# 12. 30-Month Strategic Outcome
+# 14. 42-Month Strategic Outcome
 
 By end of Phase 3, platform owns:
 
@@ -407,13 +629,34 @@ By end of Phase 6, platform additionally owns:
 -   AI resume builder and career path simulation engine
 -   Verified skills badge ecosystem trusted by employers
 
+By end of Phase 7, platform additionally owns:
+
+-   Production-grade operational infrastructure (admin, monitoring, alerting)
+-   Dedicated employer portal with hiring pipeline and analytics
+-   Notification engine driving measurable retention improvement
+-   GST-compliant billing system enabling enterprise sales
+-   Content moderation system protecting community trust
+-   Platform-wide search enabling discovery across 50+ features
+-   GDPR/DPDP compliance infrastructure for legal readiness
+
+By end of Phase 8, platform additionally owns:
+
+-   Internal BI portal for data-driven product and business decisions
+-   Content management system eliminating engineering bottleneck for content
+-   Mobile presence (PWA + native) capturing daily usage habits
+-   AI personalization engine adapting experience to each user
+-   Integration ecosystem (Zapier, Slack, Calendar, SSO) creating platform stickiness
+-   ML-powered candidate matching making marketplace defensible
+
 Positioned for:
 
--   Series A fundraising (₹5--10Cr target)
--   Recruitment marketplace with hiring fee revenue
--   API-as-a-product for HR tech ecosystem
--   Strategic partnerships with job portals (Naukri, LinkedIn, Indeed)
+-   Series A fundraising (₹5--10Cr target) with strong unit economics
+-   Recruitment marketplace with ₹25K--75K per-hire revenue
+-   API-as-a-product for HR tech ecosystem (50+ customers)
+-   Integration partnerships with job portals (Naukri, LinkedIn, Indeed)
+-   Enterprise sales motion with SSO, invoicing, and dedicated success
 -   Potential acqui-hire interest from major HR tech players
+-   Path to profitability within 6 months of Series A
 
 ------------------------------------------------------------------------
 

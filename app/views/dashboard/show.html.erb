@@ -437,6 +437,93 @@
     </div>
   </div>
 
+  <!-- Phase 6: Marketplace & Community -->
+  <div class="mb-8">
+    <h2 class="text-xl font-semibold text-gray-900 mb-4">Marketplace & Community</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-shadow">
+        <div class="w-10 h-10 bg-cyan-100 rounded-xl flex items-center justify-center mb-3">
+          <span class="material-symbols-outlined text-cyan-500 text-xl">forum</span>
+        </div>
+        <h3 class="text-sm font-semibold text-gray-900">Community</h3>
+        <p class="text-xs text-gray-500 mt-1">Share milestones, ask questions & connect</p>
+        <%= link_to "Join Discussion", community_index_path, class: "mt-3 inline-block text-xs text-cyan-600 font-semibold hover:text-cyan-700" %>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-shadow">
+        <div class="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center mb-3">
+          <span class="material-symbols-outlined text-amber-500 text-xl">star</span>
+        </div>
+        <h3 class="text-sm font-semibold text-gray-900">Company Reviews</h3>
+        <p class="text-xs text-gray-500 mt-1">Real reviews from tech professionals</p>
+        <%= link_to "Browse Reviews", company_reviews_path, class: "mt-3 inline-block text-xs text-cyan-600 font-semibold hover:text-cyan-700" %>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-shadow">
+        <div class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center mb-3">
+          <span class="material-symbols-outlined text-purple-500 text-xl">route</span>
+        </div>
+        <h3 class="text-sm font-semibold text-gray-900">Career Simulator</h3>
+        <p class="text-xs text-gray-500 mt-1">AI what-if scenarios for career moves</p>
+        <%= link_to "Run Simulation", career_simulations_path, class: "mt-3 inline-block text-xs text-cyan-600 font-semibold hover:text-cyan-700" %>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-shadow">
+        <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center mb-3">
+          <span class="material-symbols-outlined text-green-500 text-xl">description</span>
+        </div>
+        <h3 class="text-sm font-semibold text-gray-900">AI Resume Builder</h3>
+        <p class="text-xs text-gray-500 mt-1">Generate tailored, ATS-optimized resumes</p>
+        <%= link_to "Build Resume", resume_builder_index_path, class: "mt-3 inline-block text-xs text-cyan-600 font-semibold hover:text-cyan-700" %>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-shadow">
+        <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mb-3">
+          <span class="material-symbols-outlined text-blue-500 text-xl">work</span>
+        </div>
+        <h3 class="text-sm font-semibold text-gray-900">Talent Marketplace</h3>
+        <p class="text-xs text-gray-500 mt-1">Browse & post jobs, apply directly</p>
+        <%= link_to "Browse Jobs", job_postings_path, class: "mt-3 inline-block text-xs text-cyan-600 font-semibold hover:text-cyan-700" %>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-shadow">
+        <div class="w-10 h-10 bg-rose-100 rounded-xl flex items-center justify-center mb-3">
+          <span class="material-symbols-outlined text-rose-500 text-xl">api</span>
+        </div>
+        <h3 class="text-sm font-semibold text-gray-900">Public API</h3>
+        <p class="text-xs text-gray-500 mt-1">Developer access & API key management</p>
+        <%= link_to "Manage Keys", api_keys_path, class: "mt-3 inline-block text-xs text-cyan-600 font-semibold hover:text-cyan-700" %>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-shadow">
+        <div class="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center mb-3">
+          <span class="material-symbols-outlined text-indigo-500 text-xl">trending_up</span>
+        </div>
+        <h3 class="text-sm font-semibold text-gray-900">Salary Forecast</h3>
+        <p class="text-xs text-gray-500 mt-1">3-year salary trajectory projection</p>
+        <%= link_to "View Forecast", salary_forecasts_path, class: "mt-3 inline-block text-xs text-cyan-600 font-semibold hover:text-cyan-700" %>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-shadow">
+        <div class="w-10 h-10 bg-teal-100 rounded-xl flex items-center justify-center mb-3">
+          <span class="material-symbols-outlined text-teal-500 text-xl">school</span>
+        </div>
+        <h3 class="text-sm font-semibold text-gray-900">Mentor Network</h3>
+        <p class="text-xs text-gray-500 mt-1">Connect with senior professionals</p>
+        <%= link_to "Find Mentors", mentors_path, class: "mt-3 inline-block text-xs text-cyan-600 font-semibold hover:text-cyan-700" %>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-shadow">
+        <div class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center mb-3">
+          <span class="material-symbols-outlined text-orange-500 text-xl">chat</span>
+        </div>
+        <h3 class="text-sm font-semibold text-gray-900">Discussion Forums</h3>
+        <p class="text-xs text-gray-500 mt-1">Role-specific Q&A and discussions</p>
+        <%= link_to "Browse Discussions", discussions_path, class: "mt-3 inline-block text-xs text-cyan-600 font-semibold hover:text-cyan-700" %>
+      </div>
+    </div>
+  </div>
+
   <!-- All Previous Reports -->
   <% if @all_reports.any? %>
     <div class="bg-white rounded-2xl border border-gray-100 p-6">

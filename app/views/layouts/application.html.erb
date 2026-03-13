@@ -36,6 +36,17 @@
               </div>
             </div>
             <div class="flex items-center space-x-4">
+              <%= link_to notifications_path, class: "relative text-gray-400 hover:text-cyan-600 transition-colors" do %>
+                <span class="material-symbols-outlined text-xl">notifications</span>
+                <% if current_user.unread_notifications_count > 0 %>
+                  <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center"><%= [current_user.unread_notifications_count, 9].min %></span>
+                <% end %>
+              <% end %>
+              <% if current_user.admin? %>
+                <%= link_to admin_root_path, class: "text-gray-400 hover:text-cyan-600 transition-colors", title: "Admin Panel" do %>
+                  <span class="material-symbols-outlined text-xl">admin_panel_settings</span>
+                <% end %>
+              <% end %>
               <%= link_to profile_path, class: "flex items-center gap-2 text-sm text-gray-500 hover:text-cyan-600 transition-colors" do %>
                 <%= user_avatar(current_user, size: "w-7 h-7") %>
                 <span class="font-medium"><%= current_user.full_name || current_user.email %></span>

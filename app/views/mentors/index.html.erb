@@ -1,0 +1,129 @@
+<div class="min-h-screen bg-gray-50">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <div class="flex items-center gap-3 mb-1">
+        <span class="material-symbols-outlined text-cyan-500 text-[32px]">supervisor_account</span>
+        <h1 class="text-3xl font-bold text-gray-900">Mentor Network</h1>
+      </div>
+      <p class="mt-1 text-sm text-gray-500">Connect with experienced professionals who can guide your career growth.</p>
+    </div>
+
+    <!-- Your Mentor Profile / Become a Mentor -->
+    <% if @my_profile.present? %>
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-8">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="material-symbols-outlined text-cyan-500 text-[20px]">badge</span>
+          <h2 class="text-lg font-semibold text-gray-900">Your Mentor Profile</h2>
+        </div>
+
+        <div class="mb-4">
+          <p class="text-sm text-gray-600 leading-relaxed mb-3"><%= @my_profile.bio %></p>
+          <div class="flex flex-wrap gap-2 mb-3">
+            <% @my_profile.expertise.each do |tag| %>
+              <span class="px-2.5 py-1 text-xs font-medium rounded-full bg-cyan-50 text-cyan-600 border border-cyan-200"><%= tag %></span>
+            <% end %>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[16px] <%= @my_profile.available? ? 'text-green-500' : 'text-gray-400' %>">
+              <%= @my_profile.available? ? 'check_circle' : 'cancel' %>
+            </span>
+            <span class="text-sm <%= @my_profile.available? ? 'text-green-600' : 'text-gray-500' %>">
+              <%= @my_profile.available? ? 'Available for mentoring' : 'Not available' %>
+            </span>
+          </div>
+        </div>
+
+        <%= form_with url: mentor_path(@my_profile), method: :patch, class: "flex items-center gap-4 pt-4 border-t border-gray-100", data: { turbo: true } do |f| %>
+          <label class="flex items-center gap-2 cursor-pointer">
+            <%= f.check_box :available, checked: @my_profile.available?, class: "w-4 h-4 rounded border-gray-300 text-cyan-500 focus:ring-cyan-500 focus:ring-offset-0" %>
+            <span class="text-sm text-gray-600">Available</span>
+          </label>
+          <button type="submit" class="px-4 py-2 text-sm font-medium text-cyan-500 hover:text-cyan-600 transition-colors cursor-pointer">
+            Update
+          </button>
+          <%= link_to edit_mentor_path(@my_profile), class: "px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors" do %>
+            <span class="material-symbols-outlined text-[16px] align-middle">edit</span>
+            Edit Profile
+          <% end %>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-8">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="material-symbols-outlined text-cyan-500 text-[20px]">person_add</span>
+          <h2 class="text-lg font-semibold text-gray-900">Become a Mentor</h2>
+        </div>
+
+        <%= form_with url: mentors_path, method: :post, class: "space-y-4", data: { controller: "loading-button", loading_button_text_value: "Creating Profile...", action: "submit->loading-button#submit", turbo: true } do |f| %>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Bio</label>
+            <%= f.text_area :bio, name: "mentor[bio]", rows: 3, class: "w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 resize-none", placeholder: "Tell mentees about your experience and what you can help with..." %>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Expertise</label>
+            <%= f.text_field :expertise, name: "mentor[expertise]", class: "w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500", placeholder: "Ruby on Rails, System Design, Career Growth (comma-separated)" %>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Max Mentees</label>
+            <%= f.number_field :max_mentees, name: "mentor[max_mentees]", value: 3, min: 1, max: 10, class: "w-32 bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" %>
+          </div>
+
+          <button type="submit" data-loading-button-target="button" class="inline-flex items-center gap-2 px-6 py-2.5 bg-cyan-500 text-white font-semibold rounded-xl hover:bg-cyan-600 transition-colors cursor-pointer">
+            <span class="material-symbols-outlined text-[20px]">how_to_reg</span>
+            Become a Mentor
+          </button>
+        <% end %>
+      </div>
+    <% end %>
+
+    <!-- Available Mentors -->
+    <div class="mb-6">
+      <h2 class="text-xl font-bold text-gray-900 mb-1">Available Mentors</h2>
+      <p class="text-sm text-gray-500">Browse mentors who are ready to help</p>
+    </div>
+
+    <% if @mentors.present? %>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <% @mentors.each do |mentor| %>
+          <div class="bg-white rounded-2xl border border-gray-100 p-6 hover:border-cyan-200 transition-colors">
+            <div class="flex items-start gap-4 mb-4">
+              <div class="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-gray-400 text-[24px]">person</span>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between">
+                  <h3 class="text-base font-semibold text-gray-900 truncate"><%= mentor.user.full_name %></h3>
+                  <% if mentor.available? %>
+                    <span class="px-2.5 py-1 text-xs font-medium rounded-full bg-green-50 text-green-600 border border-green-200 shrink-0">Available</span>
+                  <% end %>
+                </div>
+                <% if mentor.experience_years.present? %>
+                  <p class="text-xs text-gray-400 mt-0.5"><%= mentor.experience_years %> years experience</p>
+                <% end %>
+              </div>
+            </div>
+
+            <p class="text-sm text-gray-600 leading-relaxed mb-3"><%= truncate(mentor.bio, length: 120) %></p>
+
+            <div class="flex flex-wrap gap-1.5">
+              <% mentor.expertise.each do |tag| %>
+                <span class="px-2 py-0.5 text-xs font-medium rounded-full bg-gray-50 text-gray-600 border border-gray-200"><%= tag %></span>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="bg-white rounded-2xl border border-gray-100 p-16 text-center">
+        <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+          <span class="material-symbols-outlined text-cyan-500 text-[32px]">group</span>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">No mentors available yet</h3>
+        <p class="text-sm text-gray-500">Be the first to offer your expertise to the community.</p>
+      </div>
+    <% end %>
+  </div>
+</div>

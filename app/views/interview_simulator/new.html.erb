@@ -1,0 +1,82 @@
+<div class="min-h-screen bg-gray-50">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-6">
+      <%= link_to interview_prep_path, class: "inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 transition-colors" do %>
+        <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+        Back to Interview Prep
+      <% end %>
+    </div>
+
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">AI Interview Simulator</h1>
+      <p class="text-gray-500 mt-2">Experience realistic company-specific interviews with AI follow-up questions</p>
+    </div>
+
+    <%= form_with url: interview_simulator_index_path, method: :post, class: "space-y-8", data: { controller: "loading-button", loading_button_text_value: "Starting Simulation...", action: "submit->loading-button#submit" } do |f| %>
+
+      <!-- Company Style Selection -->
+      <div class="bg-white rounded-2xl border border-gray-100 p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-1">Choose Company Style</h2>
+        <p class="text-sm text-gray-500 mb-5">Select a company to tailor the interview to their specific process and expectations</p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <% @company_styles.each do |key, company| %>
+            <label class="relative cursor-pointer group">
+              <input type="radio" name="company_style" value="<%= key %>" class="peer sr-only" <%= key == "general" ? "checked" : "" %>>
+              <div class="border border-gray-200 rounded-xl p-4 transition-all peer-checked:border-cyan-500 peer-checked:bg-cyan-50 peer-checked:ring-2 peer-checked:ring-cyan-500/20 hover:border-gray-300 hover:bg-gray-50">
+                <div class="flex items-center gap-3 mb-2">
+                  <span class="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center text-sm font-bold text-gray-600 peer-checked:bg-cyan-100 peer-checked:text-cyan-600 group-has-[:checked]:bg-cyan-100 group-has-[:checked]:text-cyan-600 shrink-0">
+                    <%= company[:name][0] %>
+                  </span>
+                  <span class="text-sm font-semibold text-gray-900"><%= company[:name] %></span>
+                </div>
+                <p class="text-xs text-gray-500 mb-2"><%= company[:focus] %></p>
+                <div class="flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[14px] text-gray-400">route</span>
+                  <p class="text-xs text-gray-400"><%= company[:rounds] %></p>
+                </div>
+              </div>
+            </label>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Interview Configuration -->
+      <div class="bg-white rounded-2xl border border-gray-100 p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-5">Interview Settings</h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <!-- Interview Type -->
+          <div>
+            <label for="interview_type" class="block text-sm font-medium text-gray-700 mb-2">Interview Type</label>
+            <select name="interview_type" id="interview_type" class="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm text-gray-700 bg-white focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500">
+              <option value="technical">Technical</option>
+              <option value="behavioral">Behavioral</option>
+              <option value="system_design">System Design</option>
+              <option value="mixed" selected>Mixed</option>
+            </select>
+          </div>
+
+          <!-- Difficulty -->
+          <div>
+            <label for="difficulty" class="block text-sm font-medium text-gray-700 mb-2">Difficulty</label>
+            <select name="difficulty" id="difficulty" class="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm text-gray-700 bg-white focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500">
+              <option value="easy">Easy</option>
+              <option value="medium" selected>Medium</option>
+              <option value="hard">Hard</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <div class="flex justify-end">
+        <button type="submit" data-loading-button-target="button" class="inline-flex items-center gap-2 px-8 py-3 bg-cyan-500 text-white font-semibold rounded-xl hover:bg-cyan-600 transition-colors cursor-pointer">
+          <span class="material-symbols-outlined text-[20px]">play_arrow</span>
+          Start Simulation
+        </button>
+      </div>
+    <% end %>
+  </div>
+</div>

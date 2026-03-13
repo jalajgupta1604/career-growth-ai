@@ -1,0 +1,113 @@
+<div class="min-h-screen bg-gray-50">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900"><%= @group.name %></h1>
+        <p class="mt-1 text-sm text-gray-500"><%= @group.description %></p>
+      </div>
+      <%= link_to study_groups_path, class: "text-sm text-cyan-600 font-medium hover:text-cyan-700" do %>
+        <span class="inline-flex items-center gap-1">
+          <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+          All Groups
+        </span>
+      <% end %>
+    </div>
+
+    <!-- Group Info -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-full bg-cyan-100 flex items-center justify-center">
+            <span class="material-symbols-outlined text-[26px] text-cyan-500">group</span>
+          </div>
+          <div>
+            <p class="text-lg font-bold text-gray-900"><%= @group.name %></p>
+            <p class="text-sm text-gray-500">
+              <%= @group.members.size %> / <%= @group.max_members %> members
+            </p>
+          </div>
+        </div>
+
+        <% if @group.full? && !@is_member %>
+          <span class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-full bg-orange-50 text-orange-600">
+            <span class="material-symbols-outlined text-[14px]">block</span>
+            Group is full
+          </span>
+        <% end %>
+      </div>
+
+      <% if @group.description.present? %>
+        <p class="text-sm text-gray-600 leading-relaxed mb-4"><%= @group.description %></p>
+      <% end %>
+
+      <div class="flex flex-wrap gap-2 mb-5">
+        <% if @group.target_company.present? %>
+          <span class="inline-flex items-center gap-1 px-3 py-1 text-xs font-medium rounded-full bg-gray-50 text-gray-600">
+            <span class="material-symbols-outlined text-[14px]">business</span>
+            <%= @group.target_company %>
+          </span>
+        <% end %>
+        <% if @group.target_role.present? %>
+          <span class="inline-flex items-center gap-1 px-3 py-1 text-xs font-medium rounded-full bg-gray-50 text-gray-600">
+            <span class="material-symbols-outlined text-[14px]">work</span>
+            <%= @group.target_role %>
+          </span>
+        <% end %>
+      </div>
+
+      <!-- Join / Leave Actions -->
+      <% if @is_member %>
+        <%= button_to "Leave Group", leave_study_group_path(@group), method: :post, class: "w-full py-3 bg-white text-red-500 font-semibold rounded-xl border border-red-200 hover:bg-red-50 transition-colors cursor-pointer", data: { turbo_confirm: "Are you sure you want to leave this group?" } %>
+      <% elsif !@group.full? %>
+        <%= button_to "Join Group", join_study_group_path(@group), method: :post, class: "w-full py-3 bg-cyan-500 text-white font-semibold rounded-xl hover:bg-cyan-600 transition-colors cursor-pointer" %>
+      <% end %>
+    </div>
+
+    <!-- Members List -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-6">
+      <div class="flex items-center gap-3 mb-5">
+        <div class="w-10 h-10 rounded-lg bg-violet-100 flex items-center justify-center">
+          <span class="material-symbols-outlined text-[22px] text-violet-500">people</span>
+        </div>
+        <h2 class="text-lg font-bold text-gray-900">Members</h2>
+        <span class="ml-auto px-2.5 py-0.5 text-xs font-medium rounded-full bg-cyan-50 text-cyan-600">
+          <%= @group.members.size %> / <%= @group.max_members %>
+        </span>
+      </div>
+
+      <% if @group.members.any? %>
+        <div class="space-y-3">
+          <% @group.members.each do |member| %>
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+              <div class="flex items-center gap-3">
+                <% if defined?(user_avatar) %>
+                  <%= user_avatar(member.user, class: "w-9 h-9 rounded-full") %>
+                <% else %>
+                  <div class="w-9 h-9 rounded-full bg-cyan-100 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-[18px] text-cyan-600">person</span>
+                  </div>
+                <% end %>
+                <div>
+                  <p class="text-sm font-semibold text-gray-900"><%= member.user&.name || "Member" %></p>
+                  <p class="text-xs text-gray-400">Joined <%= member.created_at.strftime("%b %d, %Y") %></p>
+                </div>
+              </div>
+              <span class="px-2.5 py-0.5 text-xs font-medium rounded-full
+                <%= member.role == 'admin' ? 'bg-cyan-50 text-cyan-600' : 'bg-gray-100 text-gray-500' %>">
+                <%= member.role.capitalize %>
+              </span>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="text-center py-8">
+          <div class="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3">
+            <span class="material-symbols-outlined text-[28px] text-gray-400">person_off</span>
+          </div>
+          <p class="text-sm text-gray-500">No members yet. Be the first to join!</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

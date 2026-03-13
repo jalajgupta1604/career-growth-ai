@@ -1,0 +1,173 @@
+<div class="min-h-screen bg-gray-950">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-3xl font-bold text-white">Talent Marketplace</h1>
+        <p class="mt-1 text-sm text-gray-400">Discover opportunities and track your applications</p>
+      </div>
+      <%= link_to new_job_posting_path, class: "inline-flex items-center gap-2 px-5 py-2.5 bg-cyan-500 text-white font-semibold rounded-xl hover:bg-cyan-600 transition-colors" do %>
+        <span class="material-symbols-outlined text-[20px]">add</span>
+        Post a Job
+      <% end %>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex items-center gap-1 mb-6 bg-gray-900 rounded-xl p-1 w-fit border border-gray-800">
+      <button data-action="click->tabs#switch" data-tab="browse" class="tab-btn px-5 py-2 text-sm font-medium rounded-lg bg-cyan-500/10 text-cyan-400 transition-colors">
+        <span class="material-symbols-outlined text-[18px] align-middle mr-1">work</span>
+        Browse Jobs
+      </button>
+      <button data-action="click->tabs#switch" data-tab="applications" class="tab-btn px-5 py-2 text-sm font-medium rounded-lg text-gray-400 hover:text-white transition-colors">
+        <span class="material-symbols-outlined text-[18px] align-middle mr-1">description</span>
+        My Applications
+      </button>
+    </div>
+
+    <!-- Browse Jobs Tab -->
+    <div id="tab-browse" class="tab-content">
+      <% if @postings.any? %>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <% @postings.each do |posting| %>
+            <%= link_to job_posting_path(posting), class: "block bg-gray-900 rounded-2xl border border-gray-800 p-6 hover:border-cyan-800 hover:shadow-lg hover:shadow-cyan-500/5 transition-all" do %>
+              <div class="flex items-start justify-between mb-3">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 bg-gray-800 rounded-xl flex items-center justify-center">
+                    <span class="material-symbols-outlined text-[20px] text-cyan-400">business</span>
+                  </div>
+                  <div>
+                    <h3 class="text-base font-bold text-white"><%= posting.title %></h3>
+                    <p class="text-sm text-gray-400"><%= posting.company_name %></p>
+                  </div>
+                </div>
+                <span class="px-2.5 py-1 text-xs font-medium rounded-full bg-cyan-500/10 text-cyan-400">
+                  <%= posting.job_type&.titleize %>
+                </span>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-3 mb-3 text-xs text-gray-400">
+                <% if posting.location.present? %>
+                  <span class="inline-flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px]">location_on</span>
+                    <%= posting.location %>
+                  </span>
+                <% end %>
+                <% if posting.respond_to?(:salary_display) && posting.salary_display.present? %>
+                  <span class="inline-flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px]">payments</span>
+                    <%= posting.salary_display %>
+                  </span>
+                <% elsif posting.min_salary.present? %>
+                  <span class="inline-flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px]">payments</span>
+                    <%= number_to_currency(posting.min_salary, precision: 0) %> - <%= number_to_currency(posting.max_salary, precision: 0) %>
+                  </span>
+                <% end %>
+                <% if posting.experience_range.present? %>
+                  <span class="inline-flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px]">schedule</span>
+                    <%= posting.experience_range %>
+                  </span>
+                <% end %>
+              </div>
+
+              <% if posting.required_skills.present? %>
+                <div class="flex flex-wrap gap-1.5 mb-3">
+                  <% posting.required_skills.first(5).each do |skill| %>
+                    <span class="px-2 py-0.5 text-xs font-medium rounded-md bg-gray-800 text-gray-300 border border-gray-700"><%= skill %></span>
+                  <% end %>
+                  <% if posting.required_skills.size > 5 %>
+                    <span class="px-2 py-0.5 text-xs text-gray-500">+<%= posting.required_skills.size - 5 %> more</span>
+                  <% end %>
+                </div>
+              <% end %>
+
+              <div class="flex items-center justify-between text-xs text-gray-500 pt-3 border-t border-gray-800">
+                <span><%= time_ago_in_words(posting.created_at) %> ago</span>
+                <% if posting.respond_to?(:application_count) %>
+                  <span class="inline-flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px]">group</span>
+                    <%= posting.application_count %> applicants
+                  </span>
+                <% end %>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="bg-gray-900 rounded-2xl border border-gray-800 p-16 text-center">
+          <div class="w-16 h-16 bg-cyan-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="material-symbols-outlined text-cyan-400 text-[32px]">work</span>
+          </div>
+          <h3 class="text-lg font-semibold text-white mb-2">No job postings yet</h3>
+          <p class="text-sm text-gray-400 mb-6">Be the first to post a job opportunity on the marketplace.</p>
+          <%= link_to new_job_posting_path, class: "inline-flex items-center gap-2 px-5 py-2.5 bg-cyan-500 text-white font-semibold rounded-xl hover:bg-cyan-600 transition-colors" do %>
+            <span class="material-symbols-outlined text-[20px]">add</span>
+            Post a Job
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- My Applications Tab -->
+    <div id="tab-applications" class="tab-content hidden">
+      <% if @my_applications.any? %>
+        <div class="space-y-3">
+          <% @my_applications.each do |application| %>
+            <%= link_to job_posting_path(application.job_posting), class: "block bg-gray-900 rounded-2xl border border-gray-800 p-5 hover:border-cyan-800 transition-all" do %>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                  <div class="w-10 h-10 bg-gray-800 rounded-xl flex items-center justify-center">
+                    <span class="material-symbols-outlined text-[20px] text-gray-400">description</span>
+                  </div>
+                  <div>
+                    <h3 class="text-base font-bold text-white"><%= application.job_posting.title %></h3>
+                    <p class="text-sm text-gray-400"><%= application.job_posting.company_name %> &bull; Applied <%= time_ago_in_words(application.applied_at) %> ago</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-3">
+                  <span class="px-2.5 py-1 text-xs font-medium rounded-full
+                    <%= case application.status.to_s
+                        when 'applied' then 'bg-blue-500/10 text-blue-400'
+                        when 'shortlisted' then 'bg-yellow-500/10 text-yellow-400'
+                        when 'interviewing' then 'bg-purple-500/10 text-purple-400'
+                        when 'offered' then 'bg-green-500/10 text-green-400'
+                        when 'rejected' then 'bg-red-500/10 text-red-400'
+                        else 'bg-gray-800 text-gray-400'
+                        end %>">
+                    <%= application.status.to_s.titleize %>
+                  </span>
+                  <span class="material-symbols-outlined text-gray-600 text-[20px]">chevron_right</span>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="bg-gray-900 rounded-2xl border border-gray-800 p-16 text-center">
+          <div class="w-16 h-16 bg-cyan-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="material-symbols-outlined text-cyan-400 text-[32px]">send</span>
+          </div>
+          <h3 class="text-lg font-semibold text-white mb-2">No applications yet</h3>
+          <p class="text-sm text-gray-400 mb-6">Browse jobs and start applying to track your progress here.</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tab = btn.dataset.tab;
+      document.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.remove('bg-cyan-500/10', 'text-cyan-400');
+        b.classList.add('text-gray-400');
+      });
+      btn.classList.add('bg-cyan-500/10', 'text-cyan-400');
+      btn.classList.remove('text-gray-400');
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+      document.getElementById('tab-' + tab).classList.remove('hidden');
+    });
+  });
+</script>

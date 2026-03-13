@@ -1,0 +1,151 @@
+<div class="min-h-screen bg-gray-50">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">Smart Revision</h1>
+        <p class="mt-1 text-sm text-gray-500">Spaced repetition system — review weak topics at optimal intervals</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <%= link_to interview_prep_path, class: "text-sm text-gray-500 font-medium hover:text-gray-700" do %>
+          <span class="inline-flex items-center gap-1">
+            <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+            Back to Prep
+          </span>
+        <% end %>
+        <% if @stats[:due_today] > 0 %>
+          <%= link_to practice_revisions_path, class: "inline-flex items-center gap-2 px-5 py-2.5 bg-cyan-500 text-white text-sm font-semibold rounded-xl hover:bg-cyan-600 transition-colors" do %>
+            <span class="material-symbols-outlined text-[18px]">play_arrow</span>
+            Start Revision (<%= @stats[:due_today] %>)
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div class="bg-white rounded-2xl border border-gray-100 p-5 text-center">
+        <p class="text-3xl font-bold text-cyan-600"><%= @stats[:due_today] %></p>
+        <p class="text-xs text-gray-400 mt-1">Due Today</p>
+      </div>
+      <div class="bg-white rounded-2xl border border-gray-100 p-5 text-center">
+        <p class="text-3xl font-bold text-gray-900"><%= @stats[:total_items] %></p>
+        <p class="text-xs text-gray-400 mt-1">Total Items</p>
+      </div>
+      <div class="bg-white rounded-2xl border border-gray-100 p-5 text-center">
+        <p class="text-3xl font-bold text-green-600"><%= @stats[:accuracy] %>%</p>
+        <p class="text-xs text-gray-400 mt-1">Accuracy</p>
+      </div>
+      <div class="bg-white rounded-2xl border border-gray-100 p-5 text-center">
+        <p class="text-3xl font-bold text-orange-500"><%= @stats[:weak_items] %></p>
+        <p class="text-xs text-gray-400 mt-1">Weak Areas</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Weakness Heatmap -->
+      <div class="lg:col-span-2">
+        <div class="bg-white rounded-2xl border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-gray-900 mb-4">
+            <span class="inline-flex items-center gap-2">
+              <span class="material-symbols-outlined text-[22px] text-orange-500">whatshot</span>
+              Weakness Heatmap
+            </span>
+          </h2>
+          <% if @heatmap.any? %>
+            <div class="space-y-3">
+              <% @heatmap.each do |topic| %>
+                <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
+                  <div class="flex-1">
+                    <div class="flex items-center justify-between mb-2">
+                      <p class="text-sm font-semibold text-gray-900"><%= topic[:topic].humanize %></p>
+                      <span class="px-2 py-0.5 text-xs font-medium rounded-full
+                        <%= case topic[:strength_label]
+                            when 'needs_work' then 'bg-red-50 text-red-600'
+                            when 'improving' then 'bg-yellow-50 text-yellow-600'
+                            else 'bg-green-50 text-green-600'
+                            end %>">
+                        <%= topic[:strength_label].humanize %>
+                      </span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                      <div class="h-2 rounded-full transition-all
+                        <%= case topic[:strength_label]
+                            when 'needs_work' then 'bg-red-400'
+                            when 'improving' then 'bg-yellow-400'
+                            else 'bg-green-400'
+                            end %>"
+                        style="width: <%= [100 - topic[:heat_level], 10].max %>%">
+                      </div>
+                    </div>
+                    <div class="flex items-center gap-4 mt-2 text-xs text-gray-400">
+                      <span><%= topic[:total] %> items</span>
+                      <span class="text-red-500"><%= topic[:weak] %> weak</span>
+                      <span class="text-green-500"><%= topic[:strong] %> strong</span>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <div class="text-center py-12">
+              <span class="material-symbols-outlined text-[48px] text-gray-300 mb-3">psychology</span>
+              <p class="text-gray-400 text-sm">No revision data yet.</p>
+              <p class="text-gray-400 text-xs mt-1">Complete daily challenges and mock interviews to build your revision queue.</p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Due Items Sidebar -->
+      <div>
+        <div class="bg-white rounded-2xl border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-gray-900 mb-4">
+            <span class="inline-flex items-center gap-2">
+              <span class="material-symbols-outlined text-[22px] text-cyan-500">schedule</span>
+              Due for Review
+            </span>
+          </h2>
+          <% if @due_items.any? %>
+            <div class="space-y-3">
+              <% @due_items.each do |item| %>
+                <div class="p-3 bg-gray-50 rounded-xl">
+                  <div class="flex items-center justify-between mb-1">
+                    <p class="text-sm font-medium text-gray-900 truncate flex-1"><%= (item.question_data["question"] || item.topic.humanize).truncate(50) %></p>
+                    <span class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold ml-2
+                      <%= case item.strength
+                          when 'weak' then 'bg-red-100 text-red-600'
+                          when 'strong' then 'bg-green-100 text-green-600'
+                          else 'bg-yellow-100 text-yellow-600'
+                          end %>">
+                      <%= item.accuracy_percentage %>
+                    </span>
+                  </div>
+                  <div class="flex items-center gap-2 text-xs text-gray-400">
+                    <span><%= item.topic.humanize %></span>
+                    <span>&bull;</span>
+                    <span><%= item.total_attempts %> reviews</span>
+                    <% if item.overdue? %>
+                      <span class="text-red-500 font-medium">Overdue</span>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+            <% if @stats[:due_today] > 0 %>
+              <%= link_to practice_revisions_path, class: "mt-4 block w-full text-center py-2.5 bg-cyan-500 text-white text-sm font-semibold rounded-xl hover:bg-cyan-600 transition-colors" do %>
+                Start 5-Minute Revision
+              <% end %>
+            <% end %>
+          <% else %>
+            <div class="text-center py-8">
+              <span class="material-symbols-outlined text-[36px] text-green-400 mb-2">check_circle</span>
+              <p class="text-sm text-gray-500">All caught up!</p>
+              <p class="text-xs text-gray-400 mt-1">No items due for review right now.</p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

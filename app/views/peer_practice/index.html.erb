@@ -1,0 +1,207 @@
+<div class="min-h-screen bg-gray-50">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">Peer Practice</h1>
+        <p class="mt-1 text-sm text-gray-500">Match with other professionals for mock interview practice</p>
+      </div>
+      <%= link_to interview_prep_path, class: "text-sm text-cyan-600 font-medium hover:text-cyan-700" do %>
+        <span class="inline-flex items-center gap-1">
+          <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+          Back to Prep
+        </span>
+      <% end %>
+    </div>
+
+    <!-- Create Session Form -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
+      <div class="flex items-center gap-3 mb-5">
+        <div class="w-10 h-10 rounded-lg bg-cyan-100 flex items-center justify-center">
+          <span class="material-symbols-outlined text-[22px] text-cyan-500">add_circle</span>
+        </div>
+        <h2 class="text-lg font-bold text-gray-900">Create Session</h2>
+      </div>
+
+      <%= form_with url: peer_practice_index_path, method: :post, data: { controller: "loading-button", loading_button_text_value: "Creating...", action: "submit->loading-button#submit" } do |f| %>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Session Type</label>
+            <%= f.select :session_type, options_for_select([["Mock Interview", "mock_interview"], ["Pair Coding", "pair_coding"], ["System Design", "system_design"]]), {}, class: "w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-900 focus:border-cyan-500 focus:ring-cyan-500 transition-colors bg-white" %>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Target Company</label>
+            <%= f.text_field :target_company, class: "w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-900 focus:border-cyan-500 focus:ring-cyan-500 transition-colors", placeholder: "e.g. Google, Amazon..." %>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Target Role</label>
+            <%= f.text_field :target_role, class: "w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-900 focus:border-cyan-500 focus:ring-cyan-500 transition-colors", placeholder: "e.g. Senior Software Engineer" %>
+          </div>
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-semibold text-gray-700 mb-2">Notes</label>
+          <%= f.text_area :notes, rows: 3, class: "w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-900 focus:border-cyan-500 focus:ring-cyan-500 transition-colors resize-none", placeholder: "Any specific topics or areas you want to focus on..." %>
+        </div>
+        <%= f.submit "Create Session", class: "w-full py-3 bg-cyan-500 text-white font-semibold rounded-xl hover:bg-cyan-600 transition-colors cursor-pointer" %>
+      <% end %>
+    </div>
+
+    <!-- Upcoming Sessions -->
+    <% upcoming = @sessions.select { |s| s.status == "matched" && s.scheduled_at&.future? } if @sessions.present? %>
+    <% if upcoming.present? && upcoming.any? %>
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
+        <div class="flex items-center gap-3 mb-5">
+          <div class="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center">
+            <span class="material-symbols-outlined text-[22px] text-emerald-500">event</span>
+          </div>
+          <h2 class="text-lg font-bold text-gray-900">Upcoming Sessions</h2>
+        </div>
+        <div class="space-y-3">
+          <% upcoming.each do |session| %>
+            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-cyan-100 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-[20px] text-cyan-600">person</span>
+                </div>
+                <div>
+                  <p class="text-sm font-semibold text-gray-900"><%= session.partner&.name || "Partner" %></p>
+                  <p class="text-xs text-gray-500">
+                    <%= session.scheduled_at&.strftime("%b %d, %Y at %I:%M %p") %>
+                    &bull; <%= session.session_type.humanize %>
+                  </p>
+                </div>
+              </div>
+              <span class="px-3 py-1 text-xs font-medium rounded-full bg-blue-50 text-blue-600">Matched</span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Available Sessions -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
+      <div class="flex items-center gap-3 mb-5">
+        <div class="w-10 h-10 rounded-lg bg-violet-100 flex items-center justify-center">
+          <span class="material-symbols-outlined text-[22px] text-violet-500">groups</span>
+        </div>
+        <h2 class="text-lg font-bold text-gray-900">Available Sessions</h2>
+      </div>
+
+      <% if @available_sessions.present? && @available_sessions.any? %>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <% @available_sessions.each do |session| %>
+            <div class="border border-gray-100 rounded-xl p-4 hover:border-cyan-200 transition-colors">
+              <div class="flex items-center gap-3 mb-3">
+                <div class="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-[18px] text-gray-500">person</span>
+                </div>
+                <div>
+                  <p class="text-sm font-semibold text-gray-900"><%= session.user&.name || "Anonymous" %></p>
+                  <p class="text-xs text-gray-400"><%= session.session_type.humanize %></p>
+                </div>
+              </div>
+              <% if session.target_company.present? || session.target_role.present? %>
+                <div class="flex flex-wrap gap-2 mb-3">
+                  <% if session.target_company.present? %>
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full bg-gray-50 text-gray-600">
+                      <span class="material-symbols-outlined text-[14px]">business</span>
+                      <%= session.target_company %>
+                    </span>
+                  <% end %>
+                  <% if session.target_role.present? %>
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full bg-gray-50 text-gray-600">
+                      <span class="material-symbols-outlined text-[14px]">work</span>
+                      <%= session.target_role %>
+                    </span>
+                  <% end %>
+                </div>
+              <% end %>
+              <%= button_to "Join", join_peer_practice_path(session), method: :post, class: "w-full py-2 bg-cyan-500 text-white text-sm font-semibold rounded-lg hover:bg-cyan-600 transition-colors cursor-pointer" %>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="text-center py-8">
+          <div class="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3">
+            <span class="material-symbols-outlined text-[28px] text-gray-400">search_off</span>
+          </div>
+          <p class="text-sm text-gray-500">No available sessions right now.</p>
+          <p class="text-xs text-gray-400 mt-1">Create one above and wait for a match!</p>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- My Sessions -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-6">
+      <div class="flex items-center gap-3 mb-5">
+        <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
+          <span class="material-symbols-outlined text-[22px] text-orange-500">history</span>
+        </div>
+        <h2 class="text-lg font-bold text-gray-900">My Sessions</h2>
+      </div>
+
+      <% if @my_sessions.present? && @my_sessions.any? %>
+        <div class="space-y-3">
+          <% @my_sessions.each do |session| %>
+            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-full flex items-center justify-center
+                  <%= case session.status
+                      when 'pending' then 'bg-gray-100'
+                      when 'matched' then 'bg-blue-100'
+                      when 'completed' then 'bg-green-100'
+                      when 'cancelled' then 'bg-red-100'
+                      else 'bg-gray-100'
+                      end %>">
+                  <span class="material-symbols-outlined text-[18px]
+                    <%= case session.status
+                        when 'pending' then 'text-gray-500'
+                        when 'matched' then 'text-blue-500'
+                        when 'completed' then 'text-green-500'
+                        when 'cancelled' then 'text-red-500'
+                        else 'text-gray-500'
+                        end %>">
+                    <%= case session.status
+                        when 'pending' then 'hourglass_empty'
+                        when 'matched' then 'handshake'
+                        when 'completed' then 'check_circle'
+                        when 'cancelled' then 'cancel'
+                        else 'help'
+                        end %>
+                  </span>
+                </div>
+                <div>
+                  <p class="text-sm font-semibold text-gray-900"><%= session.session_type.humanize %></p>
+                  <p class="text-xs text-gray-400">
+                    <%= session.created_at.strftime("%b %d, %Y") %>
+                    <% if session.target_company.present? %>
+                      &bull; <%= session.target_company %>
+                    <% end %>
+                  </p>
+                </div>
+              </div>
+              <span class="px-3 py-1 text-xs font-medium rounded-full
+                <%= case session.status
+                    when 'pending' then 'bg-gray-100 text-gray-600'
+                    when 'matched' then 'bg-blue-50 text-blue-600'
+                    when 'completed' then 'bg-green-50 text-green-600'
+                    when 'cancelled' then 'bg-red-50 text-red-600'
+                    else 'bg-gray-100 text-gray-600'
+                    end %>">
+                <%= session.status.capitalize %>
+              </span>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="text-center py-8">
+          <div class="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3">
+            <span class="material-symbols-outlined text-[28px] text-gray-400">event_busy</span>
+          </div>
+          <p class="text-sm text-gray-500">You haven't created any sessions yet.</p>
+          <p class="text-xs text-gray-400 mt-1">Use the form above to get started.</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

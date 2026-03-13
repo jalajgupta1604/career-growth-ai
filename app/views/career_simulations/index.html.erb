@@ -1,0 +1,66 @@
+<div class="min-h-screen bg-gray-950">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-3xl font-bold text-white">Career Simulations</h1>
+        <p class="mt-1 text-sm text-gray-400">Explore what-if scenarios for your career trajectory.</p>
+      </div>
+      <%= link_to new_career_simulation_path, class: "inline-flex items-center gap-2 px-5 py-2.5 bg-cyan-500 text-white font-semibold rounded-xl hover:bg-cyan-600 transition-colors" do %>
+        <span class="material-symbols-outlined text-[20px]">add</span>
+        New Simulation
+      <% end %>
+    </div>
+
+    <% if @simulations.any? %>
+      <div class="space-y-4">
+        <% @simulations.each do |sim| %>
+          <%= link_to career_simulation_path(sim), class: "block bg-gray-900 rounded-2xl border border-gray-800 p-6 hover:border-gray-700 transition-colors" do %>
+            <div class="flex items-start justify-between">
+              <div class="flex items-start gap-4">
+                <div class="w-12 h-12 bg-gray-800 rounded-xl flex items-center justify-center shrink-0">
+                  <span class="material-symbols-outlined text-cyan-400 text-[24px]">
+                    <%= case sim.scenario_type
+                        when 'role_change' then 'swap_horiz'
+                        when 'company_switch' then 'domain'
+                        when 'skill_pivot' then 'pivot_table_chart'
+                        when 'promotion' then 'trending_up'
+                        when 'freelancing' then 'work'
+                        else 'route'
+                        end %>
+                  </span>
+                </div>
+                <div>
+                  <h3 class="text-base font-semibold text-white"><%= sim.target_role.presence || sim.scenario_type.humanize %></h3>
+                  <p class="text-sm text-gray-400 mt-0.5"><%= sim.scenario_type.humanize %> &bull; <%= sim.target_company_type&.humanize %></p>
+                  <p class="text-xs text-gray-500 mt-1"><%= sim.created_at.strftime("%B %d, %Y") %></p>
+                </div>
+              </div>
+              <span class="px-3 py-1 text-xs font-semibold rounded-full
+                <%= case sim.status
+                    when 'completed' then 'bg-green-900/50 text-green-400 border border-green-800'
+                    when 'processing' then 'bg-yellow-900/50 text-yellow-400 border border-yellow-800'
+                    when 'failed' then 'bg-red-900/50 text-red-400 border border-red-800'
+                    else 'bg-gray-800 text-gray-400 border border-gray-700'
+                    end %>">
+                <%= sim.status.capitalize %>
+              </span>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="bg-gray-900 rounded-2xl border border-gray-800 p-16 text-center">
+        <div class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+          <span class="material-symbols-outlined text-gray-500 text-[32px]">route</span>
+        </div>
+        <h3 class="text-lg font-semibold text-white mb-2">No simulations yet</h3>
+        <p class="text-sm text-gray-400 mb-6">Run your first career simulation to explore different paths.</p>
+        <%= link_to new_career_simulation_path, class: "inline-flex items-center gap-2 px-5 py-2.5 bg-cyan-500 text-white font-semibold rounded-xl hover:bg-cyan-600 transition-colors" do %>
+          <span class="material-symbols-outlined text-[20px]">add</span>
+          New Simulation
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

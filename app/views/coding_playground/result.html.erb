@@ -1,0 +1,206 @@
+<% result = @submission.result_data || {} %>
+<% test_results = result["test_results"] || [] %>
+<% strengths = result["strengths"] || [] %>
+<% improvements = result["improvements"] || [] %>
+<% hints = result["hints"] || [] %>
+
+<div class="min-h-screen bg-gray-50">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">Submission Result</h1>
+        <p class="mt-1 text-sm text-gray-500"><%= @submission.created_at.strftime("%B %d, %Y at %H:%M") %></p>
+      </div>
+      <%= link_to coding_playground_path(@problem["id"]), class: "text-sm text-cyan-600 font-medium hover:text-cyan-700" do %>
+        <span class="inline-flex items-center gap-1">
+          <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+          Back to Problem
+        </span>
+      <% end %>
+    </div>
+
+    <!-- Problem Title & Difficulty -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
+      <div class="flex items-center gap-3">
+        <h2 class="text-xl font-bold text-gray-900"><%= @problem["title"] %></h2>
+        <% difficulty = @problem["difficulty"] %>
+        <span class="px-2.5 py-0.5 text-xs font-medium rounded-full
+          <%= case difficulty
+              when 'easy' then 'bg-green-50 text-green-600'
+              when 'medium' then 'bg-yellow-50 text-yellow-600'
+              when 'hard' then 'bg-red-50 text-red-600'
+              end %>">
+          <%= difficulty&.capitalize %>
+        </span>
+      </div>
+    </div>
+
+    <!-- Score Display -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-8 mb-6">
+      <div class="flex items-center gap-6">
+        <!-- Score Circle -->
+        <div class="relative w-24 h-24 shrink-0">
+          <svg class="w-24 h-24 transform -rotate-90" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="42" stroke="#e5e7eb" stroke-width="8" fill="none" />
+            <circle cx="50" cy="50" r="42" stroke="<%= @submission.score.to_i >= 7 ? '#22c55e' : @submission.score.to_i >= 4 ? '#eab308' : '#ef4444' %>"
+                    stroke-width="8" fill="none"
+                    stroke-dasharray="<%= ((@submission.score.to_f / 10) * 264).round %> 264"
+                    stroke-linecap="round" />
+          </svg>
+          <div class="absolute inset-0 flex items-center justify-center">
+            <span class="text-2xl font-bold text-gray-900"><%= @submission.score %><span class="text-sm text-gray-400">/10</span></span>
+          </div>
+        </div>
+
+        <!-- Badges -->
+        <div class="flex-1 space-y-3">
+          <!-- Correctness -->
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px] <%= result["correctness"] ? 'text-green-500' : 'text-red-500' %>">
+              <%= result["correctness"] ? 'check_circle' : 'cancel' %>
+            </span>
+            <span class="text-sm font-medium text-gray-700">Correctness</span>
+            <span class="px-2 py-0.5 text-xs font-medium rounded-full <%= result["correctness"] ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600' %>">
+              <%= result["correctness"] ? 'Passed' : 'Failed' %>
+            </span>
+          </div>
+
+          <!-- Time Complexity -->
+          <% if result["time_complexity"].present? %>
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-[18px] text-cyan-500">timer</span>
+              <span class="text-sm font-medium text-gray-700">Time Complexity</span>
+              <span class="px-2 py-0.5 text-xs font-medium rounded-full bg-cyan-50 text-cyan-600"><%= result["time_complexity"] %></span>
+            </div>
+          <% end %>
+
+          <!-- Space Complexity -->
+          <% if result["space_complexity"].present? %>
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-[18px] text-indigo-500">memory</span>
+              <span class="text-sm font-medium text-gray-700">Space Complexity</span>
+              <span class="px-2 py-0.5 text-xs font-medium rounded-full bg-indigo-50 text-indigo-600"><%= result["space_complexity"] %></span>
+            </div>
+          <% end %>
+
+          <!-- Code Quality -->
+          <% if result["code_quality"].present? %>
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-[18px] text-purple-500">star</span>
+              <span class="text-sm font-medium text-gray-700">Code Quality</span>
+              <span class="px-2 py-0.5 text-xs font-medium rounded-full bg-purple-50 text-purple-600"><%= result["code_quality"] %>/10</span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Test Results -->
+    <% if test_results.any? %>
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
+        <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <span class="material-symbols-outlined text-[20px] text-cyan-500">science</span>
+          Test Results
+        </h3>
+        <div class="space-y-3">
+          <% test_results.each_with_index do |test, i| %>
+            <% passed = test["passed"] || test[:passed] %>
+            <div class="p-4 rounded-xl <%= passed ? 'bg-green-50 border border-green-100' : 'bg-red-50 border border-red-100' %>">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-sm font-semibold <%= passed ? 'text-green-800' : 'text-red-800' %>">
+                  Test Case <%= i + 1 %>
+                </span>
+                <span class="inline-flex items-center gap-1 text-xs font-medium <%= passed ? 'text-green-600' : 'text-red-600' %>">
+                  <span class="material-symbols-outlined text-[16px]"><%= passed ? 'check_circle' : 'cancel' %></span>
+                  <%= passed ? 'Passed' : 'Failed' %>
+                </span>
+              </div>
+              <% explanation = test["explanation"] || test[:explanation] %>
+              <% if explanation.present? %>
+                <p class="text-xs <%= passed ? 'text-green-700' : 'text-red-700' %> mt-1"><%= explanation %></p>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Strengths & Improvements -->
+    <% if strengths.any? || improvements.any? %>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <% if strengths.any? %>
+          <div class="bg-white rounded-2xl border border-gray-100 p-6">
+            <h3 class="text-xs font-bold text-green-600 uppercase tracking-wider mb-3 flex items-center gap-2">
+              <span class="material-symbols-outlined text-[18px]">thumb_up</span>
+              Strengths
+            </h3>
+            <ul class="space-y-2">
+              <% strengths.each do |s| %>
+                <li class="flex items-start gap-2 text-sm text-gray-600">
+                  <span class="material-symbols-outlined text-green-500 text-[16px] mt-0.5 shrink-0">check</span>
+                  <%= s %>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <% if improvements.any? %>
+          <div class="bg-white rounded-2xl border border-gray-100 p-6">
+            <h3 class="text-xs font-bold text-orange-600 uppercase tracking-wider mb-3 flex items-center gap-2">
+              <span class="material-symbols-outlined text-[18px]">trending_up</span>
+              Areas to Improve
+            </h3>
+            <ul class="space-y-2">
+              <% improvements.each do |s| %>
+                <li class="flex items-start gap-2 text-sm text-gray-600">
+                  <span class="material-symbols-outlined text-orange-500 text-[16px] mt-0.5 shrink-0">arrow_forward</span>
+                  <%= s %>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <!-- Optimized Solution -->
+    <% if result["optimized_solution"].present? %>
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
+        <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <span class="material-symbols-outlined text-[20px] text-cyan-500">auto_awesome</span>
+          Optimized Solution
+        </h3>
+        <div class="bg-gray-900 rounded-xl p-5 overflow-x-auto">
+          <pre class="text-sm text-gray-100 leading-relaxed"><code><%= result["optimized_solution"] %></code></pre>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Hints for Improvement -->
+    <% if hints.any? %>
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
+        <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <span class="material-symbols-outlined text-[20px] text-cyan-500">lightbulb</span>
+          Hints for Improvement
+        </h3>
+        <div class="space-y-2">
+          <% hints.each_with_index do |hint, i| %>
+            <p class="text-sm text-gray-600 pl-4 border-l-2 border-cyan-200">
+              <span class="font-semibold text-gray-700">Hint <%= i + 1 %>:</span> <%= hint %>
+            </p>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Try Again -->
+    <div class="text-center">
+      <%= link_to coding_playground_path(@problem["id"]), class: "inline-flex items-center gap-2 px-6 py-3 bg-cyan-500 text-white font-semibold rounded-xl hover:bg-cyan-600 transition-colors" do %>
+        <span class="material-symbols-outlined text-[20px]">refresh</span>
+        Try Again
+      <% end %>
+    </div>
+  </div>
+</div>

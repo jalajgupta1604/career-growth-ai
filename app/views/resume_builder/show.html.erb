@@ -1,0 +1,211 @@
+<div class="min-h-screen bg-gray-950">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-sm mb-6">
+      <%= link_to "Resumes", resume_builder_index_path, class: "text-gray-500 hover:text-cyan-400 transition-colors" %>
+      <span class="material-symbols-outlined text-gray-600 text-[16px]">chevron_right</span>
+      <span class="text-white font-medium"><%= @resume.target_role %></span>
+    </nav>
+
+    <!-- Header -->
+    <div class="bg-gray-900 rounded-2xl border border-gray-800 p-8 mb-6">
+      <div class="flex items-start justify-between">
+        <div class="flex items-start gap-5">
+          <div class="w-14 h-14 bg-gray-800 rounded-xl flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined text-[28px] text-cyan-400">description</span>
+          </div>
+          <div>
+            <h1 class="text-2xl font-bold text-white"><%= @resume.target_role %></h1>
+            <p class="text-sm text-gray-400 mt-1">AI-generated resume</p>
+            <p class="text-xs text-gray-500 mt-1"><%= @resume.created_at.strftime("%B %d, %Y") %></p>
+          </div>
+        </div>
+        <span class="px-3 py-1.5 text-xs font-semibold rounded-full
+          <%= case @resume.status
+              when 'completed' then 'bg-green-900/50 text-green-400 border border-green-800'
+              when 'processing' then 'bg-yellow-900/50 text-yellow-400 border border-yellow-800'
+              when 'failed' then 'bg-red-900/50 text-red-400 border border-red-800'
+              else 'bg-gray-800 text-gray-400 border border-gray-700'
+              end %>">
+          <%= @resume.status.capitalize %>
+        </span>
+      </div>
+    </div>
+
+    <% if @resume.completed? %>
+      <% data = @resume.resume_data %>
+
+      <!-- Summary -->
+      <% if data["summary"].present? %>
+        <div class="bg-gray-900 rounded-2xl border border-gray-800 p-6 mb-6">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="material-symbols-outlined text-cyan-400">person</span>
+            <h2 class="text-lg font-bold text-white">Professional Summary</h2>
+          </div>
+          <p class="text-sm text-gray-400 leading-relaxed"><%= data["summary"] %></p>
+        </div>
+      <% end %>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Main Content -->
+        <div class="lg:col-span-2 space-y-6">
+          <!-- Experience -->
+          <% if data["experience"].present? %>
+            <div class="bg-gray-900 rounded-2xl border border-gray-800 p-6">
+              <div class="flex items-center gap-3 mb-4">
+                <span class="material-symbols-outlined text-cyan-400">work</span>
+                <h2 class="text-lg font-bold text-white">Experience</h2>
+              </div>
+              <div class="space-y-5">
+                <% data["experience"].each do |exp| %>
+                  <div class="border-l-2 border-cyan-500/30 pl-4">
+                    <h3 class="text-sm font-semibold text-white"><%= exp["title"] %></h3>
+                    <p class="text-xs text-gray-500 mt-0.5"><%= exp["company"] %> &bull; <%= exp["duration"] %></p>
+                    <% if exp["bullets"].present? %>
+                      <ul class="mt-2 space-y-1.5">
+                        <% exp["bullets"].each do |bullet| %>
+                          <li class="flex items-start gap-2 text-sm text-gray-400">
+                            <span class="text-cyan-500 mt-1 shrink-0">&bull;</span>
+                            <%= bullet %>
+                          </li>
+                        <% end %>
+                      </ul>
+                    <% end %>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+
+          <!-- Projects -->
+          <% if data["projects"].present? %>
+            <div class="bg-gray-900 rounded-2xl border border-gray-800 p-6">
+              <div class="flex items-center gap-3 mb-4">
+                <span class="material-symbols-outlined text-cyan-400">code</span>
+                <h2 class="text-lg font-bold text-white">Projects</h2>
+              </div>
+              <div class="space-y-4">
+                <% data["projects"].each do |project| %>
+                  <div class="border border-gray-800 rounded-xl p-4">
+                    <h3 class="text-sm font-semibold text-white"><%= project["name"] %></h3>
+                    <p class="text-xs text-gray-400 mt-1 leading-relaxed"><%= project["description"] %></p>
+                    <% if project["tech"].present? %>
+                      <div class="flex flex-wrap gap-1.5 mt-2">
+                        <% project["tech"].each do |tech| %>
+                          <span class="px-2 py-0.5 text-[11px] font-medium rounded-full bg-gray-800 text-gray-400 border border-gray-700"><%= tech %></span>
+                        <% end %>
+                      </div>
+                    <% end %>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+
+          <!-- Certifications -->
+          <% if data["certifications"].present? %>
+            <div class="bg-gray-900 rounded-2xl border border-gray-800 p-6">
+              <div class="flex items-center gap-3 mb-4">
+                <span class="material-symbols-outlined text-cyan-400">workspace_premium</span>
+                <h2 class="text-lg font-bold text-white">Certifications</h2>
+              </div>
+              <ul class="space-y-2">
+                <% data["certifications"].each do |cert| %>
+                  <li class="flex items-start gap-2 text-sm text-gray-400">
+                    <span class="material-symbols-outlined text-cyan-400 text-[16px] mt-0.5 shrink-0">verified</span>
+                    <%= cert %>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="space-y-6">
+          <!-- Skills -->
+          <% if data["skills"].present? %>
+            <div class="bg-gray-900 rounded-2xl border border-gray-800 p-6">
+              <h3 class="font-bold text-white mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-cyan-400 text-[20px]">psychology</span>
+                Skills
+              </h3>
+              <div class="space-y-4">
+                <% data["skills"].each do |category, skills| %>
+                  <div>
+                    <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2"><%= category %></p>
+                    <div class="flex flex-wrap gap-1.5">
+                      <% skills.each do |skill| %>
+                        <span class="px-2.5 py-1 text-xs font-medium rounded-lg bg-gray-800 text-gray-300 border border-gray-700"><%= skill %></span>
+                      <% end %>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+
+          <!-- ATS Keywords -->
+          <% if data["ats_keywords"].present? %>
+            <div class="bg-gradient-to-br from-cyan-500/20 to-cyan-700/20 rounded-2xl p-6 border border-cyan-800/50">
+              <h3 class="font-bold text-cyan-400 mb-3 flex items-center gap-2">
+                <span class="material-symbols-outlined text-[20px]">search</span>
+                ATS Keywords
+              </h3>
+              <div class="flex flex-wrap gap-1.5">
+                <% data["ats_keywords"].each do |keyword| %>
+                  <span class="px-2.5 py-1 text-xs font-medium rounded-full bg-cyan-900/40 text-cyan-300 border border-cyan-700/50"><%= keyword %></span>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+
+          <!-- Tips -->
+          <% if data["tips"].present? %>
+            <div class="bg-gray-900 rounded-2xl border border-gray-800 p-6">
+              <h3 class="font-bold text-white mb-3 flex items-center gap-2">
+                <span class="material-symbols-outlined text-yellow-400 text-[20px]">lightbulb</span>
+                Resume Tips
+              </h3>
+              <ul class="space-y-2">
+                <% data["tips"].each do |tip| %>
+                  <li class="flex items-start gap-2 text-sm text-gray-400">
+                    <span class="material-symbols-outlined text-yellow-400 text-[16px] mt-0.5 shrink-0">arrow_forward</span>
+                    <%= tip %>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+    <% elsif @resume.status == "processing" %>
+      <div class="bg-gray-900 rounded-2xl border border-gray-800 p-16 text-center">
+        <div class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg class="animate-spin h-8 w-8 text-cyan-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+          </svg>
+        </div>
+        <h3 class="text-lg font-semibold text-white mb-2">Generating your resume...</h3>
+        <p class="text-sm text-gray-400">Our AI is crafting a tailored resume for your target role. This usually takes a few seconds.</p>
+      </div>
+
+    <% elsif @resume.status == "failed" %>
+      <div class="bg-gray-900 rounded-2xl border border-red-900/50 p-16 text-center">
+        <div class="w-16 h-16 bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+          <span class="material-symbols-outlined text-red-400 text-[32px]">error</span>
+        </div>
+        <h3 class="text-lg font-semibold text-white mb-2">Generation failed</h3>
+        <p class="text-sm text-gray-400 mb-4">Something went wrong. Please try generating again.</p>
+        <%= link_to "Try Again", new_resume_builder_path, class: "inline-flex items-center gap-2 px-5 py-2.5 bg-cyan-500 text-white font-semibold rounded-xl hover:bg-cyan-600 transition-colors" %>
+      </div>
+
+    <% else %>
+      <div class="bg-gray-900 rounded-2xl border border-gray-800 p-16 text-center">
+        <p class="text-sm text-gray-400">Resume generation pending...</p>
+      </div>
+    <% end %>
+  </div>
+</div>

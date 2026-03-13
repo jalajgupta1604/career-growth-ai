@@ -1,0 +1,120 @@
+<div class="min-h-screen bg-gray-50">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <div class="flex items-center gap-3 mb-1">
+        <span class="material-symbols-outlined text-cyan-500 text-[32px]">forum</span>
+        <h1 class="text-3xl font-bold text-gray-900">Discussion Forums</h1>
+      </div>
+      <p class="mt-1 text-sm text-gray-500">Ask questions, share knowledge, and engage with the developer community.</p>
+    </div>
+
+    <!-- Category Filter Tabs -->
+    <div class="flex flex-wrap gap-2 mb-8">
+      <% categories = [
+        { key: nil, label: "All" },
+        { key: "backend", label: "Backend" },
+        { key: "frontend", label: "Frontend" },
+        { key: "devops", label: "DevOps" },
+        { key: "data_science", label: "Data Science" },
+        { key: "career", label: "Career" },
+        { key: "general", label: "General" }
+      ] %>
+      <% categories.each do |cat| %>
+        <%= link_to discussions_path(category: cat[:key]),
+          class: "px-4 py-2 text-sm font-medium rounded-full transition-colors #{@category == cat[:key] ? 'bg-cyan-500 text-white' : 'bg-white text-gray-500 border border-gray-200 hover:border-gray-300 hover:text-gray-700'}" do %>
+          <%= cat[:label] %>
+        <% end %>
+      <% end %>
+    </div>
+
+    <!-- New Thread Form -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-8">
+      <div class="flex items-center gap-2 mb-4">
+        <span class="material-symbols-outlined text-cyan-500 text-[20px]">add_circle</span>
+        <h2 class="text-lg font-semibold text-gray-900">New Thread</h2>
+      </div>
+
+      <%= form_with url: discussions_path, method: :post, class: "space-y-4", data: { controller: "loading-button", loading_button_text_value: "Creating Thread...", action: "submit->loading-button#submit", turbo: true } do |f| %>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="sm:col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+            <%= f.text_field :title, name: "discussion[title]", class: "w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500", placeholder: "What would you like to discuss?" %>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+            <select name="discussion[category]" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500">
+              <option value="backend">Backend</option>
+              <option value="frontend">Frontend</option>
+              <option value="devops">DevOps</option>
+              <option value="data_science">Data Science</option>
+              <option value="career">Career</option>
+              <option value="general" selected>General</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Body</label>
+          <%= f.text_area :body, name: "discussion[body]", rows: 4, class: "w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 resize-none", placeholder: "Share your thoughts, question, or topic for discussion..." %>
+        </div>
+
+        <div class="flex justify-end">
+          <button type="submit" data-loading-button-target="button" class="inline-flex items-center gap-2 px-6 py-2.5 bg-cyan-500 text-white font-semibold rounded-xl hover:bg-cyan-600 transition-colors cursor-pointer">
+            <span class="material-symbols-outlined text-[20px]">send</span>
+            Post Thread
+          </button>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Thread List -->
+    <% if @threads.present? %>
+      <div class="space-y-3">
+        <% @threads.each do |thread| %>
+          <%= link_to discussion_path(thread), class: "block bg-white rounded-2xl border border-gray-100 p-5 hover:border-cyan-200 transition-colors" do %>
+            <div class="flex items-start gap-4">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <% if thread.pinned? %>
+                    <span class="material-symbols-outlined text-cyan-500 text-[16px]">push_pin</span>
+                  <% end %>
+                  <h3 class="text-base font-semibold text-gray-900 truncate"><%= thread.title %></h3>
+                </div>
+                <div class="flex items-center gap-3 text-xs text-gray-400">
+                  <span><%= thread.user.full_name %></span>
+                  <span>&bull;</span>
+                  <span><%= time_ago_in_words(thread.created_at) %> ago</span>
+                  <span>&bull;</span>
+                  <span class="inline-flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px]">chat_bubble_outline</span>
+                    <%= thread.replies_count %>
+                  </span>
+                </div>
+              </div>
+              <span class="px-2.5 py-1 text-xs font-medium rounded-full shrink-0
+                <%= case thread.category
+                    when 'backend' then 'bg-purple-50 text-purple-600 border border-purple-200'
+                    when 'frontend' then 'bg-blue-50 text-blue-600 border border-blue-200'
+                    when 'devops' then 'bg-orange-50 text-orange-600 border border-orange-200'
+                    when 'data_science' then 'bg-green-50 text-green-600 border border-green-200'
+                    when 'career' then 'bg-yellow-50 text-yellow-600 border border-yellow-200'
+                    else 'bg-gray-50 text-gray-600 border border-gray-200'
+                    end %>">
+                <%= thread.category.humanize %>
+              </span>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="bg-white rounded-2xl border border-gray-100 p-16 text-center">
+        <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+          <span class="material-symbols-outlined text-cyan-500 text-[32px]">forum</span>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">No discussions yet</h3>
+        <p class="text-sm text-gray-500">Start the first thread and get the conversation going!</p>
+      </div>
+    <% end %>
+  </div>
+</div>

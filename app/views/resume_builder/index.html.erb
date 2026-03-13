@@ -1,0 +1,56 @@
+<div class="min-h-screen bg-gray-950">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-3xl font-bold text-white">Resume Builder</h1>
+        <p class="mt-1 text-sm text-gray-400">AI-generated resumes tailored to your target roles.</p>
+      </div>
+      <%= link_to new_resume_builder_path, class: "inline-flex items-center gap-2 px-5 py-2.5 bg-cyan-500 text-white font-semibold rounded-xl hover:bg-cyan-600 transition-colors" do %>
+        <span class="material-symbols-outlined text-[20px]">add</span>
+        New Resume
+      <% end %>
+    </div>
+
+    <% if @resumes.any? %>
+      <div class="space-y-4">
+        <% @resumes.each do |resume| %>
+          <%= link_to resume_builder_path(resume), class: "block bg-gray-900 rounded-2xl border border-gray-800 p-6 hover:border-gray-700 transition-colors" do %>
+            <div class="flex items-start justify-between">
+              <div class="flex items-start gap-4">
+                <div class="w-12 h-12 bg-gray-800 rounded-xl flex items-center justify-center shrink-0">
+                  <span class="material-symbols-outlined text-cyan-400 text-[24px]">description</span>
+                </div>
+                <div>
+                  <h3 class="text-base font-semibold text-white"><%= resume.target_role %></h3>
+                  <p class="text-xs text-gray-500 mt-1"><%= resume.created_at.strftime("%B %d, %Y") %></p>
+                </div>
+              </div>
+              <span class="px-3 py-1 text-xs font-semibold rounded-full
+                <%= case resume.status
+                    when 'completed' then 'bg-green-900/50 text-green-400 border border-green-800'
+                    when 'processing' then 'bg-yellow-900/50 text-yellow-400 border border-yellow-800'
+                    when 'failed' then 'bg-red-900/50 text-red-400 border border-red-800'
+                    else 'bg-gray-800 text-gray-400 border border-gray-700'
+                    end %>">
+                <%= resume.status.capitalize %>
+              </span>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="bg-gray-900 rounded-2xl border border-gray-800 p-16 text-center">
+        <div class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+          <span class="material-symbols-outlined text-gray-500 text-[32px]">description</span>
+        </div>
+        <h3 class="text-lg font-semibold text-white mb-2">No resumes generated yet</h3>
+        <p class="text-sm text-gray-400 mb-6">Generate your first AI-tailored resume for a target role.</p>
+        <%= link_to new_resume_builder_path, class: "inline-flex items-center gap-2 px-5 py-2.5 bg-cyan-500 text-white font-semibold rounded-xl hover:bg-cyan-600 transition-colors" do %>
+          <span class="material-symbols-outlined text-[20px]">add</span>
+          New Resume
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

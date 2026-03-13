@@ -1,0 +1,104 @@
+<div class="min-h-screen bg-gray-950">
+  <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <div class="mb-8">
+      <%= link_to company_reviews_path, class: "text-sm text-gray-500 hover:text-gray-300 transition-colors" do %>
+        &larr; Back to Company Reviews
+      <% end %>
+      <h1 class="text-3xl font-bold text-white mt-4">Write a Review</h1>
+      <p class="mt-1 text-gray-400">Share your honest experience to help fellow professionals</p>
+    </div>
+
+    <%= form_with model: @review, url: company_reviews_path, method: :post, class: "space-y-6", data: { controller: "loading-button", loading_button_text_value: "Submitting...", action: "submit->loading-button#submit" } do |f| %>
+
+      <%# Company & Role %>
+      <div class="bg-gray-900 rounded-2xl border border-gray-800 p-6 space-y-5">
+        <h2 class="text-lg font-semibold text-white">Company & Role</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-400 mb-1">Company Name</label>
+            <%= f.text_field :company_name, class: "w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500", placeholder: "e.g., Google" %>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-400 mb-1">Role Reviewed</label>
+            <%= f.text_field :role_reviewed, class: "w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500", placeholder: "e.g., Senior Engineer" %>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-400 mb-2">Employment Status</label>
+          <div class="flex items-center gap-6">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <%= f.radio_button :employment_status, "current", class: "w-4 h-4 border-gray-700 bg-gray-800 text-cyan-500 focus:ring-cyan-500 focus:ring-offset-0" %>
+              <span class="text-sm text-gray-300">Current Employee</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <%= f.radio_button :employment_status, "former", class: "w-4 h-4 border-gray-700 bg-gray-800 text-cyan-500 focus:ring-cyan-500 focus:ring-offset-0" %>
+              <span class="text-sm text-gray-300">Former Employee</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <%# Overall Rating %>
+      <div class="bg-gray-900 rounded-2xl border border-gray-800 p-6 space-y-5">
+        <h2 class="text-lg font-semibold text-white">Overall Rating</h2>
+        <div class="flex items-center gap-4">
+          <% (1..5).each do |rating| %>
+            <label class="cursor-pointer group">
+              <%= f.radio_button :overall_rating, rating, class: "sr-only peer" %>
+              <div class="flex flex-col items-center gap-1">
+                <span class="material-symbols-outlined text-[32px] text-gray-700 peer-checked:group-[]:text-yellow-400 group-hover:text-yellow-400 transition-colors">star</span>
+                <span class="text-xs text-gray-500"><%= rating %></span>
+              </div>
+            </label>
+          <% end %>
+        </div>
+      </div>
+
+      <%# Pros & Cons %>
+      <div class="bg-gray-900 rounded-2xl border border-gray-800 p-6 space-y-5">
+        <h2 class="text-lg font-semibold text-white">Your Experience</h2>
+        <div>
+          <label class="block text-sm font-medium text-green-400 mb-1">Pros</label>
+          <%= f.text_area :pros, rows: 3, class: "w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 resize-none", placeholder: "What did you like about working here?" %>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-red-400 mb-1">Cons</label>
+          <%= f.text_area :cons, rows: 3, class: "w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 resize-none", placeholder: "What could be improved?" %>
+        </div>
+      </div>
+
+      <%# Additional Details %>
+      <div class="bg-gray-900 rounded-2xl border border-gray-800 p-6 space-y-5">
+        <h2 class="text-lg font-semibold text-white">Additional Details</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-400 mb-1">Interview Difficulty</label>
+            <select name="company_review[interview_difficulty]" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm text-white focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500">
+              <option value="">Select difficulty...</option>
+              <option value="easy">Easy</option>
+              <option value="medium">Medium</option>
+              <option value="hard">Hard</option>
+              <option value="very_hard">Very Hard</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-400 mb-1">Salary Range</label>
+            <%= f.text_field :salary_range, class: "w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500", placeholder: "e.g., 15-20 LPA" %>
+          </div>
+        </div>
+      </div>
+
+      <%# Submit %>
+      <div class="flex items-center justify-between">
+        <%= link_to "Cancel", company_reviews_path, class: "text-sm text-gray-500 hover:text-gray-300 transition-colors" %>
+        <button type="submit" data-loading-button-target="button" class="inline-flex items-center gap-2 px-8 py-3 bg-cyan-500 text-white font-semibold rounded-xl hover:bg-cyan-600 transition-colors cursor-pointer">
+          <span class="material-symbols-outlined text-[20px]">send</span>
+          Submit Review
+        </button>
+      </div>
+    <% end %>
+
+  </div>
+</div>

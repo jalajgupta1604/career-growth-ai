@@ -1,0 +1,111 @@
+<div class="min-h-screen bg-gray-950">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <%# Header %>
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <div class="flex items-center gap-3 mb-1">
+          <span class="material-symbols-outlined text-cyan-400 text-[32px]">business</span>
+          <h1 class="text-3xl font-bold text-white">Company Reviews</h1>
+        </div>
+        <p class="mt-1 text-sm text-gray-400">Honest reviews from real professionals to help you make better career decisions</p>
+      </div>
+      <%= link_to new_company_review_path, class: "inline-flex items-center gap-2 px-5 py-2.5 bg-cyan-500 text-white font-semibold rounded-xl hover:bg-cyan-600 transition-colors" do %>
+        <span class="material-symbols-outlined text-[20px]">add</span>
+        Write a Review
+      <% end %>
+    </div>
+
+    <%# Companies Grid %>
+    <% if @companies.any? %>
+      <div class="mb-10">
+        <h2 class="text-lg font-semibold text-white mb-4">Companies</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <% @companies.each do |company_name| %>
+            <% avg = CompanyReview.average_rating_for(company_name) %>
+            <% count = CompanyReview.for_company(company_name).count %>
+            <%= link_to company_review_path(company_name), class: "bg-gray-900 rounded-2xl border border-gray-800 p-5 hover:border-gray-700 transition-all block" do %>
+              <div class="flex items-center gap-3 mb-3">
+                <div class="w-10 h-10 bg-gray-800 rounded-xl flex items-center justify-center">
+                  <span class="material-symbols-outlined text-gray-400 text-[20px]">business</span>
+                </div>
+                <h3 class="text-base font-bold text-white truncate"><%= company_name %></h3>
+              </div>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-1">
+                  <% 5.times do |i| %>
+                    <span class="material-symbols-outlined text-[18px] <%= i < avg.round ? 'text-yellow-400' : 'text-gray-700' %>">star</span>
+                  <% end %>
+                  <span class="text-sm text-gray-400 ml-1"><%= number_with_precision(avg, precision: 1) %></span>
+                </div>
+                <span class="text-xs text-gray-500"><%= count %> <%= "review".pluralize(count) %></span>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <%# Recent Reviews %>
+    <div>
+      <h2 class="text-lg font-semibold text-white mb-4">Recent Reviews</h2>
+      <% if @reviews.any? %>
+        <div class="space-y-4">
+          <% @reviews.each do |review| %>
+            <div class="bg-gray-900 rounded-2xl border border-gray-800 p-6 hover:border-gray-700 transition-all">
+              <div class="flex items-start justify-between mb-3">
+                <div>
+                  <%= link_to company_review_path(review.company_name), class: "text-base font-bold text-white hover:text-cyan-400 transition-colors" do %>
+                    <%= review.company_name %>
+                  <% end %>
+                  <p class="text-sm text-gray-500"><%= review.role_reviewed %> &bull; <%= review.employment_status&.humanize %></p>
+                </div>
+                <div class="flex items-center gap-1">
+                  <% 5.times do |i| %>
+                    <span class="material-symbols-outlined text-[18px] <%= i < review.overall_rating ? 'text-yellow-400' : 'text-gray-700' %>">star</span>
+                  <% end %>
+                </div>
+              </div>
+
+              <% if review.pros.present? %>
+                <div class="mb-2">
+                  <span class="text-xs font-medium text-green-400">Pros:</span>
+                  <p class="text-sm text-gray-400"><%= truncate(review.pros, length: 200) %></p>
+                </div>
+              <% end %>
+              <% if review.cons.present? %>
+                <div class="mb-2">
+                  <span class="text-xs font-medium text-red-400">Cons:</span>
+                  <p class="text-sm text-gray-400"><%= truncate(review.cons, length: 200) %></p>
+                </div>
+              <% end %>
+
+              <div class="flex items-center gap-4 mt-3 text-xs text-gray-500">
+                <% if review.interview_difficulty.present? %>
+                  <span>Interview: <strong class="text-gray-300"><%= review.interview_difficulty.humanize %></strong></span>
+                <% end %>
+                <% if review.salary_range.present? %>
+                  <span>Salary: <strong class="text-gray-300"><%= review.salary_range %></strong></span>
+                <% end %>
+                <span><%= time_ago_in_words(review.created_at) %> ago</span>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="bg-gray-900 rounded-2xl border border-gray-800 p-16 text-center">
+          <div class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="material-symbols-outlined text-cyan-400 text-[32px]">rate_review</span>
+          </div>
+          <h3 class="text-lg font-semibold text-white mb-2">No reviews yet</h3>
+          <p class="text-sm text-gray-400 mb-6">Be the first to share your experience and help others make informed decisions.</p>
+          <%= link_to new_company_review_path, class: "inline-flex items-center gap-2 px-5 py-2.5 bg-cyan-500 text-white font-semibold rounded-xl hover:bg-cyan-600 transition-colors" do %>
+            <span class="material-symbols-outlined text-[20px]">add</span>
+            Write the First Review
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+
+  </div>
+</div>

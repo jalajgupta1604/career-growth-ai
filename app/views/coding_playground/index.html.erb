@@ -1,0 +1,90 @@
+<div class="min-h-screen bg-gray-50">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">Coding Playground</h1>
+        <p class="mt-1 text-sm text-gray-500">Practice DSA problems with AI-powered code evaluation</p>
+      </div>
+      <%= link_to interview_prep_path, class: "text-sm text-cyan-600 font-medium hover:text-cyan-700" do %>
+        <span class="inline-flex items-center gap-1">
+          <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+          Back to Prep
+        </span>
+      <% end %>
+    </div>
+
+    <!-- Difficulty Filter Tabs -->
+    <div class="flex items-center gap-2 mb-8">
+      <% difficulties = [["All", nil], ["Easy", "easy"], ["Medium", "medium"], ["Hard", "hard"]] %>
+      <% current_difficulty = params[:difficulty] %>
+      <% difficulties.each do |label, value| %>
+        <%= link_to coding_playground_index_path(difficulty: value),
+            class: "px-4 py-2 text-sm font-medium rounded-full transition-colors #{current_difficulty == value ? 'bg-cyan-500 text-white' : 'bg-white text-gray-600 border border-gray-200 hover:border-cyan-300 hover:text-cyan-600'}" do %>
+          <%= label %>
+        <% end %>
+      <% end %>
+    </div>
+
+    <!-- Problems Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
+      <% @problems.each do |problem| %>
+        <div class="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-shadow">
+          <div class="flex items-center justify-between mb-3">
+            <span class="px-2.5 py-0.5 text-xs font-medium rounded-full
+              <%= case problem[:difficulty]
+                  when 'easy' then 'bg-green-50 text-green-600'
+                  when 'medium' then 'bg-yellow-50 text-yellow-600'
+                  when 'hard' then 'bg-red-50 text-red-600'
+                  end %>">
+              <%= problem[:difficulty].capitalize %>
+            </span>
+            <span class="px-2.5 py-0.5 text-xs font-medium rounded-full bg-gray-100 text-gray-500">
+              <%= problem[:category] %>
+            </span>
+          </div>
+
+          <h3 class="text-base font-bold text-gray-900 mb-2"><%= problem[:title] %></h3>
+          <p class="text-sm text-gray-500 leading-relaxed mb-4 line-clamp-2"><%= truncate(problem[:description], length: 120) %></p>
+
+          <%= link_to coding_playground_path(problem[:id]), class: "inline-flex items-center gap-1.5 text-sm font-semibold text-cyan-600 hover:text-cyan-700 transition-colors" do %>
+            <span class="material-symbols-outlined text-[18px]">code</span>
+            Solve
+            <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Recent Submissions -->
+    <% if @recent.present? %>
+      <div class="bg-white rounded-2xl border border-gray-100 p-6">
+        <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <span class="material-symbols-outlined text-[20px] text-cyan-500">history</span>
+          Recent Submissions
+        </h3>
+        <div class="space-y-3">
+          <% @recent.each do |submission| %>
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+              <div class="flex items-center gap-3">
+                <span class="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold
+                  <%= submission.score.to_i >= 7 ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' %>">
+                  <%= submission.score %>/10
+                </span>
+                <div>
+                  <p class="text-sm font-medium text-gray-900"><%= submission.problem_data&.dig("title") || "Problem" %></p>
+                  <p class="text-xs text-gray-400">
+                    <%= submission.language&.capitalize %> &bull; <%= submission.created_at.strftime("%b %d, %H:%M") %>
+                  </p>
+                </div>
+              </div>
+              <span class="material-symbols-outlined text-[18px] <%= submission.score.to_i >= 7 ? 'text-green-500' : 'text-yellow-500' %>">
+                <%= submission.score.to_i >= 7 ? 'check_circle' : 'info' %>
+              </span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

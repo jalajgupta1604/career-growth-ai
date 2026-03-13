@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html class="h-full">
+  <head>
+    <title>Admin — Career Growth AI</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <link rel="icon" href="/icon.png" type="image/png">
+
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="h-full bg-gray-100">
+    <div class="min-h-full flex">
+      <!-- Sidebar -->
+      <aside class="w-64 bg-gray-900 text-white flex flex-col flex-shrink-0">
+        <div class="p-4 border-b border-gray-800">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 bg-cyan-500 rounded-lg flex items-center justify-center">
+              <span class="material-symbols-outlined text-white text-lg">admin_panel_settings</span>
+            </div>
+            <div>
+              <h1 class="text-sm font-bold">Admin Panel</h1>
+              <p class="text-xs text-gray-400">Career Growth AI</p>
+            </div>
+          </div>
+        </div>
+
+        <nav class="flex-1 p-3 space-y-1">
+          <%= admin_nav_link "Dashboard", admin_root_path, "dashboard" %>
+          <%= admin_nav_link "Users", admin_users_path, "group" %>
+          <%= admin_nav_link "Moderation", admin_moderation_index_path, "shield" %>
+          <%= admin_nav_link "Revenue", admin_revenue_path, "payments" %>
+          <%= admin_nav_link "Audit Log", admin_audit_logs_path, "history" %>
+
+          <div class="pt-4 mt-4 border-t border-gray-800">
+            <%= link_to dashboard_path, class: "flex items-center gap-2 px-3 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition" do %>
+              <span class="material-symbols-outlined text-lg">arrow_back</span>
+              Back to App
+            <% end %>
+          </div>
+        </nav>
+
+        <div class="p-4 border-t border-gray-800">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-full bg-cyan-600 flex items-center justify-center text-xs font-bold">
+              <%= current_user.full_name&.first&.upcase || "A" %>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium truncate"><%= current_user.full_name || current_user.email %></p>
+              <p class="text-xs text-gray-400"><%= current_user.admin_role.humanize %></p>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main content -->
+      <div class="flex-1 flex flex-col min-w-0">
+        <header class="bg-white border-b border-gray-200 px-6 py-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-xl font-bold text-gray-900"><%= yield :page_title %></h2>
+            <div class="flex items-center gap-3 text-sm text-gray-500">
+              <span><%= Time.current.strftime("%B %d, %Y") %></span>
+            </div>
+          </div>
+        </header>
+
+        <% if notice.present? %>
+          <div class="mx-6 mt-4">
+            <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm"><%= notice %></div>
+          </div>
+        <% end %>
+        <% if alert.present? %>
+          <div class="mx-6 mt-4">
+            <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm"><%= alert %></div>
+          </div>
+        <% end %>
+
+        <main class="flex-1 p-6">
+          <%= yield %>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

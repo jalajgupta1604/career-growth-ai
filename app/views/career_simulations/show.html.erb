@@ -1,0 +1,183 @@
+<div class="min-h-screen bg-gray-950">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-sm mb-6">
+      <%= link_to "Simulations", career_simulations_path, class: "text-gray-500 hover:text-cyan-400 transition-colors" %>
+      <span class="material-symbols-outlined text-gray-600 text-[16px]">chevron_right</span>
+      <span class="text-white font-medium"><%= @simulation.target_role.presence || @simulation.scenario_type.humanize %></span>
+    </nav>
+
+    <!-- Header -->
+    <div class="bg-gray-900 rounded-2xl border border-gray-800 p-8 mb-6">
+      <div class="flex items-start justify-between">
+        <div class="flex items-start gap-5">
+          <div class="w-14 h-14 bg-gray-800 rounded-xl flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined text-[28px] text-cyan-400">route</span>
+          </div>
+          <div>
+            <h1 class="text-2xl font-bold text-white"><%= @simulation.target_role.presence || "Career Simulation" %></h1>
+            <p class="text-sm text-gray-400 mt-1"><%= @simulation.scenario_type.humanize %> &bull; <%= @simulation.target_company_type&.humanize %></p>
+            <p class="text-xs text-gray-500 mt-1"><%= @simulation.created_at.strftime("%B %d, %Y") %></p>
+          </div>
+        </div>
+        <span class="px-3 py-1.5 text-xs font-semibold rounded-full
+          <%= case @simulation.status
+              when 'completed' then 'bg-green-900/50 text-green-400 border border-green-800'
+              when 'processing' then 'bg-yellow-900/50 text-yellow-400 border border-yellow-800'
+              when 'failed' then 'bg-red-900/50 text-red-400 border border-red-800'
+              else 'bg-gray-800 text-gray-400 border border-gray-700'
+              end %>">
+          <%= @simulation.status.capitalize %>
+        </span>
+      </div>
+    </div>
+
+    <% if @simulation.completed? %>
+      <% result = @simulation.result_data %>
+
+      <!-- Summary & Metrics -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        <!-- Projected Salary -->
+        <div class="bg-gray-900 rounded-2xl border border-gray-800 p-6 text-center">
+          <span class="material-symbols-outlined text-cyan-400 text-[28px] mb-2">payments</span>
+          <p class="text-2xl font-bold text-white"><%= result["projected_salary"] %></p>
+          <p class="text-xs text-gray-500 mt-1">Projected Salary</p>
+        </div>
+        <!-- Timeline -->
+        <div class="bg-gray-900 rounded-2xl border border-gray-800 p-6 text-center">
+          <span class="material-symbols-outlined text-cyan-400 text-[28px] mb-2">schedule</span>
+          <p class="text-2xl font-bold text-white"><%= result["timeline_months"] %> months</p>
+          <p class="text-xs text-gray-500 mt-1">Estimated Timeline</p>
+        </div>
+        <!-- Confidence -->
+        <div class="bg-gray-900 rounded-2xl border border-gray-800 p-6 text-center">
+          <span class="material-symbols-outlined text-[28px] mb-2
+            <%= case result['confidence']
+                when 'high' then 'text-green-400'
+                when 'medium' then 'text-yellow-400'
+                else 'text-red-400'
+                end %>">verified</span>
+          <p class="text-2xl font-bold text-white capitalize"><%= result["confidence"] %></p>
+          <p class="text-xs text-gray-500 mt-1">Confidence Level</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Main Content -->
+        <div class="lg:col-span-2 space-y-6">
+          <!-- Summary -->
+          <div class="bg-gray-900 rounded-2xl border border-gray-800 p-6">
+            <div class="flex items-center gap-3 mb-4">
+              <span class="material-symbols-outlined text-cyan-400">analytics</span>
+              <h2 class="text-lg font-bold text-white">Summary</h2>
+            </div>
+            <p class="text-sm text-gray-400 leading-relaxed"><%= result["summary"] %></p>
+          </div>
+
+          <!-- Steps Timeline -->
+          <% if result["steps"].present? %>
+            <div class="bg-gray-900 rounded-2xl border border-gray-800 p-6">
+              <div class="flex items-center gap-3 mb-6">
+                <span class="material-symbols-outlined text-cyan-400">timeline</span>
+                <h2 class="text-lg font-bold text-white">Action Plan</h2>
+              </div>
+              <div class="relative">
+                <div class="absolute left-[19px] top-0 bottom-0 w-px bg-gray-800"></div>
+                <div class="space-y-6">
+                  <% result["steps"].each_with_index do |step, idx| %>
+                    <div class="relative flex items-start gap-4 pl-0">
+                      <div class="w-10 h-10 bg-gray-800 border-2 border-cyan-500 rounded-full flex items-center justify-center shrink-0 z-10">
+                        <span class="text-xs font-bold text-cyan-400"><%= step["month"] || idx + 1 %></span>
+                      </div>
+                      <div class="pt-1.5">
+                        <h4 class="text-sm font-semibold text-white"><%= step["action"] %></h4>
+                        <p class="text-xs text-gray-500 mt-1"><%= step["impact"] %></p>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="space-y-6">
+          <!-- Opportunities -->
+          <% if result["opportunities"].present? %>
+            <div class="bg-gray-900 rounded-2xl border border-gray-800 p-6">
+              <h3 class="font-bold text-white mb-3 flex items-center gap-2">
+                <span class="material-symbols-outlined text-green-400 text-[20px]">rocket_launch</span>
+                Opportunities
+              </h3>
+              <ul class="space-y-2">
+                <% result["opportunities"].each do |opp| %>
+                  <li class="flex items-start gap-2 text-sm text-gray-400">
+                    <span class="material-symbols-outlined text-green-400 text-[16px] mt-0.5 shrink-0">check_circle</span>
+                    <%= opp %>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <!-- Risks -->
+          <% if result["risks"].present? %>
+            <div class="bg-gray-900 rounded-2xl border border-gray-800 p-6">
+              <h3 class="font-bold text-white mb-3 flex items-center gap-2">
+                <span class="material-symbols-outlined text-orange-400 text-[20px]">warning</span>
+                Risks
+              </h3>
+              <ul class="space-y-2">
+                <% result["risks"].each do |risk| %>
+                  <li class="flex items-start gap-2 text-sm text-gray-400">
+                    <span class="material-symbols-outlined text-orange-400 text-[16px] mt-0.5 shrink-0">error</span>
+                    <%= risk %>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <!-- Scenario Description -->
+          <% if @simulation.description.present? %>
+            <div class="bg-gradient-to-br from-cyan-500/20 to-cyan-700/20 rounded-2xl p-6 border border-cyan-800/50">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="material-symbols-outlined text-cyan-400">description</span>
+                <span class="text-xs font-black uppercase tracking-widest text-cyan-400">Your Scenario</span>
+              </div>
+              <p class="text-sm text-gray-300 leading-relaxed"><%= @simulation.description %></p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+    <% elsif @simulation.status == "processing" %>
+      <div class="bg-gray-900 rounded-2xl border border-gray-800 p-16 text-center">
+        <div class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg class="animate-spin h-8 w-8 text-cyan-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+          </svg>
+        </div>
+        <h3 class="text-lg font-semibold text-white mb-2">Running simulation...</h3>
+        <p class="text-sm text-gray-400">Our AI is projecting outcomes for your scenario. This usually takes a few seconds.</p>
+      </div>
+
+    <% elsif @simulation.status == "failed" %>
+      <div class="bg-gray-900 rounded-2xl border border-red-900/50 p-16 text-center">
+        <div class="w-16 h-16 bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+          <span class="material-symbols-outlined text-red-400 text-[32px]">error</span>
+        </div>
+        <h3 class="text-lg font-semibold text-white mb-2">Simulation failed</h3>
+        <p class="text-sm text-gray-400 mb-4">Something went wrong. Please try running the simulation again.</p>
+        <%= link_to "Try Again", new_career_simulation_path, class: "inline-flex items-center gap-2 px-5 py-2.5 bg-cyan-500 text-white font-semibold rounded-xl hover:bg-cyan-600 transition-colors" %>
+      </div>
+
+    <% else %>
+      <div class="bg-gray-900 rounded-2xl border border-gray-800 p-16 text-center">
+        <p class="text-sm text-gray-400">Simulation pending...</p>
+      </div>
+    <% end %>
+  </div>
+</div>

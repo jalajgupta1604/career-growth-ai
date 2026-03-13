@@ -1,0 +1,112 @@
+<div class="min-h-screen bg-gray-50">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">5-Minute Revision</h1>
+        <p class="mt-1 text-sm text-gray-500">Item <%= @current_index + 1 %> of <%= @items.size %></p>
+      </div>
+      <%= link_to revisions_path, class: "text-sm text-gray-500 font-medium hover:text-gray-700" do %>
+        <span class="inline-flex items-center gap-1">
+          <span class="material-symbols-outlined text-[18px]">close</span>
+          Exit
+        </span>
+      <% end %>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="w-full bg-gray-200 rounded-full h-2 mb-8">
+      <div class="h-2 bg-cyan-500 rounded-full transition-all" style="width: <%= (@current_index.to_f / [@items.size, 1].max * 100).round %>%"></div>
+    </div>
+
+    <% if @item %>
+      <!-- Question Card -->
+      <div class="bg-white rounded-2xl border border-gray-100 p-8 mb-6">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full bg-cyan-50 text-cyan-600"><%= @item.topic.humanize %></span>
+          <span class="px-2 py-0.5 text-xs font-medium rounded-full
+            <%= case @item.difficulty
+                when 'easy' then 'bg-green-50 text-green-600'
+                when 'hard' then 'bg-red-50 text-red-600'
+                else 'bg-yellow-50 text-yellow-600'
+                end %>"><%= @item.difficulty.capitalize %></span>
+          <span class="px-2 py-0.5 text-xs font-medium rounded-full
+            <%= case @item.strength
+                when 'weak' then 'bg-red-50 text-red-600'
+                when 'strong' then 'bg-green-50 text-green-600'
+                else 'bg-yellow-50 text-yellow-600'
+                end %>"><%= @item.strength.capitalize %></span>
+        </div>
+
+        <h2 class="text-xl font-bold text-gray-900 mb-3"><%= @item.question_data["question"] %></h2>
+
+        <% if @item.question_data["context"].present? %>
+          <p class="text-sm text-gray-500 mb-6 leading-relaxed"><%= @item.question_data["context"] %></p>
+        <% end %>
+
+        <!-- Reveal Answer -->
+        <div data-controller="accordion">
+          <button data-action="click->accordion#toggle" class="w-full py-3 bg-gray-100 text-gray-700 text-sm font-semibold rounded-xl hover:bg-gray-200 transition-colors mb-4">
+            <span class="inline-flex items-center gap-2">
+              <span class="material-symbols-outlined text-[18px]">visibility</span>
+              Show Answer
+              <span data-accordion-target="icon" class="material-symbols-outlined text-[18px] transition-transform">expand_more</span>
+            </span>
+          </button>
+          <div data-accordion-target="content" class="hidden">
+            <div class="bg-cyan-50 rounded-xl p-5 mb-6">
+              <p class="text-xs font-bold text-cyan-700 uppercase tracking-wider mb-2">Model Answer</p>
+              <p class="text-sm text-cyan-800 leading-relaxed"><%= @item.question_data["ideal_answer"] || @item.question_data["model_answer"] || "No model answer available." %></p>
+            </div>
+
+            <% if @item.answer_data.present? && @item.answer_data["user_answer"].present? %>
+              <div class="bg-gray-50 rounded-xl p-5 mb-6">
+                <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Your Previous Answer</p>
+                <p class="text-sm text-gray-600 leading-relaxed"><%= @item.answer_data["user_answer"] %></p>
+              </div>
+            <% end %>
+
+            <!-- Rating Buttons -->
+            <p class="text-sm font-semibold text-gray-700 mb-3">How well did you recall this?</p>
+            <div class="grid grid-cols-3 md:grid-cols-6 gap-2">
+              <% [
+                [0, "Blank", "bg-red-500"],
+                [1, "Wrong", "bg-red-400"],
+                [2, "Hard", "bg-orange-400"],
+                [3, "OK", "bg-yellow-400"],
+                [4, "Good", "bg-green-400"],
+                [5, "Perfect", "bg-green-500"]
+              ].each do |quality, label, color| %>
+                <%= button_to review_revision_path(@item, quality: quality, next_index: @current_index + 1),
+                  method: :post,
+                  class: "py-3 #{color} text-white text-sm font-semibold rounded-xl hover:opacity-90 transition-opacity cursor-pointer" do %>
+                  <span class="block text-lg font-bold"><%= quality %></span>
+                  <span class="block text-[10px] opacity-80"><%= label %></span>
+                <% end %>
+              <% end %>
+            </div>
+            <p class="mt-3 text-xs text-gray-400 text-center">0 = Complete blank &nbsp;&bull;&nbsp; 5 = Perfect instant recall</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Item Stats -->
+      <div class="bg-white rounded-2xl border border-gray-100 p-4">
+        <div class="flex items-center justify-between text-xs text-gray-400">
+          <span>Reviews: <%= @item.total_attempts %></span>
+          <span>Accuracy: <%= @item.accuracy_percentage %>%</span>
+          <span>Streak: <%= @item.correct_streak %></span>
+          <span>Interval: <%= @item.interval %> day<%= 's' if @item.interval != 1 %></span>
+        </div>
+      </div>
+    <% else %>
+      <!-- Session Complete -->
+      <div class="bg-white rounded-2xl border border-gray-100 p-12 text-center">
+        <span class="material-symbols-outlined text-[64px] text-green-400 mb-4">celebration</span>
+        <h2 class="text-2xl font-bold text-gray-900 mb-2">Revision Complete!</h2>
+        <p class="text-gray-500 mb-6">Great job! You've reviewed all due items.</p>
+        <%= link_to "Back to Dashboard", revisions_path, class: "inline-flex items-center gap-2 px-6 py-3 bg-cyan-500 text-white font-semibold rounded-xl hover:bg-cyan-600 transition-colors" %>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,89 @@
+<div class="min-h-screen bg-gray-950">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <div class="mb-8">
+      <%= link_to company_reviews_path, class: "text-sm text-gray-500 hover:text-gray-300 transition-colors" do %>
+        &larr; Back to Company Reviews
+      <% end %>
+    </div>
+
+    <%# Company Header %>
+    <div class="bg-gray-900 rounded-2xl border border-gray-800 p-6 mb-8">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 bg-gray-800 rounded-xl flex items-center justify-center">
+            <span class="material-symbols-outlined text-cyan-400 text-[28px]">business</span>
+          </div>
+          <div>
+            <h1 class="text-2xl font-bold text-white"><%= @company_name %></h1>
+            <p class="text-sm text-gray-400"><%= @reviews.size %> <%= "review".pluralize(@reviews.size) %></p>
+          </div>
+        </div>
+        <div class="text-right">
+          <div class="flex items-center gap-1 justify-end">
+            <% 5.times do |i| %>
+              <span class="material-symbols-outlined text-[22px] <%= i < @avg_rating.round ? 'text-yellow-400' : 'text-gray-700' %>">star</span>
+            <% end %>
+          </div>
+          <p class="text-sm text-gray-400 mt-1"><%= number_with_precision(@avg_rating, precision: 1) %> average rating</p>
+        </div>
+      </div>
+    </div>
+
+    <%# Reviews List %>
+    <% if @reviews.any? %>
+      <div class="space-y-4">
+        <% @reviews.each do |review| %>
+          <div class="bg-gray-900 rounded-2xl border border-gray-800 p-6">
+            <div class="flex items-start justify-between mb-4">
+              <div>
+                <p class="text-sm font-medium text-white"><%= review.role_reviewed %></p>
+                <p class="text-xs text-gray-500"><%= review.employment_status&.humanize %> &bull; <%= time_ago_in_words(review.created_at) %> ago</p>
+              </div>
+              <div class="flex items-center gap-1">
+                <% 5.times do |i| %>
+                  <span class="material-symbols-outlined text-[18px] <%= i < review.overall_rating ? 'text-yellow-400' : 'text-gray-700' %>">star</span>
+                <% end %>
+              </div>
+            </div>
+
+            <% if review.pros.present? %>
+              <div class="mb-3">
+                <span class="text-xs font-medium text-green-400">Pros</span>
+                <p class="text-sm text-gray-400 mt-0.5 leading-relaxed"><%= review.pros %></p>
+              </div>
+            <% end %>
+            <% if review.cons.present? %>
+              <div class="mb-3">
+                <span class="text-xs font-medium text-red-400">Cons</span>
+                <p class="text-sm text-gray-400 mt-0.5 leading-relaxed"><%= review.cons %></p>
+              </div>
+            <% end %>
+
+            <div class="flex items-center gap-4 mt-4 pt-3 border-t border-gray-800 text-xs text-gray-500">
+              <% if review.interview_difficulty.present? %>
+                <span>Interview: <strong class="text-gray-300"><%= review.interview_difficulty.humanize %></strong></span>
+              <% end %>
+              <% if review.salary_range.present? %>
+                <span>Salary: <strong class="text-gray-300"><%= review.salary_range %></strong></span>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="bg-gray-900 rounded-2xl border border-gray-800 p-16 text-center">
+        <div class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+          <span class="material-symbols-outlined text-cyan-400 text-[32px]">rate_review</span>
+        </div>
+        <h3 class="text-lg font-semibold text-white mb-2">No reviews for this company yet</h3>
+        <p class="text-sm text-gray-400 mb-6">Be the first to share your experience at <%= @company_name %>.</p>
+        <%= link_to new_company_review_path, class: "inline-flex items-center gap-2 px-5 py-2.5 bg-cyan-500 text-white font-semibold rounded-xl hover:bg-cyan-600 transition-colors" do %>
+          <span class="material-symbols-outlined text-[20px]">add</span>
+          Write a Review
+        <% end %>
+      </div>
+    <% end %>
+
+  </div>
+</div>

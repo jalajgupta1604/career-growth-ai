@@ -1,0 +1,127 @@
+<% content_for :page_title, "Dashboard" %>
+
+<!-- Stats Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+  <div class="bg-white rounded-xl border border-gray-200 p-5">
+    <div class="flex items-center justify-between">
+      <div>
+        <p class="text-sm text-gray-500">Total Users</p>
+        <p class="text-2xl font-bold text-gray-900 mt-1"><%= number_with_delimiter(@total_users) %></p>
+        <p class="text-xs text-green-600 mt-1">+<%= @new_users_today %> today</p>
+      </div>
+      <div class="w-12 h-12 bg-cyan-50 rounded-xl flex items-center justify-center">
+        <span class="material-symbols-outlined text-cyan-600">group</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-xl border border-gray-200 p-5">
+    <div class="flex items-center justify-between">
+      <div>
+        <p class="text-sm text-gray-500">Active Subscribers</p>
+        <p class="text-2xl font-bold text-gray-900 mt-1"><%= number_with_delimiter(@active_subscribers) %></p>
+        <% if @total_users > 0 %>
+          <p class="text-xs text-gray-400 mt-1"><%= number_to_percentage((@active_subscribers.to_f / @total_users * 100), precision: 1) %> conversion</p>
+        <% end %>
+      </div>
+      <div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center">
+        <span class="material-symbols-outlined text-amber-600">star</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-xl border border-gray-200 p-5">
+    <div class="flex items-center justify-between">
+      <div>
+        <p class="text-sm text-gray-500">Monthly Revenue</p>
+        <p class="text-2xl font-bold text-gray-900 mt-1"><%= number_to_currency(@monthly_revenue, unit: "₹", precision: 0) %></p>
+      </div>
+      <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center">
+        <span class="material-symbols-outlined text-green-600">payments</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-xl border border-gray-200 p-5">
+    <div class="flex items-center justify-between">
+      <div>
+        <p class="text-sm text-gray-500">Pending Flags</p>
+        <p class="text-2xl font-bold text-gray-900 mt-1"><%= @pending_flags %></p>
+        <% if @pending_flags > 0 %>
+          <p class="text-xs text-red-600 mt-1">Needs attention</p>
+        <% end %>
+      </div>
+      <div class="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center">
+        <span class="material-symbols-outlined text-red-600">flag</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Stats Row -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+  <div class="bg-white rounded-xl border border-gray-200 p-5">
+    <h3 class="text-sm font-semibold text-gray-900 mb-3">New Users (7 days)</h3>
+    <p class="text-3xl font-bold text-cyan-600"><%= @new_users_week %></p>
+    <p class="text-xs text-gray-400 mt-1"><%= (@new_users_week / 7.0).round(1) %> avg/day</p>
+  </div>
+
+  <div class="bg-white rounded-xl border border-gray-200 p-5">
+    <h3 class="text-sm font-semibold text-gray-900 mb-3">User Growth (30 days)</h3>
+    <div class="flex items-end gap-1 h-16">
+      <% @user_growth.each do |date, count| %>
+        <div class="flex-1 bg-cyan-200 rounded-t" style="height: <%= [count * 10, 100].min %>%"></div>
+      <% end %>
+      <% if @user_growth.empty? %>
+        <p class="text-sm text-gray-400">No data yet</p>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-xl border border-gray-200 p-5">
+    <h3 class="text-sm font-semibold text-gray-900 mb-3">Quick Actions</h3>
+    <div class="space-y-2">
+      <%= link_to admin_users_path, class: "flex items-center gap-2 text-sm text-gray-600 hover:text-cyan-600 transition" do %>
+        <span class="material-symbols-outlined text-base">person_search</span>
+        Search Users
+      <% end %>
+      <%= link_to admin_moderation_index_path, class: "flex items-center gap-2 text-sm text-gray-600 hover:text-cyan-600 transition" do %>
+        <span class="material-symbols-outlined text-base">shield</span>
+        Review Flags (<%= @pending_flags %>)
+      <% end %>
+      <%= link_to admin_revenue_path, class: "flex items-center gap-2 text-sm text-gray-600 hover:text-cyan-600 transition" do %>
+        <span class="material-symbols-outlined text-base">analytics</span>
+        Revenue Report
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Audit Logs -->
+<div class="bg-white rounded-xl border border-gray-200">
+  <div class="p-5 border-b border-gray-100">
+    <div class="flex items-center justify-between">
+      <h3 class="text-sm font-semibold text-gray-900">Recent Activity</h3>
+      <%= link_to "View All", admin_audit_logs_path, class: "text-xs text-cyan-600 hover:text-cyan-700" %>
+    </div>
+  </div>
+  <div class="divide-y divide-gray-50">
+    <% @recent_audit_logs.each do |log| %>
+      <div class="px-5 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-600">
+            <%= log.user.full_name&.first&.upcase || "?" %>
+          </div>
+          <div>
+            <p class="text-sm text-gray-900"><%= log.user.email %> <span class="text-gray-400">—</span> <span class="font-medium"><%= log.action.humanize %></span></p>
+            <p class="text-xs text-gray-400"><%= log.resource_type %> #<%= log.resource_id %></p>
+          </div>
+        </div>
+        <span class="text-xs text-gray-400"><%= time_ago_in_words(log.created_at) %> ago</span>
+      </div>
+    <% end %>
+    <% if @recent_audit_logs.empty? %>
+      <div class="px-5 py-8 text-center text-sm text-gray-400">No activity yet</div>
+    <% end %>
+  </div>
+</div>

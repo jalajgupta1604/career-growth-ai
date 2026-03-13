@@ -24,6 +24,26 @@ class User < ApplicationRecord
   has_many :challenge_attempts, dependent: :destroy
   has_many :interview_debriefs, dependent: :destroy
   has_many :readiness_scores, dependent: :destroy
+  has_many :community_posts, dependent: :destroy
+  has_many :post_likes, dependent: :destroy
+  has_many :company_reviews, dependent: :destroy
+  has_many :career_simulations, dependent: :destroy
+  has_many :generated_resumes, dependent: :destroy
+  has_many :api_keys, dependent: :destroy
+  has_many :job_postings, foreign_key: :posted_by_id, dependent: :destroy
+  has_many :job_applications, dependent: :destroy
+  has_many :revision_items, dependent: :destroy
+  has_many :peer_practice_sessions, dependent: :destroy
+  has_many :study_group_memberships, dependent: :destroy
+  has_many :study_groups, through: :study_group_memberships
+  has_many :salary_forecasts, dependent: :destroy
+  has_one :mentor_profile, dependent: :destroy
+  has_many :discussion_threads, dependent: :destroy
+  has_many :discussion_replies, dependent: :destroy
+  has_many :code_submissions, dependent: :destroy
+  has_many :audit_logs, dependent: :destroy
+  has_many :notifications, dependent: :destroy
+  has_many :content_flags, dependent: :destroy
   has_one_attached :profile_photo
 
   belongs_to :referrer, class_name: "User", foreign_key: :referred_by_id, optional: true
@@ -79,6 +99,22 @@ class User < ApplicationRecord
 
   def referral_url(base_url = "")
     "#{base_url}/?ref=#{referral_code}"
+  end
+
+  def admin?
+    admin
+  end
+
+  def super_admin?
+    admin_role == "super_admin"
+  end
+
+  def content_moderator?
+    admin_role.in?(%w[super_admin content_moderator])
+  end
+
+  def unread_notifications_count
+    notifications.unread.count
   end
 
   private

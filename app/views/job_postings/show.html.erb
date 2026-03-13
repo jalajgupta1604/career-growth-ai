@@ -1,0 +1,102 @@
+<div class="min-h-screen bg-gray-950">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Back link -->
+    <div class="mb-6">
+      <%= link_to job_postings_path, class: "inline-flex items-center gap-1 text-sm text-gray-400 hover:text-cyan-400 transition-colors" do %>
+        <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+        Back to Marketplace
+      <% end %>
+    </div>
+
+    <!-- Job Detail Card -->
+    <div class="bg-gray-900 rounded-2xl border border-gray-800 p-8">
+      <!-- Header -->
+      <div class="flex items-start justify-between mb-6">
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 bg-gray-800 rounded-xl flex items-center justify-center">
+            <span class="material-symbols-outlined text-[28px] text-cyan-400">business</span>
+          </div>
+          <div>
+            <h1 class="text-2xl font-bold text-white"><%= @posting.title %></h1>
+            <p class="text-base text-gray-400"><%= @posting.company_name %></p>
+          </div>
+        </div>
+        <span class="px-3 py-1 text-xs font-medium rounded-full bg-cyan-500/10 text-cyan-400">
+          <%= @posting.job_type&.titleize %>
+        </span>
+      </div>
+
+      <!-- Meta row -->
+      <div class="flex flex-wrap items-center gap-4 mb-6 text-sm text-gray-400">
+        <% if @posting.location.present? %>
+          <span class="inline-flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[18px]">location_on</span>
+            <%= @posting.location %>
+          </span>
+        <% end %>
+        <% if @posting.min_salary.present? %>
+          <span class="inline-flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[18px]">payments</span>
+            <% if @posting.respond_to?(:salary_display) && @posting.salary_display.present? %>
+              <%= @posting.salary_display %>
+            <% else %>
+              <%= number_to_currency(@posting.min_salary, precision: 0) %> - <%= number_to_currency(@posting.max_salary, precision: 0) %>
+            <% end %>
+          </span>
+        <% end %>
+        <% if @posting.experience_range.present? %>
+          <span class="inline-flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[18px]">schedule</span>
+            <%= @posting.experience_range %>
+          </span>
+        <% end %>
+        <% if @posting.respond_to?(:application_count) %>
+          <span class="inline-flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[18px]">group</span>
+            <%= @posting.application_count %> applicants
+          </span>
+        <% end %>
+      </div>
+
+      <!-- Required Skills -->
+      <% if @posting.required_skills.present? %>
+        <div class="mb-6">
+          <h3 class="text-sm font-semibold text-gray-300 mb-2">Required Skills</h3>
+          <div class="flex flex-wrap gap-2">
+            <% @posting.required_skills.each do |skill| %>
+              <span class="px-3 py-1 text-sm font-medium rounded-lg bg-gray-800 text-gray-300 border border-gray-700"><%= skill %></span>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Description -->
+      <div class="mb-8">
+        <h3 class="text-sm font-semibold text-gray-300 mb-2">Job Description</h3>
+        <div class="prose prose-invert prose-sm max-w-none text-gray-400 leading-relaxed">
+          <%= simple_format(@posting.description) %>
+        </div>
+      </div>
+
+      <!-- Apply section -->
+      <div class="pt-6 border-t border-gray-800">
+        <% if @applied %>
+          <button disabled class="inline-flex items-center gap-2 px-6 py-3 bg-gray-800 text-gray-500 font-semibold rounded-xl cursor-not-allowed">
+            <span class="material-symbols-outlined text-[20px]">check_circle</span>
+            Already Applied
+          </button>
+        <% else %>
+          <%= button_to apply_job_posting_path(@posting), method: :post, class: "inline-flex items-center gap-2 px-6 py-3 bg-cyan-500 text-white font-semibold rounded-xl hover:bg-cyan-600 transition-colors", data: { turbo_confirm: "Submit your application for this position?" } do %>
+            <span class="material-symbols-outlined text-[20px]">send</span>
+            Apply Now
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Posted info -->
+    <div class="mt-4 text-center text-xs text-gray-600">
+      Posted <%= time_ago_in_words(@posting.created_at) %> ago
+    </div>
+  </div>
+</div>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_12_124759) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_13_133432) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -42,6 +42,32 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_12_124759) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "api_keys", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "key", null: false
+    t.string "name", null: false
+    t.integer "calls_count", default: 0, null: false
+    t.integer "rate_limit", default: 100, null: false
+    t.string "tier", default: "free", null: false
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["key"], name: "index_api_keys_on_key", unique: true
+    t.index ["user_id"], name: "index_api_keys_on_user_id"
+  end
+
+  create_table "audit_logs", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "action"
+    t.string "resource_type"
+    t.integer "resource_id"
+    t.jsonb "metadata"
+    t.string "ip_address"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_audit_logs_on_user_id"
+  end
+
   create_table "career_reports", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.float "salary_gap_percentage"
@@ -53,6 +79,17 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_12_124759) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_career_reports_on_user_id"
+  end
+
+  create_table "career_simulations", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.jsonb "scenario_data", default: {}, null: false
+    t.jsonb "result_data", default: {}, null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "created_at"], name: "index_career_simulations_on_user_id_and_created_at"
+    t.index ["user_id"], name: "index_career_simulations_on_user_id"
   end
 
   create_table "challenge_attempts", force: :cascade do |t|
@@ -91,6 +128,34 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_12_124759) do
     t.datetime "updated_at", null: false
     t.index ["coach_conversation_id"], name: "index_coach_messages_on_coach_conversation_id"
     t.index ["created_at"], name: "index_coach_messages_on_created_at"
+  end
+
+  create_table "code_submissions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "language", default: "python", null: false
+    t.text "code", null: false
+    t.jsonb "problem_data", default: {}, null: false
+    t.jsonb "test_results", default: {}, null: false
+    t.jsonb "ai_feedback", default: {}, null: false
+    t.integer "score", default: 0, null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_code_submissions_on_user_id"
+  end
+
+  create_table "community_posts", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "post_type", default: "milestone", null: false
+    t.string "title"
+    t.text "content", null: false
+    t.boolean "anonymous", default: false
+    t.integer "likes_count", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_community_posts_on_created_at"
+    t.index ["post_type"], name: "index_community_posts_on_post_type"
+    t.index ["user_id"], name: "index_community_posts_on_user_id"
   end
 
   create_table "companies", force: :cascade do |t|
@@ -155,6 +220,38 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_12_124759) do
     t.index ["slug"], name: "index_company_packs_on_slug", unique: true
   end
 
+  create_table "company_reviews", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "company_name", null: false
+    t.integer "overall_rating", null: false
+    t.text "pros"
+    t.text "cons"
+    t.string "interview_difficulty"
+    t.string "salary_range"
+    t.string "role_reviewed"
+    t.string "employment_status", default: "current"
+    t.boolean "verified", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_name"], name: "index_company_reviews_on_company_name"
+    t.index ["user_id"], name: "index_company_reviews_on_user_id"
+  end
+
+  create_table "content_flags", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "flaggable_type", null: false
+    t.bigint "flaggable_id", null: false
+    t.string "reason"
+    t.integer "status"
+    t.text "notes"
+    t.bigint "resolved_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["flaggable_type", "flaggable_id"], name: "index_content_flags_on_flaggable"
+    t.index ["resolved_by_id"], name: "index_content_flags_on_resolved_by_id"
+    t.index ["user_id"], name: "index_content_flags_on_user_id"
+  end
+
   create_table "daily_challenges", force: :cascade do |t|
     t.date "challenge_date", null: false
     t.string "challenge_type", null: false
@@ -163,6 +260,39 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_12_124759) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["challenge_date"], name: "index_daily_challenges_on_challenge_date", unique: true
+  end
+
+  create_table "discussion_replies", force: :cascade do |t|
+    t.bigint "discussion_thread_id", null: false
+    t.bigint "user_id", null: false
+    t.text "body"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["discussion_thread_id"], name: "index_discussion_replies_on_discussion_thread_id"
+    t.index ["user_id"], name: "index_discussion_replies_on_user_id"
+  end
+
+  create_table "discussion_threads", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "title", null: false
+    t.text "body", null: false
+    t.string "category", null: false
+    t.boolean "pinned", default: false, null: false
+    t.integer "replies_count", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_discussion_threads_on_user_id"
+  end
+
+  create_table "generated_resumes", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "target_role", null: false
+    t.jsonb "resume_data", default: {}, null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "created_at"], name: "index_generated_resumes_on_user_id_and_created_at"
+    t.index ["user_id"], name: "index_generated_resumes_on_user_id"
   end
 
   create_table "interview_debriefs", force: :cascade do |t|
@@ -201,6 +331,20 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_12_124759) do
     t.index ["user_id"], name: "index_interview_experiences_on_user_id"
   end
 
+  create_table "job_applications", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "job_posting_id", null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "applied_at"
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["job_posting_id"], name: "index_job_applications_on_job_posting_id"
+    t.index ["status"], name: "index_job_applications_on_status"
+    t.index ["user_id", "job_posting_id"], name: "index_job_applications_on_user_id_and_job_posting_id", unique: true
+    t.index ["user_id"], name: "index_job_applications_on_user_id"
+  end
+
   create_table "job_listings", force: :cascade do |t|
     t.string "title", null: false
     t.string "company_name", null: false
@@ -221,6 +365,24 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_12_124759) do
     t.index ["active"], name: "index_job_listings_on_active"
     t.index ["location"], name: "index_job_listings_on_location"
     t.index ["title", "company_name"], name: "index_job_listings_on_title_and_company_name"
+  end
+
+  create_table "job_postings", force: :cascade do |t|
+    t.string "company_name", null: false
+    t.string "title", null: false
+    t.text "description"
+    t.string "location"
+    t.string "job_type", default: "full_time"
+    t.integer "min_salary"
+    t.integer "max_salary"
+    t.jsonb "required_skills", default: []
+    t.string "experience_range"
+    t.integer "status", default: 0, null: false
+    t.bigint "posted_by_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["posted_by_id"], name: "index_job_postings_on_posted_by_id"
+    t.index ["status"], name: "index_job_postings_on_status"
   end
 
   create_table "job_recommendations", force: :cascade do |t|
@@ -278,6 +440,17 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_12_124759) do
     t.index ["user_id"], name: "index_linkedin_profiles_on_user_id", unique: true
   end
 
+  create_table "mentor_profiles", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.jsonb "expertise", default: [], null: false
+    t.boolean "available", default: true, null: false
+    t.text "bio"
+    t.integer "max_mentees", default: 3, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_mentor_profiles_on_user_id"
+  end
+
   create_table "mock_interviews", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "interview_type", default: "technical", null: false
@@ -294,6 +467,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_12_124759) do
     t.datetime "completed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "company_style"
+    t.jsonb "follow_up_data", default: {}
+    t.boolean "simulator_mode", default: false
+    t.jsonb "scorecard_data", default: {}
     t.index ["status"], name: "index_mock_interviews_on_status"
     t.index ["user_id", "created_at"], name: "index_mock_interviews_on_user_id_and_created_at"
     t.index ["user_id"], name: "index_mock_interviews_on_user_id"
@@ -314,6 +491,18 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_12_124759) do
     t.datetime "updated_at", null: false
     t.index ["user_id", "created_at"], name: "index_negotiation_sessions_on_user_id_and_created_at"
     t.index ["user_id"], name: "index_negotiation_sessions_on_user_id"
+  end
+
+  create_table "notifications", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "title"
+    t.text "body"
+    t.string "category"
+    t.datetime "read_at"
+    t.string "action_url"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_notifications_on_user_id"
   end
 
   create_table "offer_analyses", force: :cascade do |t|
@@ -360,6 +549,32 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_12_124759) do
     t.datetime "updated_at", null: false
     t.index ["user_id", "created_at"], name: "index_peer_benchmarks_on_user_id_and_created_at"
     t.index ["user_id"], name: "index_peer_benchmarks_on_user_id"
+  end
+
+  create_table "peer_practice_sessions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "partner_id"
+    t.string "session_type", default: "mock_interview", null: false
+    t.integer "status", default: 0, null: false
+    t.string "target_company"
+    t.string "target_role"
+    t.datetime "scheduled_at"
+    t.jsonb "feedback_data", default: {}
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["partner_id"], name: "index_peer_practice_sessions_on_partner_id"
+    t.index ["user_id"], name: "index_peer_practice_sessions_on_user_id"
+  end
+
+  create_table "post_likes", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "community_post_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["community_post_id"], name: "index_post_likes_on_community_post_id"
+    t.index ["user_id", "community_post_id"], name: "index_post_likes_on_user_id_and_community_post_id", unique: true
+    t.index ["user_id"], name: "index_post_likes_on_user_id"
   end
 
   create_table "prep_categories", force: :cascade do |t|
@@ -434,6 +649,30 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_12_124759) do
     t.index ["user_id"], name: "index_resumes_on_user_id"
   end
 
+  create_table "revision_items", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "source_type", null: false
+    t.integer "source_id"
+    t.string "topic", null: false
+    t.string "difficulty", default: "medium", null: false
+    t.float "easiness_factor", default: 2.5, null: false
+    t.integer "interval", default: 1, null: false
+    t.integer "repetitions", default: 0, null: false
+    t.datetime "next_review_at", null: false
+    t.datetime "last_reviewed_at"
+    t.integer "correct_streak", default: 0, null: false
+    t.integer "total_attempts", default: 0, null: false
+    t.integer "correct_attempts", default: 0, null: false
+    t.jsonb "question_data", default: {}, null: false
+    t.jsonb "answer_data", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "next_review_at"], name: "index_revision_items_on_user_id_and_next_review_at"
+    t.index ["user_id", "source_type", "source_id"], name: "index_revision_items_on_user_id_and_source_type_and_source_id", unique: true
+    t.index ["user_id", "topic"], name: "index_revision_items_on_user_id_and_topic"
+    t.index ["user_id"], name: "index_revision_items_on_user_id"
+  end
+
   create_table "role_skill_mappings", force: :cascade do |t|
     t.string "role"
     t.bigint "skill_id", null: false
@@ -453,6 +692,18 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_12_124759) do
     t.string "company_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "salary_forecasts", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.integer "current_salary", null: false
+    t.jsonb "projected_salaries", default: {}, null: false
+    t.jsonb "skill_plan", default: {}, null: false
+    t.jsonb "market_factors", default: {}, null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_salary_forecasts_on_user_id"
   end
 
   create_table "salary_submissions", force: :cascade do |t|
@@ -500,6 +751,29 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_12_124759) do
     t.float "learning_difficulty_index"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "study_group_memberships", force: :cascade do |t|
+    t.bigint "study_group_id", null: false
+    t.bigint "user_id", null: false
+    t.string "role", default: "member", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["study_group_id", "user_id"], name: "index_study_group_memberships_on_study_group_id_and_user_id", unique: true
+    t.index ["study_group_id"], name: "index_study_group_memberships_on_study_group_id"
+    t.index ["user_id"], name: "index_study_group_memberships_on_user_id"
+  end
+
+  create_table "study_groups", force: :cascade do |t|
+    t.string "name", null: false
+    t.text "description"
+    t.string "target_company"
+    t.string "target_role"
+    t.integer "max_members", default: 10
+    t.bigint "creator_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["creator_id"], name: "index_study_groups_on_creator_id"
   end
 
   create_table "subscriptions", force: :cascade do |t|
@@ -551,6 +825,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_12_124759) do
     t.datetime "updated_at", null: false
     t.string "referral_code"
     t.bigint "referred_by_id"
+    t.boolean "admin", default: false, null: false
+    t.string "admin_role", default: "none", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["referral_code"], name: "index_users_on_referral_code", unique: true
     t.index ["referred_by_id"], name: "index_users_on_referred_by_id"
@@ -559,34 +835,60 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_12_124759) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "api_keys", "users"
+  add_foreign_key "audit_logs", "users"
   add_foreign_key "career_reports", "users"
+  add_foreign_key "career_simulations", "users"
   add_foreign_key "challenge_attempts", "daily_challenges"
   add_foreign_key "challenge_attempts", "users"
   add_foreign_key "coach_conversations", "users"
   add_foreign_key "coach_messages", "coach_conversations"
+  add_foreign_key "code_submissions", "users"
+  add_foreign_key "community_posts", "users"
   add_foreign_key "company_analytics_snapshots", "companies"
   add_foreign_key "company_members", "companies"
   add_foreign_key "company_members", "users"
+  add_foreign_key "company_reviews", "users"
+  add_foreign_key "content_flags", "users"
+  add_foreign_key "content_flags", "users", column: "resolved_by_id"
+  add_foreign_key "discussion_replies", "discussion_threads"
+  add_foreign_key "discussion_replies", "users"
+  add_foreign_key "discussion_threads", "users"
+  add_foreign_key "generated_resumes", "users"
   add_foreign_key "interview_debriefs", "users"
   add_foreign_key "interview_experiences", "users"
+  add_foreign_key "job_applications", "job_postings"
+  add_foreign_key "job_applications", "users"
+  add_foreign_key "job_postings", "users", column: "posted_by_id"
   add_foreign_key "job_recommendations", "job_listings"
   add_foreign_key "job_recommendations", "users"
   add_foreign_key "lesson_progresses", "prep_lessons"
   add_foreign_key "lesson_progresses", "users"
   add_foreign_key "linkedin_profiles", "users"
+  add_foreign_key "mentor_profiles", "users"
   add_foreign_key "mock_interviews", "users"
   add_foreign_key "negotiation_sessions", "users"
+  add_foreign_key "notifications", "users"
   add_foreign_key "offer_analyses", "users"
   add_foreign_key "payments", "career_reports"
   add_foreign_key "payments", "users"
   add_foreign_key "peer_benchmarks", "users"
+  add_foreign_key "peer_practice_sessions", "users"
+  add_foreign_key "peer_practice_sessions", "users", column: "partner_id"
+  add_foreign_key "post_likes", "community_posts"
+  add_foreign_key "post_likes", "users"
   add_foreign_key "prep_lessons", "prep_categories"
   add_foreign_key "readiness_scores", "users"
   add_foreign_key "referral_rewards", "users"
   add_foreign_key "referral_rewards", "users", column: "referred_user_id"
   add_foreign_key "resumes", "users"
+  add_foreign_key "revision_items", "users"
   add_foreign_key "role_skill_mappings", "skills"
+  add_foreign_key "salary_forecasts", "users"
   add_foreign_key "salary_submissions", "users"
+  add_foreign_key "study_group_memberships", "study_groups"
+  add_foreign_key "study_group_memberships", "users"
+  add_foreign_key "study_groups", "users", column: "creator_id"
   add_foreign_key "subscriptions", "users"
   add_foreign_key "user_streaks", "users"
 end

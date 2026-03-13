@@ -1,0 +1,120 @@
+<div class="min-h-screen bg-gray-950">
+  <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Back link -->
+    <div class="mb-6">
+      <%= link_to job_postings_path, class: "inline-flex items-center gap-1 text-sm text-gray-400 hover:text-cyan-400 transition-colors" do %>
+        <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+        Back to Marketplace
+      <% end %>
+    </div>
+
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-white">Post a Job</h1>
+      <p class="mt-1 text-sm text-gray-400">Fill in the details to list your opportunity on the marketplace</p>
+    </div>
+
+    <!-- Form -->
+    <div class="bg-gray-900 rounded-2xl border border-gray-800 p-8">
+      <%= form_with model: @posting, class: "space-y-6" do |f| %>
+        <% if @posting.errors.any? %>
+          <div class="bg-red-500/10 border border-red-500/20 rounded-xl p-4">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="material-symbols-outlined text-red-400 text-[20px]">error</span>
+              <p class="text-sm font-medium text-red-400"><%= pluralize(@posting.errors.count, "error") %> prevented this job from being posted:</p>
+            </div>
+            <ul class="list-disc list-inside text-sm text-red-300 space-y-1">
+              <% @posting.errors.full_messages.each do |msg| %>
+                <li><%= msg %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <!-- Company Name -->
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-1.5">Company Name</label>
+          <%= f.text_field :company_name, class: "w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors", placeholder: "e.g. Acme Corp" %>
+        </div>
+
+        <!-- Title -->
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-1.5">Job Title</label>
+          <%= f.text_field :title, class: "w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors", placeholder: "e.g. Senior Backend Engineer" %>
+        </div>
+
+        <!-- Description -->
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-1.5">Description</label>
+          <%= f.text_area :description, rows: 8, class: "w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors resize-y", placeholder: "Describe the role, responsibilities, and requirements..." %>
+        </div>
+
+        <!-- Location & Job Type (2 columns) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-1.5">Location</label>
+            <%= f.text_field :location, class: "w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors", placeholder: "e.g. Remote, Bangalore" %>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-1.5">Job Type</label>
+            <%= f.select :job_type, options_for_select([["Full-time", "full_time"], ["Part-time", "part_time"], ["Contract", "contract"], ["Internship", "internship"], ["Freelance", "freelance"]], @posting.job_type), { include_blank: "Select type" }, class: "w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors" %>
+          </div>
+        </div>
+
+        <!-- Salary Range (2 columns) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-1.5">Min Salary (Annual)</label>
+            <%= f.number_field :min_salary, class: "w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors", placeholder: "e.g. 800000", step: 1000 %>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-1.5">Max Salary (Annual)</label>
+            <%= f.number_field :max_salary, class: "w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors", placeholder: "e.g. 1500000", step: 1000 %>
+          </div>
+        </div>
+
+        <!-- Experience Range -->
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-1.5">Experience Range</label>
+          <%= f.text_field :experience_range, class: "w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors", placeholder: "e.g. 3-5 years" %>
+        </div>
+
+        <!-- Required Skills -->
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-1.5">Required Skills</label>
+          <input type="text" name="job_posting[required_skills][]" id="skills_input" class="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors" placeholder="e.g. Ruby, Rails, PostgreSQL (comma-separated)" data-skills-target="input">
+          <p class="mt-1 text-xs text-gray-500">Enter skills separated by commas. They will be stored as individual tags.</p>
+          <div id="skills_hidden_fields"></div>
+        </div>
+
+        <!-- Submit -->
+        <div class="pt-4">
+          <%= f.submit "Post Job", class: "w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-cyan-500 text-white font-semibold rounded-xl hover:bg-cyan-600 active:bg-cyan-700 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed", data: { turbo_submits_with: "Posting..." } %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.querySelector('form');
+    const input = document.getElementById('skills_input');
+    const hiddenContainer = document.getElementById('skills_hidden_fields');
+
+    if (form && input) {
+      form.addEventListener('submit', (e) => {
+        const skills = input.value.split(',').map(s => s.trim()).filter(s => s.length > 0);
+        input.disabled = true;
+        hiddenContainer.innerHTML = '';
+        skills.forEach(skill => {
+          const hidden = document.createElement('input');
+          hidden.type = 'hidden';
+          hidden.name = 'job_posting[required_skills][]';
+          hidden.value = skill;
+          hiddenContainer.appendChild(hidden);
+        });
+      });
+    }
+  });
+</script>

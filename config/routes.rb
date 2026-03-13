@@ -130,6 +130,124 @@ Rails.application.routes.draw do
     end
   end
 
+  # Community
+  resources :community, only: [:index, :create], controller: "community" do
+    member do
+      post :like
+    end
+  end
+
+  # Company Reviews
+  resources :company_reviews, only: [:index, :new, :create, :show]
+
+  # Career Simulations
+  resources :career_simulations, only: [:index, :new, :create, :show]
+
+  # AI Resume Builder
+  resources :resume_builder, only: [:index, :new, :create, :show]
+
+  # Talent Marketplace
+  resources :job_postings, only: [:index, :new, :create, :show] do
+    member do
+      post :apply
+    end
+  end
+
+  # Peer Practice
+  resources :peer_practice, only: [:index, :create] do
+    member do
+      post :join
+      post :feedback
+    end
+  end
+
+  # Study Groups
+  resources :study_groups, only: [:index, :show, :create] do
+    member do
+      post :join
+      post :leave
+    end
+  end
+
+  # Coding Playground
+  resources :coding_playground, only: [:index, :show] do
+    collection do
+      post :submit
+    end
+  end
+  get "coding-playground/result/:id", to: "coding_playground#result", as: :coding_playground_result
+
+  # AI Interview Simulator
+  resources :interview_simulator, only: [:new, :create, :show] do
+    member do
+      post :answer
+    end
+  end
+
+  # Spaced Repetition & Revision
+  resources :revisions, only: [:index] do
+    collection do
+      get :practice
+    end
+    member do
+      post :review
+    end
+  end
+
+  # Public API Keys
+  resources :api_keys, only: [:index, :create, :destroy]
+
+  # Salary Trajectory Forecasting
+  resources :salary_forecasts, only: [:index, :create, :show]
+
+  # Mentor Matching
+  resources :mentors, only: [:index, :create, :update]
+
+  # Discussion Forums
+  resources :discussions, only: [:index, :show, :create] do
+    member do
+      post :reply
+    end
+  end
+
+  # Public API v1
+  namespace :api do
+    namespace :v1 do
+      get "salary", to: "salary_intelligence#show"
+      get "skills", to: "skill_demand#index"
+      post "parse-resume", to: "resume_parsing#create"
+    end
+  end
+
+  # Notifications
+  resources :notifications, only: [:index] do
+    member do
+      post :mark_as_read
+    end
+    collection do
+      post :mark_all_read
+    end
+  end
+
+  # Admin Panel
+  namespace :admin do
+    root to: "dashboard#show"
+    resources :users, only: [:index, :show] do
+      member do
+        post :toggle_admin
+        post :toggle_subscription
+      end
+    end
+    resources :moderation, only: [:index] do
+      member do
+        post :resolve
+        post :dismiss
+      end
+    end
+    get "revenue", to: "revenue#index", as: :revenue
+    resources :audit_logs, only: [:index]
+  end
+
   # Pricing page
   get "pricing", to: "pages#pricing", as: :pricing
 end

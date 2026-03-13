@@ -1,0 +1,66 @@
+<% content_for :page_title, "Users" %>
+
+<div class="mb-6">
+  <%= form_tag admin_users_path, method: :get, class: "flex items-center gap-3" do %>
+    <div class="flex-1 relative">
+      <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg">search</span>
+      <%= text_field_tag :q, params[:q], placeholder: "Search by email or name...", class: "w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-cyan-500 focus:border-transparent" %>
+    </div>
+    <%= submit_tag "Search", class: "px-4 py-2.5 bg-cyan-600 text-white text-sm font-medium rounded-lg hover:bg-cyan-700 transition cursor-pointer" %>
+  <% end %>
+</div>
+
+<div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+  <table class="w-full">
+    <thead class="bg-gray-50 border-b border-gray-200">
+      <tr>
+        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">User</th>
+        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Role</th>
+        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Joined</th>
+        <th class="px-5 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-100">
+      <% @users.each do |user| %>
+        <tr class="hover:bg-gray-50 transition">
+          <td class="px-5 py-3">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-full bg-cyan-100 flex items-center justify-center text-xs font-bold text-cyan-700">
+                <%= user.full_name&.first&.upcase || user.email.first.upcase %>
+              </div>
+              <div>
+                <p class="text-sm font-medium text-gray-900"><%= user.full_name || "—" %></p>
+                <p class="text-xs text-gray-400"><%= user.email %></p>
+              </div>
+            </div>
+          </td>
+          <td class="px-5 py-3">
+            <% if user.admin? %>
+              <span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-purple-100 text-purple-700"><%= user.admin_role.humanize %></span>
+            <% else %>
+              <span class="text-xs text-gray-400">User</span>
+            <% end %>
+          </td>
+          <td class="px-5 py-3">
+            <% if user.subscribed? %>
+              <span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-amber-100 text-amber-700">PRO</span>
+            <% else %>
+              <span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-gray-100 text-gray-500">Free</span>
+            <% end %>
+          </td>
+          <td class="px-5 py-3 text-sm text-gray-500"><%= user.created_at.strftime("%b %d, %Y") %></td>
+          <td class="px-5 py-3 text-right">
+            <%= link_to "View", admin_user_path(user), class: "text-sm text-cyan-600 hover:text-cyan-700 font-medium" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<% if @users.respond_to?(:total_pages) && @users.total_pages > 1 %>
+  <div class="mt-4 flex justify-center">
+    <%= paginate @users %>
+  </div>
+<% end %>
