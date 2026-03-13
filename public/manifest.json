@@ -1,0 +1,13 @@
+{
+  "name": "Career Growth AI",
+  "short_name": "CareerAI",
+  "description": "AI-powered career growth platform",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#f9fafb",
+  "theme_color": "#06b6d4",
+  "icons": [
+    { "src": "/icon.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

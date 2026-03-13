@@ -1,0 +1,92 @@
+<div class="min-h-screen bg-gray-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">Your Achievements</h1>
+      <p class="mt-1 text-sm text-gray-500">Track your progress and unlock new badges as you grow.</p>
+    </div>
+
+    <!-- Earned Badges -->
+    <% if @badges.any? %>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+        <% @badges.each do |badge| %>
+          <%
+            border_color = case badge.level
+                           when "platinum" then "border-cyan-300"
+                           when "gold" then "border-yellow-300"
+                           when "silver" then "border-gray-300"
+                           else "border-amber-600"
+                           end
+            glow_ring = case badge.level
+                        when "platinum" then "ring-2 ring-cyan-200"
+                        when "gold" then "ring-2 ring-yellow-200"
+                        when "silver" then "ring-2 ring-gray-200"
+                        else "ring-2 ring-amber-200"
+                        end
+            icon_bg = case badge.level
+                      when "platinum" then "bg-cyan-100"
+                      when "gold" then "bg-yellow-100"
+                      when "silver" then "bg-gray-200"
+                      else "bg-amber-100"
+                      end
+            icon_text = case badge.level
+                        when "platinum" then "text-cyan-600"
+                        when "gold" then "text-yellow-600"
+                        when "silver" then "text-gray-500"
+                        else "text-amber-700"
+                        end
+          %>
+          <div class="bg-white rounded-2xl border <%= border_color %> <%= glow_ring %> p-6 flex flex-col items-center text-center transition-shadow hover:shadow-lg">
+            <div class="w-16 h-16 rounded-full <%= icon_bg %> flex items-center justify-center mb-4">
+              <span class="material-symbols-outlined text-[32px] <%= icon_text %>"><%= badge.icon %></span>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900"><%= badge.display_name %></h3>
+            <span class="inline-block mt-1 px-3 py-0.5 text-xs font-semibold rounded-full <%= badge.level_color %>">
+              <%= badge.level.capitalize %>
+            </span>
+            <% if badge.skill_name.present? %>
+              <p class="mt-2 text-sm text-gray-500">Skill: <span class="font-medium text-gray-700"><%= badge.skill_name %></span></p>
+            <% end %>
+            <p class="mt-2 text-xs text-gray-400">Earned <%= badge.earned_at.strftime("%b %-d, %Y") %></p>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="bg-white rounded-2xl border border-gray-200 p-12 text-center mb-12">
+        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <span class="material-symbols-outlined text-gray-400 text-[32px]">emoji_events</span>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-900 mb-1">No badges earned yet</h3>
+        <p class="text-sm text-gray-500">Keep practicing and contributing to unlock your first badge!</p>
+      </div>
+    <% end %>
+
+    <!-- All Badges Section -->
+    <div class="mb-4">
+      <h2 class="text-2xl font-bold text-gray-900">All Badges</h2>
+      <p class="mt-1 text-sm text-gray-500">Here are all the badges you can earn. Keep going to unlock them all!</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <% @all_badge_types.each do |type_key, badge_info| %>
+        <% earned = @badges.find { |b| b.badge_type == type_key } %>
+        <div class="bg-white rounded-2xl border border-gray-200 p-6 flex items-start gap-4 <%= earned ? '' : 'opacity-50 grayscale' %>">
+          <div class="w-12 h-12 rounded-full flex-shrink-0 flex items-center justify-center <%= earned ? 'bg-cyan-100' : 'bg-gray-100' %>">
+            <span class="material-symbols-outlined text-[24px] <%= earned ? 'text-cyan-600' : 'text-gray-400' %>"><%= badge_info[:icon] %></span>
+          </div>
+          <div>
+            <h3 class="text-base font-semibold <%= earned ? 'text-gray-900' : 'text-gray-400' %>"><%= badge_info[:name] %></h3>
+            <p class="text-sm <%= earned ? 'text-gray-500' : 'text-gray-400' %> mt-0.5"><%= badge_info[:description] %></p>
+            <% if earned %>
+              <span class="inline-block mt-2 px-2.5 py-0.5 text-xs font-semibold rounded-full <%= earned.level_color %>">
+                <%= earned.level.capitalize %>
+              </span>
+            <% else %>
+              <span class="inline-block mt-2 px-2.5 py-0.5 text-xs font-medium rounded-full bg-gray-100 text-gray-400">Locked</span>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

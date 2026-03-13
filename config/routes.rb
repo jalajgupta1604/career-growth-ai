@@ -246,6 +246,14 @@ Rails.application.routes.draw do
     end
     get "revenue", to: "revenue#index", as: :revenue
     resources :audit_logs, only: [:index]
+    get "analytics", to: "analytics#index", as: :analytics
+    resources :cms, only: [:index, :new, :create, :edit, :update] do
+      member do
+        post :publish
+        post :archive
+      end
+    end
+    resources :webhooks, only: [:index], controller: "webhooks"
   end
 
   # Global Search
@@ -278,6 +286,12 @@ Rails.application.routes.draw do
       end
     end
   end
+
+  # Skill Badges
+  resources :badges, only: [:index]
+
+  # Webhooks (user-facing)
+  resources :webhooks, only: [:index, :create, :destroy]
 
   # Pricing page
   get "pricing", to: "pages#pricing", as: :pricing

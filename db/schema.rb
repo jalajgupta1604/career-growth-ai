@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_13_140007) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_13_150006) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -41,6 +41,23 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_13_140007) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "analytics_events", force: :cascade do |t|
+    t.bigint "user_id"
+    t.string "event_type", null: false
+    t.string "resource_type"
+    t.integer "resource_id"
+    t.jsonb "properties", default: {}
+    t.string "session_id"
+    t.string "ip_address"
+    t.string "user_agent"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_analytics_events_on_created_at"
+    t.index ["event_type"], name: "index_analytics_events_on_event_type"
+    t.index ["resource_type", "resource_id"], name: "index_analytics_events_on_resource_type_and_resource_id"
+    t.index ["user_id"], name: "index_analytics_events_on_user_id"
   end
 
   create_table "api_keys", force: :cascade do |t|
@@ -114,6 +131,23 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_13_140007) do
     t.index ["daily_challenge_id"], name: "index_challenge_attempts_on_daily_challenge_id"
     t.index ["user_id", "daily_challenge_id"], name: "index_challenge_attempts_on_user_id_and_daily_challenge_id", unique: true
     t.index ["user_id"], name: "index_challenge_attempts_on_user_id"
+  end
+
+  create_table "cms_contents", force: :cascade do |t|
+    t.string "content_type", null: false
+    t.string "title", null: false
+    t.string "slug"
+    t.text "body"
+    t.jsonb "metadata", default: {}
+    t.string "status", default: "draft"
+    t.bigint "author_id", null: false
+    t.datetime "published_at"
+    t.integer "position", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["author_id"], name: "index_cms_contents_on_author_id"
+    t.index ["content_type", "status"], name: "index_cms_contents_on_content_type_and_status"
+    t.index ["slug"], name: "index_cms_contents_on_slug", unique: true
   end
 
   create_table "coach_conversations", force: :cascade do |t|
@@ -789,6 +823,36 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_13_140007) do
     t.index ["verified"], name: "index_salary_submissions_on_verified"
   end
 
+  create_table "scheduled_challenges", force: :cascade do |t|
+    t.bigint "cms_content_id"
+    t.string "title", null: false
+    t.text "question"
+    t.jsonb "options", default: []
+    t.string "correct_answer"
+    t.text "explanation"
+    t.string "difficulty", default: "medium"
+    t.string "topic"
+    t.date "scheduled_for"
+    t.boolean "published", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cms_content_id"], name: "index_scheduled_challenges_on_cms_content_id"
+    t.index ["scheduled_for"], name: "index_scheduled_challenges_on_scheduled_for", unique: true
+  end
+
+  create_table "skill_badges", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "badge_type", null: false
+    t.string "skill_name"
+    t.string "level", default: "bronze"
+    t.jsonb "criteria_met", default: {}
+    t.datetime "earned_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "badge_type", "skill_name"], name: "index_skill_badges_on_user_id_and_badge_type_and_skill_name", unique: true
+    t.index ["user_id"], name: "index_skill_badges_on_user_id"
+  end
+
   create_table "skill_trends", force: :cascade do |t|
     t.string "skill_name", null: false
     t.string "role"
@@ -894,14 +958,33 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_13_140007) do
     t.datetime "data_exported_at"
     t.datetime "deletion_requested_at"
     t.datetime "deletion_scheduled_at"
+    t.string "user_type", default: "job_seeker"
+    t.float "engagement_score", default: 0.0
+    t.jsonb "dashboard_layout", default: {}
+    t.jsonb "notification_preferences", default: {}
+    t.datetime "last_active_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["referral_code"], name: "index_users_on_referral_code", unique: true
     t.index ["referred_by_id"], name: "index_users_on_referred_by_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  create_table "webhook_subscriptions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "url", null: false
+    t.string "secret"
+    t.jsonb "events", default: []
+    t.boolean "active", default: true
+    t.datetime "last_triggered_at"
+    t.integer "failure_count", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_webhook_subscriptions_on_user_id"
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "analytics_events", "users"
   add_foreign_key "api_keys", "users"
   add_foreign_key "audit_logs", "users"
   add_foreign_key "candidate_searches", "employer_profiles"
@@ -909,6 +992,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_13_140007) do
   add_foreign_key "career_simulations", "users"
   add_foreign_key "challenge_attempts", "daily_challenges"
   add_foreign_key "challenge_attempts", "users"
+  add_foreign_key "cms_contents", "users", column: "author_id"
   add_foreign_key "coach_conversations", "users"
   add_foreign_key "coach_messages", "coach_conversations"
   add_foreign_key "code_submissions", "users"
@@ -958,9 +1042,12 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_13_140007) do
   add_foreign_key "role_skill_mappings", "skills"
   add_foreign_key "salary_forecasts", "users"
   add_foreign_key "salary_submissions", "users"
+  add_foreign_key "scheduled_challenges", "cms_contents"
+  add_foreign_key "skill_badges", "users"
   add_foreign_key "study_group_memberships", "study_groups"
   add_foreign_key "study_group_memberships", "users"
   add_foreign_key "study_groups", "users", column: "creator_id"
   add_foreign_key "subscriptions", "users"
   add_foreign_key "user_streaks", "users"
+  add_foreign_key "webhook_subscriptions", "users"
 end
