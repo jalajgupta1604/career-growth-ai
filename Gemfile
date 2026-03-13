@@ -62,6 +62,9 @@ gem "razorpay"
 # Pagination
 gem "kaminari"
 
+# Rate Limiting
+gem "rack-attack"
+
 # PDF Generation
 gem "wicked_pdf"
 gem "wkhtmltopdf-binary"

@@ -1,0 +1,98 @@
+<div class="min-h-screen bg-gray-50">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <div class="flex items-center gap-3 mb-1">
+        <span class="material-symbols-outlined text-cyan-500 text-[32px]">search</span>
+        <h1 class="text-3xl font-bold text-gray-900">Search</h1>
+      </div>
+      <p class="mt-1 text-sm text-gray-500">Find jobs, discussions, reviews, posts, and experiences across the platform.</p>
+    </div>
+
+    <!-- Search Bar -->
+    <%= form_with url: search_path, method: :get, class: "mb-8" do |f| %>
+      <div class="flex items-center gap-3">
+        <div class="relative flex-1">
+          <span class="material-symbols-outlined text-gray-400 text-[20px] absolute left-4 top-1/2 -translate-y-1/2">search</span>
+          <input
+            type="text"
+            name="q"
+            value="<%= @query %>"
+            autofocus
+            placeholder="Search for anything..."
+            class="w-full bg-white border border-gray-200 rounded-xl pl-11 pr-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500"
+          />
+        </div>
+        <button type="submit" class="inline-flex items-center gap-2 px-6 py-3 bg-cyan-500 text-white font-semibold rounded-xl hover:bg-cyan-600 transition-colors cursor-pointer">
+          <span class="material-symbols-outlined text-[20px]">search</span>
+          Search
+        </button>
+      </div>
+    <% end %>
+
+    <!-- Results -->
+    <% if @query.blank? %>
+      <div class="bg-white rounded-2xl border border-gray-100 p-16 text-center">
+        <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+          <span class="material-symbols-outlined text-cyan-500 text-[32px]">manage_search</span>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">Start searching</h3>
+        <p class="text-sm text-gray-500">Enter a query above to find jobs, discussions, reviews, and more.</p>
+      </div>
+
+    <% elsif @results.blank? %>
+      <div class="bg-white rounded-2xl border border-gray-100 p-16 text-center">
+        <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+          <span class="material-symbols-outlined text-gray-400 text-[32px]">search_off</span>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">No results found</h3>
+        <p class="text-sm text-gray-500">No matches for "<%= @query %>". Try a different search term.</p>
+      </div>
+
+    <% else %>
+      <%
+        type_config = {
+          "Job"        => { color: "blue",   icon: "work" },
+          "Discussion" => { color: "purple", icon: "forum" },
+          "Review"     => { color: "amber",  icon: "rate_review" },
+          "Post"       => { color: "cyan",   icon: "article" },
+          "Experience" => { color: "green",  icon: "military_tech" }
+        }
+        grouped = @results.group_by { |r| r[:type] }
+      %>
+
+      <p class="text-sm text-gray-500 mb-6"><%= @results.size %> result<%= @results.size == 1 ? "" : "s" %> for "<%= @query %>"</p>
+
+      <% grouped.each do |type, items| %>
+        <% config = type_config[type] || { color: "gray", icon: "category" } %>
+        <div class="mb-8">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="material-symbols-outlined text-<%= config[:color] %>-500 text-[20px]"><%= config[:icon] %></span>
+            <h2 class="text-base font-semibold text-gray-900"><%= type.pluralize %></h2>
+            <span class="px-2 py-0.5 text-xs font-medium rounded-full bg-<%= config[:color] %>-50 text-<%= config[:color] %>-600 border border-<%= config[:color] %>-200">
+              <%= items.size %>
+            </span>
+          </div>
+
+          <div class="space-y-2">
+            <% items.each do |result| %>
+              <%= link_to result[:url], class: "block bg-white rounded-2xl border border-gray-100 p-5 hover:border-cyan-200 transition-colors" do %>
+                <div class="flex items-center gap-3">
+                  <div class="flex-1 min-w-0">
+                    <h3 class="text-sm font-semibold text-gray-900 truncate"><%= result[:title] %></h3>
+                    <% if result[:subtitle].present? %>
+                      <p class="text-xs text-gray-400 mt-0.5 truncate"><%= result[:subtitle] %></p>
+                    <% end %>
+                  </div>
+                  <span class="px-2.5 py-1 text-xs font-medium rounded-full shrink-0 bg-<%= config[:color] %>-50 text-<%= config[:color] %>-600 border border-<%= config[:color] %>-200">
+                    <%= type %>
+                  </span>
+                </div>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>

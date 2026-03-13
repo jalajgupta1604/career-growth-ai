@@ -1,0 +1,74 @@
+<div class="max-w-2xl mx-auto py-8 px-4">
+  <div class="mb-4">
+    <%= link_to invoices_path, class: "inline-flex items-center gap-1 text-sm text-gray-500 hover:text-cyan-600 transition" do %>
+      <span class="material-symbols-outlined text-base">arrow_back</span> Back to Invoices
+    <% end %>
+  </div>
+
+  <div class="bg-white rounded-2xl border border-gray-200 p-8">
+    <div class="flex items-start justify-between mb-8">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Invoice</h1>
+        <p class="text-sm text-gray-500 mt-1"><%= @invoice.invoice_number %></p>
+      </div>
+      <% colors = { "generated" => "bg-gray-100 text-gray-700", "sent" => "bg-blue-100 text-blue-700", "paid" => "bg-green-100 text-green-700", "cancelled" => "bg-red-100 text-red-700" } %>
+      <span class="inline-flex items-center px-3 py-1 text-sm font-medium rounded-full <%= colors[@invoice.status] %>"><%= @invoice.status.humanize %></span>
+    </div>
+
+    <div class="grid grid-cols-2 gap-8 mb-8">
+      <div class="bg-gray-50 rounded-xl p-4">
+        <p class="text-xs font-semibold text-gray-400 uppercase mb-2">From</p>
+        <p class="text-sm font-medium text-gray-900">Career Growth AI</p>
+        <p class="text-sm text-gray-500">Bangalore, India</p>
+      </div>
+      <div class="bg-gray-50 rounded-xl p-4">
+        <p class="text-xs font-semibold text-gray-400 uppercase mb-2">Bill To</p>
+        <p class="text-sm font-medium text-gray-900"><%= @invoice.user.full_name || @invoice.user.email %></p>
+        <p class="text-sm text-gray-500"><%= @invoice.user.email %></p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-8 mb-8 text-sm">
+      <div>
+        <span class="text-gray-500">Issued:</span>
+        <span class="font-medium text-gray-900"><%= @invoice.issued_at&.strftime("%B %d, %Y") || "—" %></span>
+      </div>
+      <div>
+        <span class="text-gray-500">Paid:</span>
+        <span class="font-medium text-gray-900"><%= @invoice.paid_at&.strftime("%B %d, %Y") || "—" %></span>
+      </div>
+    </div>
+
+    <table class="w-full mb-6">
+      <thead class="border-b border-gray-200">
+        <tr>
+          <th class="py-2 text-left text-xs font-semibold text-gray-500 uppercase">Description</th>
+          <th class="py-2 text-right text-xs font-semibold text-gray-500 uppercase">Amount</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-50">
+        <% (@invoice.line_items || []).each do |item| %>
+          <tr>
+            <td class="py-3 text-sm text-gray-900"><%= item["description"] %></td>
+            <td class="py-3 text-sm text-gray-900 text-right"><%= number_to_currency((item["amount"] || 0) / 100.0, unit: "₹", precision: 0) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <div class="border-t border-gray-200 pt-4 space-y-2">
+      <div class="flex justify-between text-sm">
+        <span class="text-gray-500">Subtotal</span>
+        <span class="text-gray-900"><%= number_to_currency(@invoice.amount / 100.0, unit: "₹", precision: 0) %></span>
+      </div>
+      <div class="flex justify-between text-sm">
+        <span class="text-gray-500">GST (18%)</span>
+        <span class="text-gray-900"><%= number_to_currency(@invoice.tax_amount / 100.0, unit: "₹", precision: 0) %></span>
+      </div>
+      <div class="flex justify-between text-sm font-bold pt-2 border-t border-gray-100">
+        <span class="text-gray-900">Total</span>
+        <span class="text-gray-900"><%= number_to_currency(@invoice.total_amount / 100.0, unit: "₹", precision: 0) %></span>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html class="h-full">
+  <head>
+    <title>Employer Portal — Career Growth AI</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <link rel="icon" href="/icon.png" type="image/png">
+
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="h-full bg-gray-50">
+    <nav class="bg-white border-b border-gray-200">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+          <div class="flex items-center gap-6">
+            <%= link_to employer_root_path, class: "flex items-center gap-2" do %>
+              <div class="w-7 h-7 bg-indigo-600 rounded-lg flex items-center justify-center">
+                <span class="material-symbols-outlined text-white text-sm">business</span>
+              </div>
+              <span class="text-lg font-bold text-gray-900">Employer Portal</span>
+            <% end %>
+            <div class="flex items-center gap-1">
+              <%= link_to "Dashboard", employer_root_path, class: "px-3 py-2 text-sm font-medium rounded-lg #{request.path == employer_root_path ? 'text-indigo-600 bg-indigo-50' : 'text-gray-500 hover:text-gray-700'}" %>
+              <%= link_to "Jobs", employer_jobs_path, class: "px-3 py-2 text-sm font-medium rounded-lg #{request.path.start_with?('/employer/jobs') ? 'text-indigo-600 bg-indigo-50' : 'text-gray-500 hover:text-gray-700'}" %>
+              <%= link_to "Candidates", employer_candidates_path, class: "px-3 py-2 text-sm font-medium rounded-lg #{request.path.start_with?('/employer/candidates') ? 'text-indigo-600 bg-indigo-50' : 'text-gray-500 hover:text-gray-700'}" %>
+            </div>
+          </div>
+          <div class="flex items-center gap-4">
+            <% if current_employer&.verified? %>
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded-full">
+                <span class="material-symbols-outlined text-xs">verified</span> Verified
+              </span>
+            <% end %>
+            <%= link_to "Back to App", dashboard_path, class: "text-sm text-gray-400 hover:text-gray-600" %>
+            <span class="text-sm text-gray-500"><%= current_user.email %></span>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <% if notice.present? %>
+      <div class="max-w-7xl mx-auto px-4 mt-4">
+        <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm"><%= notice %></div>
+      </div>
+    <% end %>
+    <% if alert.present? %>
+      <div class="max-w-7xl mx-auto px-4 mt-4">
+        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm"><%= alert %></div>
+      </div>
+    <% end %>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <%= yield %>
+    </main>
+  </body>
+</html>

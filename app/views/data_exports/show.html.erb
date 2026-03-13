@@ -1,0 +1,83 @@
+<div class="min-h-screen bg-gray-50">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <div class="flex items-center gap-3 mb-1">
+        <span class="material-symbols-outlined text-cyan-500 text-[32px]">shield</span>
+        <h1 class="text-3xl font-bold text-gray-900">Data & Privacy</h1>
+      </div>
+      <p class="mt-1 text-sm text-gray-500">Manage your data, request exports, or delete your account.</p>
+    </div>
+
+    <!-- Export Your Data -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-8 mb-6">
+      <div class="flex items-center gap-2 mb-4">
+        <span class="material-symbols-outlined text-cyan-500 text-[20px]">download</span>
+        <h2 class="text-lg font-semibold text-gray-900">Export Your Data</h2>
+      </div>
+
+      <p class="text-sm text-gray-500 mb-6">
+        Download a copy of all your data, including your profile, career reports, interview debriefs,
+        and other information you've provided. The export will be prepared and emailed to you as a ZIP file.
+      </p>
+
+      <% if @last_export_at.present? %>
+        <div class="flex items-center gap-2 text-sm text-gray-500 mb-4">
+          <span class="material-symbols-outlined text-gray-400 text-[18px]">history</span>
+          Last export requested on <%= @last_export_at.strftime("%B %d, %Y at %I:%M %p") %>
+        </div>
+      <% end %>
+
+      <%= button_to "Request Data Export", data_export_path, method: :post, class: "inline-flex items-center gap-2 px-6 py-2.5 bg-cyan-500 text-white font-semibold rounded-xl hover:bg-cyan-600 transition-colors cursor-pointer", data: { turbo_submits_with: "Requesting..." } do %>
+        <span class="material-symbols-outlined text-[20px]">download</span>
+        Request Data Export
+      <% end %>
+    </div>
+
+    <!-- Delete Account -->
+    <div class="bg-white rounded-2xl border border-red-100 p-8">
+      <div class="flex items-center gap-2 mb-4">
+        <span class="material-symbols-outlined text-red-500 text-[20px]">warning</span>
+        <h2 class="text-lg font-semibold text-red-600">Delete Account</h2>
+      </div>
+
+      <p class="text-sm text-gray-500 mb-2">
+        Permanently delete your account and all associated data. This action cannot be undone.
+      </p>
+      <p class="text-sm text-red-500 mb-6">
+        After requesting deletion, your account will enter a 30-day grace period.
+        During this time you can cancel the request and keep your account. After 30 days,
+        all data will be permanently deleted.
+      </p>
+
+      <% if @deletion_requested_at.present? %>
+        <div class="bg-red-50 border border-red-200 rounded-xl p-4 mb-4">
+          <div class="flex items-start gap-3">
+            <span class="material-symbols-outlined text-red-500 text-[20px] mt-0.5">schedule</span>
+            <div>
+              <p class="text-sm font-semibold text-red-700">Account deletion scheduled</p>
+              <p class="text-sm text-red-600 mt-0.5">
+                Your account and all data will be permanently deleted on
+                <strong><%= (@deletion_requested_at + 30.days).strftime("%B %d, %Y") %></strong>.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <%= button_to "Cancel Deletion Request", cancel_deletion_data_export_path, method: :post, class: "inline-flex items-center gap-2 px-6 py-2.5 bg-white text-gray-700 font-semibold rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer" do %>
+          <span class="material-symbols-outlined text-[20px]">undo</span>
+          Cancel Deletion Request
+        <% end %>
+      <% else %>
+        <%= button_to "Request Account Deletion", request_deletion_data_export_path, method: :post, class: "inline-flex items-center gap-2 px-6 py-2.5 bg-red-50 text-red-600 font-semibold rounded-xl border border-red-200 hover:bg-red-100 transition-colors cursor-pointer", data: { turbo_confirm: "Are you sure you want to delete your account? You will have 30 days to cancel this request before your data is permanently deleted." } do %>
+          <span class="material-symbols-outlined text-[20px]">delete_forever</span>
+          Request Account Deletion
+        <% end %>
+      <% end %>
+    </div>
+
+    <div class="mt-8 text-center">
+      <%= link_to "Back to Dashboard", dashboard_path, class: "text-sm text-cyan-600 font-medium hover:text-cyan-700" %>
+    </div>
+  </div>
+</div>

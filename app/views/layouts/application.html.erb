@@ -31,8 +31,12 @@
                 </div>
                 <span class="text-lg font-bold text-gray-900">Career Growth AI</span>
               <% end %>
-              <div class="ml-8 flex space-x-4">
+              <div class="ml-8 flex items-center space-x-4">
                 <%= link_to "Dashboard", dashboard_path, class: "text-gray-500 hover:text-cyan-600 px-3 py-2 text-sm font-medium" %>
+                <%= form_tag search_path, method: :get, class: "relative hidden sm:block" do %>
+                  <span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-base">search</span>
+                  <%= text_field_tag :q, params[:q], placeholder: "Search...", class: "w-48 pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent bg-gray-50" %>
+                <% end %>
               </div>
             </div>
             <div class="flex items-center space-x-4">

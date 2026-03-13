@@ -1,0 +1,107 @@
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- Back link -->
+  <div class="mb-6">
+    <%= link_to employer_jobs_path, class: "inline-flex items-center gap-1 text-sm text-gray-500 hover:text-cyan-600 transition-colors" do %>
+      <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+      Back to Jobs
+    <% end %>
+  </div>
+
+  <!-- Header -->
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Post a New Job</h1>
+    <p class="mt-1 text-sm text-gray-500">Fill in the details to create a new job listing</p>
+  </div>
+
+  <!-- Form -->
+  <div class="bg-white rounded-2xl border border-gray-100 p-8">
+    <%= form_with model: @job, url: employer_jobs_path, method: :post, class: "space-y-6" do |f| %>
+      <% if @job.errors.any? %>
+        <div class="bg-red-50 border border-red-200 rounded-xl p-4">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="material-symbols-outlined text-red-500 text-[20px]">error</span>
+            <p class="text-sm font-medium text-red-700"><%= pluralize(@job.errors.count, "error") %> prevented this job from being saved:</p>
+          </div>
+          <ul class="list-disc list-inside text-sm text-red-600 space-y-1">
+            <% @job.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <!-- Title -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1.5">Job Title</label>
+        <%= f.text_field :title, class: "w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors", placeholder: "e.g. Senior Backend Engineer" %>
+      </div>
+
+      <!-- Company Name -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1.5">Company Name</label>
+        <%= f.text_field :company_name, value: @job.company_name.presence || @employer.company_name, class: "w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors", placeholder: "e.g. Acme Corp" %>
+      </div>
+
+      <!-- Location & Job Type -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">Location</label>
+          <%= f.text_field :location, class: "w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors", placeholder: "e.g. Bangalore, Remote" %>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">Job Type</label>
+          <%= f.select :job_type, options_for_select([["Full-time", "full_time"], ["Part-time", "part_time"], ["Contract", "contract"], ["Remote", "remote"]], @job.job_type), { include_blank: "Select type" }, class: "w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors" %>
+        </div>
+      </div>
+
+      <!-- Experience Level & Salary Range -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">Experience Level</label>
+          <%= f.text_field :experience_level, class: "w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors", placeholder: "e.g. 3-5 years" %>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">Salary Range</label>
+          <%= f.text_field :salary_range, class: "w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors", placeholder: "e.g. 12-18 LPA" %>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1.5">Job Description</label>
+        <%= f.text_area :description, rows: 8, class: "w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors resize-y", placeholder: "Describe the role, responsibilities, and what makes this opportunity unique..." %>
+      </div>
+
+      <!-- Requirements -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1.5">Requirements</label>
+        <%= f.text_area :requirements, rows: 5, class: "w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors resize-y", placeholder: "List the skills, qualifications, and experience required..." %>
+      </div>
+
+      <!-- Application Email & URL -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">Application Email</label>
+          <%= f.email_field :application_email, class: "w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors", placeholder: "hr@company.com" %>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">Application URL</label>
+          <%= f.url_field :application_url, class: "w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors", placeholder: "https://careers.company.com/apply" %>
+        </div>
+      </div>
+
+      <!-- Expires At -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1.5">Listing Expiry Date</label>
+        <%= f.date_field :expires_at, class: "w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors" %>
+        <p class="mt-1 text-xs text-gray-400">Leave blank for no expiry</p>
+      </div>
+
+      <!-- Submit -->
+      <div class="pt-4 flex items-center gap-3">
+        <%= f.submit "Post Job", class: "inline-flex items-center justify-center gap-2 px-6 py-3 bg-cyan-500 text-white font-semibold rounded-xl hover:bg-cyan-600 active:bg-cyan-700 transition-colors cursor-pointer" %>
+        <%= link_to "Cancel", employer_jobs_path, class: "px-6 py-3 text-gray-500 font-medium hover:text-gray-700 transition-colors" %>
+      </div>
+    <% end %>
+  </div>
+</div>

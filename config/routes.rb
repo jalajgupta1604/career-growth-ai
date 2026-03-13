@@ -248,6 +248,37 @@ Rails.application.routes.draw do
     resources :audit_logs, only: [:index]
   end
 
+  # Global Search
+  get "search", to: "search#index", as: :search
+
+  # Invoices & Billing
+  resources :invoices, only: [:index, :show]
+
+  # Data & Privacy (GDPR/DPDP)
+  resource :data_export, only: [:show] do
+    post :request_export
+    post :request_deletion
+    post :cancel_deletion
+  end
+
+  # Employer Portal
+  namespace :employer do
+    root to: "dashboard#show"
+    get "register", to: "registrations#new", as: :registration
+    post "register", to: "registrations#create"
+    resources :jobs, except: [:destroy]
+    resources :candidates, only: [:index] do
+      collection do
+        post :search
+      end
+    end
+    resources :pipeline, only: [:index] do
+      member do
+        post :update_stage
+      end
+    end
+  end
+
   # Pricing page
   get "pricing", to: "pages#pricing", as: :pricing
 end

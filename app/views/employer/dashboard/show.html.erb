@@ -1,0 +1,163 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Employer Dashboard</h1>
+      <p class="mt-1 text-gray-500"><%= @employer.company_name %> &middot; Hiring Portal</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <%= link_to new_employer_job_path, class: "inline-flex items-center gap-2 px-5 py-2.5 bg-cyan-500 text-white font-semibold rounded-xl hover:bg-cyan-600 transition-colors" do %>
+        <span class="material-symbols-outlined text-[20px]">add</span>
+        Post New Job
+      <% end %>
+      <%= link_to employer_candidates_path, class: "inline-flex items-center gap-2 px-4 py-2.5 bg-gray-100 text-gray-700 font-semibold rounded-xl hover:bg-gray-200 transition-colors" do %>
+        <span class="material-symbols-outlined text-[20px]">person_search</span>
+        Search Candidates
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Stats Row -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div class="bg-white rounded-2xl border border-gray-100 p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-500">Active Jobs</p>
+          <p class="mt-2 text-3xl font-bold text-gray-900"><%= @active_jobs_count %></p>
+        </div>
+        <div class="w-12 h-12 bg-cyan-50 rounded-xl flex items-center justify-center">
+          <span class="material-symbols-outlined text-cyan-600">work</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl border border-gray-100 p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-500">Total Applications</p>
+          <p class="mt-2 text-3xl font-bold text-cyan-600"><%= @total_applications_count %></p>
+        </div>
+        <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
+          <span class="material-symbols-outlined text-blue-600">description</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl border border-gray-100 p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-500">In Pipeline</p>
+          <p class="mt-2 text-3xl font-bold text-purple-600"><%= @pipeline_counts[:screening].to_i + @pipeline_counts[:interview].to_i %></p>
+          <p class="text-xs text-gray-400 mt-1">Screening + Interview</p>
+        </div>
+        <div class="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center">
+          <span class="material-symbols-outlined text-purple-600">filter_list</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl border border-gray-100 p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-500">Offers Extended</p>
+          <p class="mt-2 text-3xl font-bold text-green-600"><%= @pipeline_counts[:offer].to_i %></p>
+        </div>
+        <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center">
+          <span class="material-symbols-outlined text-green-600">handshake</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pipeline Breakdown -->
+  <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-8">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4">Pipeline Overview</h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+      <% pipeline_stages = { applied: { label: "Applied", color: "blue" }, screening: { label: "Screening", color: "yellow" }, interview: { label: "Interview", color: "purple" }, offer: { label: "Offer", color: "green" }, hired: { label: "Hired", color: "emerald" }, rejected: { label: "Rejected", color: "red" } } %>
+      <% pipeline_stages.each do |stage, config| %>
+        <div class="text-center p-4 bg-gray-50 rounded-xl">
+          <p class="text-2xl font-bold text-gray-900"><%= @pipeline_counts[stage].to_i %></p>
+          <p class="text-xs font-medium text-gray-500 mt-1"><%= config[:label] %></p>
+          <div class="mt-2 h-1.5 bg-gray-200 rounded-full">
+            <% total = @total_applications_count.to_i %>
+            <% pct = total > 0 ? (@pipeline_counts[stage].to_i.to_f / total * 100).round : 0 %>
+            <div class="h-1.5 rounded-full bg-<%= config[:color] %>-500" style="width: <%= pct %>%"></div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Recent Applications -->
+  <div class="bg-white rounded-2xl border border-gray-100 p-6">
+    <div class="flex items-center justify-between mb-6">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-cyan-500">inbox</span>
+        <h2 class="text-lg font-semibold text-gray-900">Recent Applications</h2>
+      </div>
+      <span class="text-sm text-gray-400"><%= @recent_applications.size %> latest</span>
+    </div>
+
+    <% if @recent_applications.any? %>
+      <!-- Table Header -->
+      <div class="hidden md:grid grid-cols-12 gap-4 px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wide border-b border-gray-100">
+        <div class="col-span-3">Applicant</div>
+        <div class="col-span-3">Job Title</div>
+        <div class="col-span-2">Applied On</div>
+        <div class="col-span-2">Stage</div>
+        <div class="col-span-2 text-right">Actions</div>
+      </div>
+
+      <div class="divide-y divide-gray-50">
+        <% @recent_applications.each do |application| %>
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-4 px-4 py-4 items-center hover:bg-gray-50 rounded-xl transition-colors">
+            <div class="col-span-3">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-cyan-100 flex items-center justify-center text-xs font-bold text-cyan-700">
+                  <%= application.user.full_name&.first&.upcase || "?" %>
+                </div>
+                <div>
+                  <p class="text-sm font-semibold text-gray-900"><%= application.user.full_name || application.user.email %></p>
+                  <p class="text-xs text-gray-400"><%= application.user.email %></p>
+                </div>
+              </div>
+            </div>
+            <div class="col-span-3">
+              <p class="text-sm text-gray-700"><%= application.job.title %></p>
+            </div>
+            <div class="col-span-2">
+              <p class="text-sm text-gray-500"><%= application.created_at.strftime("%b %d, %Y") %></p>
+            </div>
+            <div class="col-span-2">
+              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold
+                <%= case application.stage.to_s
+                    when 'applied' then 'bg-blue-50 text-blue-700'
+                    when 'screening' then 'bg-yellow-50 text-yellow-700'
+                    when 'interview' then 'bg-purple-50 text-purple-700'
+                    when 'offer' then 'bg-green-50 text-green-700'
+                    when 'hired' then 'bg-emerald-50 text-emerald-700'
+                    when 'rejected' then 'bg-red-50 text-red-700'
+                    else 'bg-gray-100 text-gray-500'
+                    end %>">
+                <%= application.stage.to_s.titleize %>
+              </span>
+            </div>
+            <div class="col-span-2 text-right">
+              <%= link_to employer_pipeline_index_path(job_id: application.job.id), class: "inline-flex items-center gap-1 text-sm text-cyan-600 font-medium hover:text-cyan-700" do %>
+                <span class="material-symbols-outlined text-[16px]">visibility</span>
+                View
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="py-12 text-center">
+        <div class="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+          <span class="material-symbols-outlined text-gray-400 text-[28px]">inbox</span>
+        </div>
+        <p class="text-sm text-gray-500">No applications received yet. Post a job to start receiving candidates.</p>
+      </div>
+    <% end %>
+  </div>
+</div>

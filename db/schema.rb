@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_13_133432) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_13_140007) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+  enable_extension "pg_trgm"
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -66,6 +67,16 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_13_133432) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_audit_logs_on_user_id"
+  end
+
+  create_table "candidate_searches", force: :cascade do |t|
+    t.bigint "employer_profile_id", null: false
+    t.jsonb "filters", default: {}
+    t.jsonb "results", default: []
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["employer_profile_id"], name: "index_candidate_searches_on_employer_profile_id"
   end
 
   create_table "career_reports", force: :cascade do |t|
@@ -153,6 +164,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_13_133432) do
     t.integer "likes_count", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["content"], name: "idx_community_posts_content_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["created_at"], name: "index_community_posts_on_created_at"
     t.index ["post_type"], name: "index_community_posts_on_post_type"
     t.index ["user_id"], name: "index_community_posts_on_user_id"
@@ -233,6 +245,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_13_133432) do
     t.boolean "verified", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["company_name"], name: "idx_company_reviews_company_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["company_name"], name: "index_company_reviews_on_company_name"
     t.index ["user_id"], name: "index_company_reviews_on_user_id"
   end
@@ -281,7 +294,26 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_13_133432) do
     t.integer "replies_count", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["title"], name: "idx_discussion_threads_title_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["user_id"], name: "index_discussion_threads_on_user_id"
+  end
+
+  create_table "employer_profiles", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "company_name", null: false
+    t.string "company_domain"
+    t.string "company_size"
+    t.string "industry"
+    t.string "company_logo_url"
+    t.text "company_description"
+    t.boolean "verified", default: false
+    t.string "verification_token"
+    t.datetime "verified_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_domain"], name: "index_employer_profiles_on_company_domain"
+    t.index ["user_id"], name: "index_employer_profiles_on_user_id"
+    t.index ["verification_token"], name: "index_employer_profiles_on_verification_token", unique: true
   end
 
   create_table "generated_resumes", force: :cascade do |t|
@@ -325,10 +357,31 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_13_133432) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["company_name", "role"], name: "idx_interview_exp_company_role"
+    t.index ["company_name"], name: "idx_interview_exp_company_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["created_at"], name: "index_interview_experiences_on_created_at"
     t.index ["difficulty"], name: "index_interview_experiences_on_difficulty"
     t.index ["outcome"], name: "index_interview_experiences_on_outcome"
     t.index ["user_id"], name: "index_interview_experiences_on_user_id"
+  end
+
+  create_table "invoices", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "payment_id"
+    t.string "invoice_number", null: false
+    t.integer "amount", null: false
+    t.integer "tax_amount", default: 0
+    t.integer "total_amount", null: false
+    t.string "gstin"
+    t.string "status", default: "generated"
+    t.jsonb "line_items", default: []
+    t.jsonb "billing_address", default: {}
+    t.datetime "issued_at"
+    t.datetime "paid_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["invoice_number"], name: "index_invoices_on_invoice_number", unique: true
+    t.index ["payment_id"], name: "index_invoices_on_payment_id"
+    t.index ["user_id"], name: "index_invoices_on_user_id"
   end
 
   create_table "job_applications", force: :cascade do |t|
@@ -339,7 +392,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_13_133432) do
     t.text "notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "pipeline_stage", default: "applied"
+    t.text "employer_notes"
     t.index ["job_posting_id"], name: "index_job_applications_on_job_posting_id"
+    t.index ["pipeline_stage"], name: "index_job_applications_on_pipeline_stage"
     t.index ["status"], name: "index_job_applications_on_status"
     t.index ["user_id", "job_posting_id"], name: "index_job_applications_on_user_id_and_job_posting_id", unique: true
     t.index ["user_id"], name: "index_job_applications_on_user_id"
@@ -381,8 +437,15 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_13_133432) do
     t.bigint "posted_by_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "employer_profile_id"
+    t.string "application_email"
+    t.string "application_url"
+    t.boolean "featured", default: false
+    t.datetime "expires_at"
+    t.index ["employer_profile_id"], name: "index_job_postings_on_employer_profile_id"
     t.index ["posted_by_id"], name: "index_job_postings_on_posted_by_id"
     t.index ["status"], name: "index_job_postings_on_status"
+    t.index ["title"], name: "idx_job_postings_title_trgm", opclass: :gin_trgm_ops, using: :gin
   end
 
   create_table "job_recommendations", force: :cascade do |t|
@@ -827,6 +890,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_13_133432) do
     t.bigint "referred_by_id"
     t.boolean "admin", default: false, null: false
     t.string "admin_role", default: "none", null: false
+    t.datetime "data_export_requested_at"
+    t.datetime "data_exported_at"
+    t.datetime "deletion_requested_at"
+    t.datetime "deletion_scheduled_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["referral_code"], name: "index_users_on_referral_code", unique: true
     t.index ["referred_by_id"], name: "index_users_on_referred_by_id"
@@ -837,6 +904,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_13_133432) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "api_keys", "users"
   add_foreign_key "audit_logs", "users"
+  add_foreign_key "candidate_searches", "employer_profiles"
   add_foreign_key "career_reports", "users"
   add_foreign_key "career_simulations", "users"
   add_foreign_key "challenge_attempts", "daily_challenges"
@@ -854,11 +922,15 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_13_133432) do
   add_foreign_key "discussion_replies", "discussion_threads"
   add_foreign_key "discussion_replies", "users"
   add_foreign_key "discussion_threads", "users"
+  add_foreign_key "employer_profiles", "users"
   add_foreign_key "generated_resumes", "users"
   add_foreign_key "interview_debriefs", "users"
   add_foreign_key "interview_experiences", "users"
+  add_foreign_key "invoices", "payments"
+  add_foreign_key "invoices", "users"
   add_foreign_key "job_applications", "job_postings"
   add_foreign_key "job_applications", "users"
+  add_foreign_key "job_postings", "employer_profiles"
   add_foreign_key "job_postings", "users", column: "posted_by_id"
   add_foreign_key "job_recommendations", "job_listings"
   add_foreign_key "job_recommendations", "users"

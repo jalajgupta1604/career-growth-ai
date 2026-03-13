@@ -44,6 +44,8 @@ class User < ApplicationRecord
   has_many :audit_logs, dependent: :destroy
   has_many :notifications, dependent: :destroy
   has_many :content_flags, dependent: :destroy
+  has_one :employer_profile, dependent: :destroy
+  has_many :invoices, dependent: :destroy
   has_one_attached :profile_photo
 
   belongs_to :referrer, class_name: "User", foreign_key: :referred_by_id, optional: true

@@ -1,0 +1,88 @@
+<div class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <!-- Header -->
+  <div class="text-center mb-8">
+    <div class="w-16 h-16 bg-cyan-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+      <span class="material-symbols-outlined text-cyan-600 text-[32px]">business</span>
+    </div>
+    <h1 class="text-3xl font-bold text-gray-900">Register as Employer</h1>
+    <p class="mt-2 text-gray-500">Set up your company profile to start hiring top talent</p>
+  </div>
+
+  <!-- Form -->
+  <div class="bg-white rounded-2xl border border-gray-100 p-8">
+    <%= form_with model: @employer_profile, url: employer_register_path, method: :post, class: "space-y-6" do |f| %>
+      <% if @employer_profile.errors.any? %>
+        <div class="bg-red-50 border border-red-200 rounded-xl p-4">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="material-symbols-outlined text-red-500 text-[20px]">error</span>
+            <p class="text-sm font-medium text-red-700"><%= pluralize(@employer_profile.errors.count, "error") %> prevented registration:</p>
+          </div>
+          <ul class="list-disc list-inside text-sm text-red-600 space-y-1">
+            <% @employer_profile.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <!-- Company Name -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1.5">Company Name</label>
+        <%= f.text_field :company_name, class: "w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors", placeholder: "e.g. Acme Technologies Pvt Ltd", autofocus: true %>
+      </div>
+
+      <!-- Company Domain -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1.5">Company Domain</label>
+        <%= f.text_field :company_domain, class: "w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors", placeholder: "e.g. acme.com" %>
+        <p class="mt-1 text-xs text-gray-400">Your corporate email domain for verification</p>
+      </div>
+
+      <!-- Company Size & Industry -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">Company Size</label>
+          <%= f.select :company_size, options_for_select([
+            ["1-10 employees", "1-10"],
+            ["11-50 employees", "11-50"],
+            ["51-200 employees", "51-200"],
+            ["201-500 employees", "201-500"],
+            ["501-1000 employees", "501-1000"],
+            ["1000+ employees", "1000+"]
+          ], @employer_profile.company_size), { include_blank: "Select size" }, class: "w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors" %>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">Industry</label>
+          <%= f.text_field :industry, class: "w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors", placeholder: "e.g. Technology, Healthcare" %>
+        </div>
+      </div>
+
+      <!-- Company Description -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1.5">Company Description</label>
+        <%= f.text_area :company_description, rows: 4, class: "w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors resize-y", placeholder: "Tell candidates about your company, culture, and mission..." %>
+      </div>
+
+      <!-- Domain Verification Note -->
+      <div class="bg-cyan-50 border border-cyan-200 rounded-xl p-4">
+        <div class="flex items-start gap-3">
+          <span class="material-symbols-outlined text-cyan-600 text-[20px] mt-0.5">verified</span>
+          <div>
+            <p class="text-sm font-medium text-cyan-800">Domain Verification</p>
+            <p class="text-xs text-cyan-700 mt-1">After registration, we will verify your company domain to ensure authenticity. You will receive a verification email at your corporate address. Verified employers get a trust badge on all job listings.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <div class="pt-2">
+        <%= f.submit "Register as Employer", class: "w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-cyan-500 text-white font-semibold rounded-xl hover:bg-cyan-600 active:bg-cyan-700 transition-colors cursor-pointer" %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Footer note -->
+  <p class="text-center text-xs text-gray-400 mt-6">
+    Already have an employer account? <%= link_to "Sign in", new_user_session_path, class: "text-cyan-600 font-medium hover:text-cyan-700" %> to access your dashboard.
+  </p>
+</div>
