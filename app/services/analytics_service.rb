@@ -42,8 +42,8 @@ class AnalyticsService
   private
 
   def self.calculate_mrr
-    monthly = Subscription.where(status: :active, plan_type: "monthly").sum(:amount)
-    yearly = Subscription.where(status: :active, plan_type: "yearly").sum(:amount) / 12
+    monthly = Subscription.where(status: :active, plan_name: "monthly").sum(:amount)
+    yearly = Subscription.where(status: :active, plan_name: "yearly").sum(:amount) / 12
     (monthly + yearly) / 100.0
   end
 

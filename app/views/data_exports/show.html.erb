@@ -28,7 +28,7 @@
         </div>
       <% end %>
 
-      <%= button_to "Request Data Export", data_export_path, method: :post, class: "inline-flex items-center gap-2 px-6 py-2.5 bg-cyan-500 text-white font-semibold rounded-xl hover:bg-cyan-600 transition-colors cursor-pointer", data: { turbo_submits_with: "Requesting..." } do %>
+      <%= button_to request_export_data_export_path, method: :post, class: "inline-flex items-center gap-2 px-6 py-2.5 bg-cyan-500 text-white font-semibold rounded-xl hover:bg-cyan-600 transition-colors cursor-pointer", data: { turbo_submits_with: "Requesting..." } do %>
         <span class="material-symbols-outlined text-[20px]">download</span>
         Request Data Export
       <% end %>
@@ -64,12 +64,12 @@
           </div>
         </div>
 
-        <%= button_to "Cancel Deletion Request", cancel_deletion_data_export_path, method: :post, class: "inline-flex items-center gap-2 px-6 py-2.5 bg-white text-gray-700 font-semibold rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer" do %>
+        <%= button_to cancel_deletion_data_export_path, method: :post, class: "inline-flex items-center gap-2 px-6 py-2.5 bg-white text-gray-700 font-semibold rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer" do %>
           <span class="material-symbols-outlined text-[20px]">undo</span>
           Cancel Deletion Request
         <% end %>
       <% else %>
-        <%= button_to "Request Account Deletion", request_deletion_data_export_path, method: :post, class: "inline-flex items-center gap-2 px-6 py-2.5 bg-red-50 text-red-600 font-semibold rounded-xl border border-red-200 hover:bg-red-100 transition-colors cursor-pointer", data: { turbo_confirm: "Are you sure you want to delete your account? You will have 30 days to cancel this request before your data is permanently deleted." } do %>
+        <%= button_to request_deletion_data_export_path, method: :post, class: "inline-flex items-center gap-2 px-6 py-2.5 bg-red-50 text-red-600 font-semibold rounded-xl border border-red-200 hover:bg-red-100 transition-colors cursor-pointer", data: { turbo_confirm: "Are you sure you want to delete your account? You will have 30 days to cancel this request before your data is permanently deleted." } do %>
           <span class="material-symbols-outlined text-[20px]">delete_forever</span>
           Request Account Deletion
         <% end %>

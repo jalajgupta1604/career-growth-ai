@@ -1,0 +1,51 @@
+<% content_for :page_title, "Departments" %>
+<% content_for :page_subtitle, "Organizational structure" %>
+
+<% content_for :page_actions do %>
+  <% if current_member&.hr_admin? %>
+    <%= link_to new_enterprise_department_path, class: "inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition" do %>
+      <span class="material-symbols-outlined text-base">add</span> New Department
+    <% end %>
+  <% end %>
+<% end %>
+
+<% if @departments.any? %>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <% @departments.each do |dept| %>
+      <%= link_to enterprise_department_path(dept), class: "bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-lg transition-shadow block" do %>
+        <div class="flex items-start justify-between mb-4">
+          <div class="w-11 h-11 bg-emerald-50 rounded-xl flex items-center justify-center">
+            <span class="material-symbols-outlined text-emerald-600">account_tree</span>
+          </div>
+          <span class="text-xs text-gray-400"><%= dept.member_count %> members</span>
+        </div>
+        <h3 class="text-base font-semibold text-gray-900"><%= dept.name %></h3>
+        <% if dept.description.present? %>
+          <p class="mt-1 text-sm text-gray-500 line-clamp-2"><%= dept.description %></p>
+        <% end %>
+        <% if dept.head.present? %>
+          <div class="mt-4 pt-3 border-t border-gray-100 flex items-center gap-2">
+            <div class="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center text-[10px] font-bold text-emerald-700">
+              <%= dept.head.full_name&.first&.upcase || "H" %>
+            </div>
+            <span class="text-xs text-gray-500"><%= dept.head.full_name || dept.head.email %></span>
+            <span class="text-[10px] text-gray-400">Head</span>
+          </div>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+<% else %>
+  <div class="bg-white rounded-2xl border border-gray-100 p-12 text-center">
+    <div class="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+      <span class="material-symbols-outlined text-emerald-600 text-2xl">account_tree</span>
+    </div>
+    <h3 class="text-lg font-semibold text-gray-900 mb-2">No Departments Yet</h3>
+    <p class="text-sm text-gray-500 mb-6">Create departments to organize your team.</p>
+    <% if current_member&.hr_admin? %>
+      <%= link_to new_enterprise_department_path, class: "inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition" do %>
+        <span class="material-symbols-outlined text-base">add</span> Create Department
+      <% end %>
+    <% end %>
+  </div>
+<% end %>

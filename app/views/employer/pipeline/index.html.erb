@@ -1,24 +1,18 @@
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  <!-- Back link -->
-  <div class="mb-6">
-    <%= link_to employer_jobs_path, class: "inline-flex items-center gap-1 text-sm text-gray-500 hover:text-cyan-600 transition-colors" do %>
-      <span class="material-symbols-outlined text-[18px]">arrow_back</span>
-      Back to Jobs
-    <% end %>
-  </div>
+<% content_for :page_title, "Pipeline" %>
+<% content_for :page_subtitle, @job ? "#{@job.title} — #{@applications.size} applicants" : "All applications — #{@applications.size} total" %>
 
-  <!-- Header -->
-  <div class="flex items-center justify-between mb-8">
-    <div>
-      <h1 class="text-3xl font-bold text-gray-900"><%= @job.title %></h1>
-      <p class="mt-1 text-gray-500">
-        Applicant Pipeline &middot; <%= @applications.size %> total applicants
-      </p>
+<div>
+  <!-- Job Filter -->
+  <div class="bg-white rounded-2xl border border-gray-100 p-4 mb-6">
+    <div class="flex items-center gap-4">
+      <span class="material-symbols-outlined text-gray-400">filter_list</span>
+      <div class="flex items-center gap-2 flex-wrap">
+        <%= link_to "All Jobs", employer_pipeline_index_path, class: "px-3 py-1.5 text-sm font-medium rounded-lg transition #{@job.nil? ? 'bg-indigo-100 text-indigo-700' : 'text-gray-500 hover:bg-gray-100'}" %>
+        <% @jobs.each do |job| %>
+          <%= link_to job.title, employer_pipeline_index_path(job_id: job.id), class: "px-3 py-1.5 text-sm font-medium rounded-lg transition #{@job&.id == job.id ? 'bg-indigo-100 text-indigo-700' : 'text-gray-500 hover:bg-gray-100'}" %>
+        <% end %>
+      </div>
     </div>
-    <%= link_to edit_employer_job_path(@job), class: "inline-flex items-center gap-2 px-4 py-2.5 bg-gray-100 text-gray-700 font-semibold rounded-xl hover:bg-gray-200 transition-colors" do %>
-      <span class="material-symbols-outlined text-[20px]">edit</span>
-      Edit Job
-    <% end %>
   </div>
 
   <!-- Kanban Board -->
@@ -33,7 +27,7 @@
 
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
     <% stages.each do |stage| %>
-      <% stage_applications = @applications.select { |a| a.stage.to_s == stage[:key] } %>
+      <% stage_applications = @applications.select { |a| a.pipeline_stage.to_s == stage[:key] } %>
       <div class="bg-white rounded-2xl border border-gray-100 flex flex-col">
         <!-- Column Header -->
         <div class="px-4 py-3 border-b border-gray-100">
@@ -51,22 +45,21 @@
           <% if stage_applications.any? %>
             <% stage_applications.each do |application| %>
               <div class="bg-gray-50 rounded-xl p-4 border border-gray-100 hover:border-gray-200 transition-colors">
-                <!-- Applicant Info -->
-                <div class="flex items-center gap-2 mb-3">
-                  <div class="w-8 h-8 rounded-full bg-cyan-100 flex items-center justify-center text-xs font-bold text-cyan-700">
+                <div class="flex items-center gap-2 mb-2">
+                  <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-xs font-bold text-indigo-700">
                     <%= application.user.full_name&.first&.upcase || "?" %>
                   </div>
                   <div class="min-w-0">
                     <p class="text-sm font-semibold text-gray-900 truncate"><%= application.user.full_name || application.user.email %></p>
-                    <p class="text-xs text-gray-400"><%= application.created_at.strftime("%b %d") %></p>
+                    <p class="text-xs text-gray-400"><%= application.job_posting.title %></p>
                   </div>
                 </div>
+                <p class="text-[10px] text-gray-400 mb-2">Applied <%= application.created_at.strftime("%b %d") %></p>
 
                 <!-- Move Actions -->
                 <div class="flex flex-wrap gap-1">
-                  <% move_stages = stages.reject { |s| s[:key] == stage[:key] } %>
-                  <% move_stages.each do |target| %>
-                    <%= button_to employer_pipeline_move_path(application_id: application.id, stage: target[:key]), method: :patch, class: "inline-flex items-center gap-0.5 px-2 py-1 text-[10px] font-medium rounded-md bg-#{target[:color]}-50 text-#{target[:color]}-700 hover:bg-#{target[:color]}-100 transition-colors cursor-pointer", title: "Move to #{target[:label]}" do %>
+                  <% stages.reject { |s| s[:key] == stage[:key] }.first(3).each do |target| %>
+                    <%= button_to update_stage_employer_pipeline_path(application), params: { stage: target[:key] }, method: :post, class: "inline-flex items-center gap-0.5 px-2 py-1 text-[10px] font-medium rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors cursor-pointer", title: "Move to #{target[:label]}" do %>
                       <span class="material-symbols-outlined text-[12px]"><%= target[:icon] %></span>
                       <%= target[:label] %>
                     <% end %>

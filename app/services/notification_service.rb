@@ -1,11 +1,23 @@
 class NotificationService
   def self.notify(user:, title:, body: nil, category: "system", action_url: nil)
-    user.notifications.create!(
+    notification = user.notifications.create!(
       title: title,
       body: body,
       category: category,
       action_url: action_url
     )
+
+    NotificationChannel.broadcast_to(user, {
+      id: notification.id,
+      title: notification.title,
+      body: notification.body,
+      category: notification.category,
+      action_url: notification.action_url,
+      created_at: notification.created_at.iso8601,
+      unread_count: user.notifications.unread.count
+    })
+
+    notification
   end
 
   def self.achievement(user:, title:, body: nil)
@@ -28,5 +40,11 @@ class NotificationService
 
   def self.community_activity(user:, title:, body: nil, url: nil)
     notify(user: user, title: title, body: body, category: "community", action_url: url)
+  end
+
+  def self.email_enabled?(user, category)
+    prefs = user.notification_preferences || {}
+    email_prefs = prefs["email"] || {}
+    email_prefs.fetch(category, true)
   end
 end

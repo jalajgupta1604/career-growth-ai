@@ -1,9 +1,13 @@
 <% content_for :page_title, "Revenue" %>
 
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-8">
   <div class="bg-white rounded-xl border border-gray-200 p-5">
     <p class="text-sm text-gray-500">Total Revenue</p>
     <p class="text-2xl font-bold text-gray-900 mt-1"><%= number_to_currency(@total_revenue, unit: "₹", precision: 0) %></p>
+  </div>
+  <div class="bg-white rounded-xl border border-gray-200 p-5">
+    <p class="text-sm text-gray-500">Refunded</p>
+    <p class="text-2xl font-bold text-red-600 mt-1"><%= number_to_currency(@total_refunded, unit: "₹", precision: 0) %></p>
   </div>
   <div class="bg-white rounded-xl border border-gray-200 p-5">
     <p class="text-sm text-gray-500">MRR</p>
@@ -16,6 +20,10 @@
   <div class="bg-white rounded-xl border border-gray-200 p-5">
     <p class="text-sm text-gray-500">Yearly Plans</p>
     <p class="text-2xl font-bold text-purple-600 mt-1"><%= @yearly_subscriptions %></p>
+  </div>
+  <div class="bg-white rounded-xl border border-gray-200 p-5">
+    <p class="text-sm text-gray-500">Dunning</p>
+    <p class="text-2xl font-bold text-amber-600 mt-1"><%= @dunning_count %></p>
   </div>
 </div>
 
@@ -62,8 +70,8 @@
         <span class="font-medium text-gray-900"><%= number_to_currency(@mrr * 12, unit: "₹", precision: 0) %></span>
       </div>
       <div class="flex justify-between py-2">
-        <span class="text-gray-500">Avg Revenue/Subscriber</span>
-        <span class="font-medium text-gray-900"><%= @active_subscriptions > 0 ? number_to_currency(@mrr / @active_subscriptions, unit: "₹", precision: 0) : "—" %></span>
+        <span class="text-gray-500">Dunning (Payment Issues)</span>
+        <span class="font-medium text-amber-600"><%= @dunning_count %></span>
       </div>
     </div>
   </div>
@@ -74,31 +82,56 @@
   <div class="p-5 border-b border-gray-100">
     <h3 class="text-sm font-semibold text-gray-900">Recent Payments</h3>
   </div>
-  <table class="w-full">
-    <thead class="bg-gray-50 border-b border-gray-200">
-      <tr>
-        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">User</th>
-        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Amount</th>
-        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Status</th>
-        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Date</th>
-      </tr>
-    </thead>
-    <tbody class="divide-y divide-gray-100">
-      <% @recent_payments.each do |payment| %>
-        <tr class="hover:bg-gray-50 transition">
-          <td class="px-5 py-3 text-sm text-gray-900"><%= payment.user&.email || "—" %></td>
-          <td class="px-5 py-3 text-sm font-medium text-gray-900"><%= number_to_currency(payment.amount / 100.0, unit: "₹", precision: 0) %></td>
-          <td class="px-5 py-3">
-            <span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-green-100 text-green-700">Paid</span>
-          </td>
-          <td class="px-5 py-3 text-sm text-gray-500"><%= payment.created_at.strftime("%b %d, %Y %H:%M") %></td>
-        </tr>
-      <% end %>
-      <% if @recent_payments.empty? %>
+  <div class="overflow-x-auto">
+    <table class="w-full">
+      <thead class="bg-gray-50 border-b border-gray-200">
         <tr>
-          <td colspan="4" class="px-5 py-8 text-center text-sm text-gray-400">No payments yet</td>
+          <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">User</th>
+          <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Amount</th>
+          <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Status</th>
+          <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Date</th>
+          <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Actions</th>
         </tr>
-      <% end %>
-    </tbody>
-  </table>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <% @recent_payments.each do |payment| %>
+          <tr class="hover:bg-gray-50 transition">
+            <td class="px-5 py-3 text-sm text-gray-900"><%= payment.user&.email || "—" %></td>
+            <td class="px-5 py-3 text-sm font-medium text-gray-900"><%= number_to_currency(payment.amount / 100.0, unit: "₹", precision: 0) %></td>
+            <td class="px-5 py-3">
+              <%= case payment.status
+                  when "captured"
+                    '<span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-green-100 text-green-700">Paid</span>'
+                  when "refunded"
+                    '<span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-red-100 text-red-700">Refunded</span>'
+                  when "pending"
+                    '<span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-yellow-100 text-yellow-700">Pending</span>'
+                  when "failed"
+                    '<span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-gray-100 text-gray-500">Failed</span>'
+                  else
+                    '<span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-gray-100 text-gray-500">' + payment.status.to_s.capitalize + '</span>'
+                  end.html_safe %>
+            </td>
+            <td class="px-5 py-3 text-sm text-gray-500"><%= payment.created_at.strftime("%b %d, %Y %H:%M") %></td>
+            <td class="px-5 py-3">
+              <% if payment.captured? %>
+                <%= button_to refund_admin_payment_path(payment), method: :post,
+                    class: "inline-flex items-center px-3 py-1 text-xs font-medium rounded-lg bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 cursor-pointer transition",
+                    data: { turbo_confirm: "Issue refund of ₹#{payment.amount / 100} to #{payment.user&.email}?" } do %>
+                  <span class="material-symbols-outlined text-sm mr-1">undo</span> Refund
+                <% end %>
+              <% elsif payment.refunded? %>
+                <span class="text-xs text-gray-400">Refunded <%= payment.refunded_at&.strftime("%b %d") %></span>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+        <% if @recent_payments.empty? %>
+          <tr>
+            <td colspan="5" class="px-5 py-8 text-center text-sm text-gray-400">No payments yet</td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
 </div>

@@ -12,6 +12,8 @@ class SearchController < ApplicationController
     @results += search_community
     @results += search_experiences
     @results.sort_by! { |r| -r[:relevance] }
+
+    SearchQuery.create(user: current_user, query: @query, results_count: @results.size)
   end
 
   private

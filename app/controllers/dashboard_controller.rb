@@ -9,5 +9,7 @@ class DashboardController < ApplicationController
     @latest_report = current_user.career_reports.order(created_at: :desc).first
     @all_reports = current_user.career_reports.order(created_at: :desc)
     @salary_analysis = SalaryBenchmarkService.new(current_user).analyze
+    @nudges = SmartNudgeService.new(current_user).generate_nudges
+    @recommendations = ContentRecommendationService.new(current_user).recommendations(limit: 3)
   end
 end

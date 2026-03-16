@@ -1,0 +1,91 @@
+<% content_for :page_title, @job.title %>
+
+<div class="space-y-6">
+  <%= link_to employer_jobs_path, class: "inline-flex items-center gap-1 text-sm text-gray-500 hover:text-indigo-600 transition" do %>
+    <span class="material-symbols-outlined text-[18px]">arrow_back</span> Back to Jobs
+  <% end %>
+
+  <div class="bg-white rounded-xl border border-gray-200 p-6">
+    <div class="flex items-start justify-between mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900"><%= @job.title %></h1>
+        <div class="flex flex-wrap gap-3 mt-2 text-sm text-gray-500">
+          <span class="flex items-center gap-1"><span class="material-symbols-outlined text-base">location_on</span> <%= @job.location || "Remote" %></span>
+          <span class="flex items-center gap-1"><span class="material-symbols-outlined text-base">work</span> <%= @job.job_type&.titleize || "Full-time" %></span>
+          <span class="flex items-center gap-1"><span class="material-symbols-outlined text-base">group</span> <%= @job.application_count %> applications</span>
+        </div>
+      </div>
+      <div class="flex gap-2">
+        <%= link_to edit_employer_job_path(@job), class: "inline-flex items-center gap-1 px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition" do %>
+          <span class="material-symbols-outlined text-base">edit</span> Edit
+        <% end %>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div class="bg-gray-50 rounded-lg p-4">
+        <p class="text-xs font-semibold text-gray-400 uppercase">Status</p>
+        <p class="mt-1 font-semibold text-gray-900"><%= @job.status.capitalize %></p>
+      </div>
+      <div class="bg-gray-50 rounded-lg p-4">
+        <p class="text-xs font-semibold text-gray-400 uppercase">Salary Range</p>
+        <p class="mt-1 font-semibold text-gray-900"><%= @job.salary_display %></p>
+      </div>
+      <div class="bg-gray-50 rounded-lg p-4">
+        <p class="text-xs font-semibold text-gray-400 uppercase">Posted</p>
+        <p class="mt-1 font-semibold text-gray-900"><%= @job.created_at.strftime("%b %d, %Y") %></p>
+      </div>
+    </div>
+
+    <% if @job.description.present? %>
+      <div class="border-t border-gray-100 pt-6">
+        <h3 class="text-sm font-semibold text-gray-900 mb-3">Description</h3>
+        <div class="prose prose-sm text-gray-600"><%= simple_format(@job.description) %></div>
+      </div>
+    <% end %>
+
+    <% if @job.requirements.present? %>
+      <div class="border-t border-gray-100 pt-6 mt-6">
+        <h3 class="text-sm font-semibold text-gray-900 mb-3">Requirements</h3>
+        <div class="prose prose-sm text-gray-600"><%= simple_format(@job.requirements) %></div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Applications -->
+  <div class="bg-white rounded-xl border border-gray-200">
+    <div class="p-5 border-b border-gray-100">
+      <h3 class="text-sm font-semibold text-gray-900">Applications (<%= @applications.size %>)</h3>
+    </div>
+    <% if @applications.any? %>
+      <div class="divide-y divide-gray-50">
+        <% @applications.each do |app| %>
+          <div class="px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center text-xs font-bold text-indigo-700">
+                <%= app.user.full_name&.first&.upcase || "?" %>
+              </div>
+              <div>
+                <p class="text-sm font-medium text-gray-900"><%= app.user.full_name %></p>
+                <p class="text-xs text-gray-500"><%= app.created_at.strftime("%b %d, %Y") %></p>
+              </div>
+            </div>
+            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium
+              <%= case app.status
+                  when 'applied' then 'bg-blue-100 text-blue-700'
+                  when 'shortlisted' then 'bg-green-100 text-green-700'
+                  when 'interviewing' then 'bg-purple-100 text-purple-700'
+                  when 'offered' then 'bg-amber-100 text-amber-700'
+                  when 'rejected' then 'bg-red-100 text-red-700'
+                  else 'bg-gray-100 text-gray-700'
+                  end %>">
+              <%= app.status.capitalize %>
+            </span>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="p-8 text-center text-sm text-gray-400">No applications yet</div>
+    <% end %>
+  </div>
+</div>

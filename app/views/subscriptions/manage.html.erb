@@ -6,7 +6,7 @@
     <div class="bg-white rounded-2xl border border-gray-100 p-8">
       <div class="flex items-center gap-4 mb-6">
         <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
-          <svg class="w-6 h-6 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 2a2 2 0 00-2 2v14l3.5-2 3.5 2 3.5-2 3.5 2V4a2 2 0 00-2-2H5zm4.707 3.707a1 1 0 00-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L8.414 9H10a3 3 0 013 3v1a1 1 0 102 0v-1a5 5 0 00-5-5H8.414l1.293-1.293z" clip-rule="evenodd"/></svg>
+          <span class="material-symbols-outlined text-amber-500">verified</span>
         </div>
         <div>
           <h2 class="text-xl font-semibold text-gray-900">Lifetime Access</h2>
@@ -22,12 +22,49 @@
     </div>
 
   <% elsif @subscription&.active_access? %>
+    <!-- Dunning Warning Banner -->
+    <% if @subscription.dunning_state.present? %>
+      <div class="mb-6 rounded-xl border p-4 <%= @subscription.dunning_state == 'urgent' ? 'bg-red-50 border-red-200' : 'bg-amber-50 border-amber-200' %>">
+        <div class="flex items-start gap-3">
+          <span class="material-symbols-outlined <%= @subscription.dunning_state == 'urgent' ? 'text-red-500' : 'text-amber-500' %>">warning</span>
+          <div>
+            <% if @subscription.dunning_state == "paused" %>
+              <p class="text-sm font-semibold text-red-800">Subscription Paused</p>
+              <p class="text-sm text-red-700 mt-1">Your subscription has been paused due to payment failure. Please update your payment method to restore access.</p>
+            <% elsif @subscription.dunning_state == "urgent" %>
+              <p class="text-sm font-semibold text-red-800">Payment Overdue</p>
+              <p class="text-sm text-red-700 mt-1">Your subscription payment is overdue. Pro features will be paused soon if not resolved.</p>
+            <% else %>
+              <p class="text-sm font-semibold text-amber-800">Payment Issue</p>
+              <p class="text-sm text-amber-700 mt-1">We couldn't process your last payment. Please check your payment method.</p>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Pending Plan Change Banner -->
+    <% if @subscription.pending_plan_name.present? %>
+      <div class="mb-6 rounded-xl border border-blue-200 bg-blue-50 p-4">
+        <div class="flex items-start gap-3">
+          <span class="material-symbols-outlined text-blue-500">swap_horiz</span>
+          <div>
+            <p class="text-sm font-semibold text-blue-800">Plan Change Scheduled</p>
+            <p class="text-sm text-blue-700 mt-1">
+              Your plan will change to <strong><%= @subscription.pending_plan_name.capitalize %></strong>
+              on <%= @subscription.plan_change_scheduled_at&.strftime("%B %d, %Y") || "your next billing cycle" %>.
+            </p>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
     <!-- Active subscription -->
     <div class="bg-white rounded-2xl border border-gray-100 p-8">
       <div class="flex items-center justify-between mb-6">
         <div class="flex items-center gap-4">
           <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-            <svg class="w-6 h-6 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+            <span class="material-symbols-outlined text-green-500">check_circle</span>
           </div>
           <div>
             <h2 class="text-xl font-semibold text-gray-900">Pro <%= @subscription.plan_name.capitalize %></h2>
@@ -41,12 +78,22 @@
           </div>
         </div>
         <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold
-          <% if @subscription.cancelled? %>
-            bg-yellow-100 text-yellow-700
-          <% else %>
-            bg-green-100 text-green-700
-          <% end %>">
-          <%= @subscription.cancelled? ? "Cancelling" : "Active" %>
+          <%= if @subscription.dunning_state.present?
+                'bg-amber-100 text-amber-700'
+              elsif @subscription.cancelled?
+                'bg-yellow-100 text-yellow-700'
+              else
+                'bg-green-100 text-green-700'
+              end %>">
+          <%= if @subscription.dunning_state == "paused"
+                "Paused"
+              elsif @subscription.dunning_state.present?
+                "Payment Issue"
+              elsif @subscription.cancelled?
+                "Cancelling"
+              else
+                "Active"
+              end %>
         </span>
       </div>
 
@@ -69,12 +116,43 @@
         </div>
       </div>
 
+      <!-- Plan Change Section -->
+      <% unless @subscription.cancelled? || @subscription.pending_plan_name.present? %>
+        <div class="border-t border-gray-100 pt-6 mb-6">
+          <h3 class="text-sm font-semibold text-gray-900 mb-3">Change Plan</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <% Subscription::PLANS.each do |plan_name, plan| %>
+              <% is_current = plan_name == @subscription.plan_name %>
+              <div class="rounded-xl border-2 p-4 <%= is_current ? 'border-cyan-500 bg-cyan-50' : 'border-gray-200 bg-white' %>">
+                <div class="flex items-center justify-between mb-2">
+                  <p class="font-semibold text-gray-900"><%= plan_name.capitalize %></p>
+                  <% if is_current %>
+                    <span class="text-xs font-medium text-cyan-600 bg-cyan-100 px-2 py-0.5 rounded-full">Current</span>
+                  <% end %>
+                </div>
+                <p class="text-2xl font-bold text-gray-900">&#8377;<%= number_with_delimiter(plan[:amount]) %><span class="text-sm font-normal text-gray-500">/<%= plan_name == "monthly" ? "mo" : "yr" %></span></p>
+                <% unless is_current %>
+                  <% is_upgrade = plan[:amount] > Subscription::PLANS[@subscription.plan_name][:amount] %>
+                  <%= button_to change_plan_subscriptions_path(plan: plan_name), method: :post,
+                      class: "mt-3 w-full text-center px-4 py-2 text-sm font-semibold rounded-lg cursor-pointer transition #{is_upgrade ? 'bg-cyan-500 text-white hover:bg-cyan-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}",
+                      data: { turbo_confirm: is_upgrade ? "Upgrade to #{plan_name.capitalize}? You'll be charged immediately." : "Downgrade to #{plan_name.capitalize}? This takes effect at the end of your current billing period." } do %>
+                    <%= is_upgrade ? "Upgrade Now" : "Downgrade" %>
+                  <% end %>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
       <% unless @subscription.cancelled? %>
         <div class="border-t border-gray-100 pt-6">
           <p class="text-sm text-gray-500 mb-4">Need to cancel? You'll retain access until the end of your current billing period.</p>
-          <%= button_to "Cancel Subscription", cancel_subscriptions_path, method: :post,
+          <%= button_to cancel_subscriptions_path, method: :post,
               class: "px-6 py-2.5 bg-red-50 text-red-600 font-semibold rounded-lg hover:bg-red-100 transition-colors cursor-pointer border border-red-200",
-              data: { turbo_confirm: "Are you sure you want to cancel? You'll keep access until #{@subscription.current_period_end&.strftime("%B %d, %Y")}." } %>
+              data: { turbo_confirm: "Are you sure you want to cancel? You'll keep access until #{@subscription.current_period_end&.strftime("%B %d, %Y")}." } do %>
+            Cancel Subscription
+          <% end %>
         </div>
       <% end %>
     </div>
@@ -83,7 +161,7 @@
     <!-- No subscription -->
     <div class="bg-white rounded-2xl border border-gray-100 p-8 text-center">
       <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+        <span class="material-symbols-outlined text-3xl text-gray-400">lock</span>
       </div>
       <h2 class="text-xl font-semibold text-gray-900">No Active Subscription</h2>
       <p class="mt-2 text-gray-500">Subscribe to unlock full career reports, PDF downloads, and all Pro features.</p>

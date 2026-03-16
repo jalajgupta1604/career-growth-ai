@@ -13,6 +13,7 @@
           <a href="#how-it-works" class="text-sm text-gray-500 hover:text-gray-900">How it works</a>
           <a href="#features" class="text-sm text-gray-500 hover:text-gray-900">Features</a>
           <a href="#pricing" class="text-sm text-gray-500 hover:text-gray-900">Pricing</a>
+          <%= link_to "For Employers", employer_landing_path, class: "text-sm text-indigo-600 font-medium hover:text-indigo-700" %>
           <% if user_signed_in? %>
             <%= link_to "Dashboard", dashboard_path, class: "text-sm text-gray-500 hover:text-gray-900" %>
           <% else %>
@@ -311,6 +312,7 @@
           <span class="text-sm font-semibold text-gray-700">Career Growth AI</span>
         </div>
         <div class="flex space-x-6 mt-4 md:mt-0">
+          <%= link_to "For Employers", employer_landing_path, class: "text-sm text-gray-400 hover:text-gray-600" %>
           <a href="#" class="text-sm text-gray-400 hover:text-gray-600">Privacy Policy</a>
           <a href="#" class="text-sm text-gray-400 hover:text-gray-600">Terms of Service</a>
           <a href="#" class="text-sm text-gray-400 hover:text-gray-600">Contact</a>

@@ -1,0 +1,77 @@
+<% content_for :page_title, "Notification Preferences" %>
+
+<div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <h1 class="text-2xl font-bold text-gray-900 mb-2">Notification Preferences</h1>
+  <p class="text-sm text-gray-500 mb-8">Choose which emails you'd like to receive from CareerGrowth AI.</p>
+
+  <%= form_with url: notification_preferences_path, method: :patch, class: "space-y-6" do |f| %>
+    <div class="bg-white rounded-2xl border border-gray-100 divide-y divide-gray-100">
+      <div class="p-5">
+        <h3 class="text-sm font-semibold text-gray-900 mb-1">Email Notifications</h3>
+        <p class="text-xs text-gray-500">We'll always send transactional emails (payment receipts, password resets).</p>
+      </div>
+
+      <label class="flex items-center justify-between p-5 cursor-pointer hover:bg-gray-50 transition">
+        <div>
+          <p class="text-sm font-medium text-gray-900">Weekly Digest</p>
+          <p class="text-xs text-gray-500">A summary of your weekly progress, streaks, and achievements</p>
+        </div>
+        <input type="hidden" name="email[weekly_digest]" value="0">
+        <input type="checkbox" name="email[weekly_digest]" value="1"
+          class="h-5 w-5 text-cyan-500 rounded border-gray-300 focus:ring-cyan-500"
+          <%= "checked" if @email_prefs.fetch("weekly_digest", true) %>>
+      </label>
+
+      <label class="flex items-center justify-between p-5 cursor-pointer hover:bg-gray-50 transition">
+        <div>
+          <p class="text-sm font-medium text-gray-900">Streak Reminders</p>
+          <p class="text-xs text-gray-500">Get a nudge when your daily streak is about to break</p>
+        </div>
+        <input type="hidden" name="email[streak_reminders]" value="0">
+        <input type="checkbox" name="email[streak_reminders]" value="1"
+          class="h-5 w-5 text-cyan-500 rounded border-gray-300 focus:ring-cyan-500"
+          <%= "checked" if @email_prefs.fetch("streak_reminders", true) %>>
+      </label>
+
+      <label class="flex items-center justify-between p-5 cursor-pointer hover:bg-gray-50 transition">
+        <div>
+          <p class="text-sm font-medium text-gray-900">Subscription Updates</p>
+          <p class="text-xs text-gray-500">Payment failures, plan changes, and cancellation notices</p>
+        </div>
+        <input type="hidden" name="email[subscription_updates]" value="0">
+        <input type="checkbox" name="email[subscription_updates]" value="1"
+          class="h-5 w-5 text-cyan-500 rounded border-gray-300 focus:ring-cyan-500"
+          <%= "checked" if @email_prefs.fetch("subscription_updates", true) %>>
+      </label>
+
+      <label class="flex items-center justify-between p-5 cursor-pointer hover:bg-gray-50 transition">
+        <div>
+          <p class="text-sm font-medium text-gray-900">Interview Notifications</p>
+          <p class="text-xs text-gray-500">Results from mock interviews and practice sessions</p>
+        </div>
+        <input type="hidden" name="email[interview_notifications]" value="0">
+        <input type="checkbox" name="email[interview_notifications]" value="1"
+          class="h-5 w-5 text-cyan-500 rounded border-gray-300 focus:ring-cyan-500"
+          <%= "checked" if @email_prefs.fetch("interview_notifications", true) %>>
+      </label>
+
+      <label class="flex items-center justify-between p-5 cursor-pointer hover:bg-gray-50 transition">
+        <div>
+          <p class="text-sm font-medium text-gray-900">Community Activity</p>
+          <p class="text-xs text-gray-500">Likes, replies, and new posts in your discussions</p>
+        </div>
+        <input type="hidden" name="email[community_activity]" value="0">
+        <input type="checkbox" name="email[community_activity]" value="1"
+          class="h-5 w-5 text-cyan-500 rounded border-gray-300 focus:ring-cyan-500"
+          <%= "checked" if @email_prefs.fetch("community_activity", true) %>>
+      </label>
+    </div>
+
+    <div class="flex items-center justify-between">
+      <%= link_to "Back to Notifications", notifications_path, class: "text-sm text-cyan-600 font-medium hover:text-cyan-700" %>
+      <button type="submit" class="px-6 py-2.5 bg-cyan-500 text-white font-semibold rounded-lg hover:bg-cyan-600 transition-colors cursor-pointer">
+        Save Preferences
+      </button>
+    </div>
+  <% end %>
+</div>

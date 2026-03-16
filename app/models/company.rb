@@ -2,6 +2,7 @@ class Company < ApplicationRecord
   has_many :company_members, dependent: :destroy
   has_many :users, through: :company_members
   has_many :company_analytics_snapshots, dependent: :destroy
+  has_many :departments, dependent: :destroy
 
   validates :name, presence: true
   validates :domain, uniqueness: true, allow_nil: true

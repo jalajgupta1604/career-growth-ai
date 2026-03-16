@@ -21,9 +21,16 @@
 
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/service-worker.js").catch(() => {});
+      }
+    </script>
   </head>
 
   <body class="h-full bg-gray-50">
+    <%= render "shared/banner" %>
     <% if user_signed_in? && !controller_name.in?(%w[pages onboarding career_reports resumes sessions registrations interview_prep]) %>
       <nav class="bg-white border-b border-gray-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

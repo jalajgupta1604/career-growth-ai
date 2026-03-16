@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="h-full">
   <head>
-    <title>Employer Portal — Career Growth AI</title>
+    <title><%= content_for(:page_title).present? ? "#{content_for(:page_title)} — Employer Portal" : "Employer Portal — Career Growth AI" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -14,48 +14,102 @@
   </head>
 
   <body class="h-full bg-gray-50">
-    <nav class="bg-white border-b border-gray-200">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-          <div class="flex items-center gap-6">
-            <%= link_to employer_root_path, class: "flex items-center gap-2" do %>
-              <div class="w-7 h-7 bg-indigo-600 rounded-lg flex items-center justify-center">
-                <span class="material-symbols-outlined text-white text-sm">business</span>
-              </div>
-              <span class="text-lg font-bold text-gray-900">Employer Portal</span>
-            <% end %>
-            <div class="flex items-center gap-1">
-              <%= link_to "Dashboard", employer_root_path, class: "px-3 py-2 text-sm font-medium rounded-lg #{request.path == employer_root_path ? 'text-indigo-600 bg-indigo-50' : 'text-gray-500 hover:text-gray-700'}" %>
-              <%= link_to "Jobs", employer_jobs_path, class: "px-3 py-2 text-sm font-medium rounded-lg #{request.path.start_with?('/employer/jobs') ? 'text-indigo-600 bg-indigo-50' : 'text-gray-500 hover:text-gray-700'}" %>
-              <%= link_to "Candidates", employer_candidates_path, class: "px-3 py-2 text-sm font-medium rounded-lg #{request.path.start_with?('/employer/candidates') ? 'text-indigo-600 bg-indigo-50' : 'text-gray-500 hover:text-gray-700'}" %>
+    <div class="min-h-full flex">
+      <!-- Sidebar -->
+      <aside class="w-60 bg-indigo-950 text-white flex flex-col flex-shrink-0 fixed inset-y-0 left-0 z-30">
+        <!-- Company Brand -->
+        <div class="p-5 border-b border-indigo-900">
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 bg-indigo-600 rounded-lg flex items-center justify-center">
+              <span class="material-symbols-outlined text-white text-lg">business_center</span>
+            </div>
+            <div>
+              <h1 class="text-sm font-bold leading-tight"><%= current_employer&.company_name || "Employer" %></h1>
+              <p class="text-[11px] text-indigo-300">Employer Portal</p>
             </div>
           </div>
-          <div class="flex items-center gap-4">
-            <% if current_employer&.verified? %>
-              <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded-full">
-                <span class="material-symbols-outlined text-xs">verified</span> Verified
-              </span>
+          <% if current_employer&.verified? %>
+            <div class="mt-3 flex items-center gap-1.5 px-2.5 py-1.5 bg-indigo-900/50 rounded-lg">
+              <span class="material-symbols-outlined text-green-400 text-sm">verified</span>
+              <span class="text-[11px] text-green-300 font-medium">Verified Employer</span>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 p-3 space-y-0.5 overflow-y-auto">
+          <p class="px-3 pt-2 pb-1 text-[10px] font-semibold text-indigo-400 uppercase tracking-wider">Hiring</p>
+          <%= employer_nav_link "Dashboard", employer_root_path, "dashboard" %>
+          <%= employer_nav_link "Job Postings", employer_jobs_path, "work" %>
+          <%= employer_nav_link "Applications", employer_candidates_path, "person_search" %>
+
+          <p class="px-3 pt-5 pb-1 text-[10px] font-semibold text-indigo-400 uppercase tracking-wider">Manage</p>
+          <%= employer_nav_link "Pipeline", employer_pipeline_index_path, "filter_list" %>
+          <%= employer_nav_link "Company Settings", employer_settings_path, "settings" %>
+        </nav>
+
+        <!-- Footer -->
+        <div class="p-4 border-t border-indigo-900">
+          <div class="flex items-center gap-2.5 mb-3">
+            <div class="w-8 h-8 rounded-full bg-indigo-700 flex items-center justify-center text-xs font-bold">
+              <%= current_user.full_name&.first&.upcase || "E" %>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium truncate"><%= current_user.full_name || current_user.email %></p>
+              <p class="text-[11px] text-indigo-400 truncate"><%= current_user.email %></p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <%= link_to dashboard_path, class: "flex-1 flex items-center justify-center gap-1 px-2 py-1.5 text-[11px] text-indigo-300 hover:text-white hover:bg-indigo-900 rounded-lg transition" do %>
+              <span class="material-symbols-outlined text-sm">swap_horiz</span>
+              Candidate App
             <% end %>
-            <%= link_to "Back to App", dashboard_path, class: "text-sm text-gray-400 hover:text-gray-600" %>
-            <span class="text-sm text-gray-500"><%= current_user.email %></span>
+            <%= button_to destroy_user_session_path, method: :delete, class: "flex items-center justify-center px-2 py-1.5 text-[11px] text-indigo-400 hover:text-red-400 hover:bg-indigo-900 rounded-lg transition" do %>
+              <span class="material-symbols-outlined text-sm">logout</span>
+            <% end %>
           </div>
         </div>
-      </div>
-    </nav>
+      </aside>
 
-    <% if notice.present? %>
-      <div class="max-w-7xl mx-auto px-4 mt-4">
-        <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm"><%= notice %></div>
-      </div>
-    <% end %>
-    <% if alert.present? %>
-      <div class="max-w-7xl mx-auto px-4 mt-4">
-        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm"><%= alert %></div>
-      </div>
-    <% end %>
+      <!-- Main content -->
+      <div class="flex-1 ml-60 flex flex-col min-w-0">
+        <!-- Top bar -->
+        <header class="bg-white border-b border-gray-200 px-8 py-4 sticky top-0 z-20">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-lg font-bold text-gray-900"><%= yield :page_title %></h2>
+              <% if content_for?(:page_subtitle) %>
+                <p class="text-sm text-gray-500"><%= yield :page_subtitle %></p>
+              <% end %>
+            </div>
+            <div class="flex items-center gap-3">
+              <%= link_to new_employer_job_path, class: "inline-flex items-center gap-1.5 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition" do %>
+                <span class="material-symbols-outlined text-base">add</span> Post Job
+              <% end %>
+            </div>
+          </div>
+        </header>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <%= yield %>
-    </main>
+        <% if notice.present? %>
+          <div class="mx-8 mt-4">
+            <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm"><%= notice %></div>
+          </div>
+        <% end %>
+        <% if alert.present? %>
+          <div class="mx-8 mt-4">
+            <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm"><%= alert %></div>
+          </div>
+        <% end %>
+
+        <main class="flex-1 p-8">
+          <%= yield %>
+        </main>
+
+        <!-- Footer -->
+        <footer class="border-t border-gray-100 px-8 py-4">
+          <p class="text-xs text-gray-400">&copy; <%= Date.current.year %> Career Growth AI &middot; Employer Platform</p>
+        </footer>
+      </div>
+    </div>
   </body>
 </html>

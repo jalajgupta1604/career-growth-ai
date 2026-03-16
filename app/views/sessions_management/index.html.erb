@@ -1,0 +1,59 @@
+<% content_for :page_title, "Active Sessions" %>
+
+<div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Active Sessions</h1>
+      <p class="text-sm text-gray-500 mt-1">Manage your logged-in devices. Revoke sessions you don't recognize.</p>
+    </div>
+    <% if @sessions.size > 1 %>
+      <%= button_to "Revoke All Others", destroy_all_sessions_management_index_path, method: :post,
+          class: "px-4 py-2 text-sm font-medium bg-red-50 text-red-600 rounded-lg hover:bg-red-100 border border-red-200 cursor-pointer transition",
+          data: { turbo_confirm: "Revoke all other sessions? You'll stay logged in here." } %>
+    <% end %>
+  </div>
+
+  <div class="bg-white rounded-xl border border-gray-200 divide-y divide-gray-100">
+    <% @sessions.each do |sess| %>
+      <div class="p-5 flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <div class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
+            <span class="material-symbols-outlined text-gray-500">
+              <%= case sess.device_type
+                  when "mobile" then "phone_android"
+                  when "tablet" then "tablet"
+                  else "computer"
+                  end %>
+            </span>
+          </div>
+          <div>
+            <p class="text-sm font-medium text-gray-900">
+              <%= sess.device_label %>
+              <% if sess.current?(session.id.to_s) %>
+                <span class="ml-2 text-xs font-medium text-green-600 bg-green-100 px-2 py-0.5 rounded-full">Current</span>
+              <% end %>
+            </p>
+            <p class="text-xs text-gray-500">
+              IP: <%= sess.ip_address || "Unknown" %> &bull;
+              Last active: <%= sess.last_active_at ? time_ago_in_words(sess.last_active_at) + " ago" : "Unknown" %>
+            </p>
+          </div>
+        </div>
+        <% unless sess.current?(session.id.to_s) %>
+          <%= button_to sessions_management_path(sess), method: :delete,
+              class: "text-sm text-red-500 font-medium hover:text-red-700 cursor-pointer",
+              data: { turbo_confirm: "Revoke this session?" } do %>
+            Revoke
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+    <% if @sessions.empty? %>
+      <div class="p-8 text-center text-sm text-gray-400">No active sessions found</div>
+    <% end %>
+  </div>
+
+  <div class="mt-6 text-center">
+    <%= link_to "Back to Profile", profile_path, class: "text-sm text-cyan-600 font-medium hover:text-cyan-700" %>
+  </div>
+</div>

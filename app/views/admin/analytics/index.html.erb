@@ -218,3 +218,46 @@
     <div class="py-8 text-center text-sm text-gray-400">No forecast data available</div>
   <% end %>
 </div>
+
+<!-- Search Analytics & Trending -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
+  <!-- Popular Searches -->
+  <div class="bg-white rounded-xl border border-gray-200 p-6">
+    <div class="flex items-center gap-2 mb-4">
+      <span class="material-symbols-outlined text-gray-400">search</span>
+      <h3 class="text-sm font-semibold text-gray-900">Popular Searches</h3>
+    </div>
+    <% if @popular_searches.any? %>
+      <div class="space-y-2">
+        <% @popular_searches.first(10).each do |query, count| %>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-gray-700"><%= query %></span>
+            <span class="font-medium text-gray-500"><%= count %></span>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="py-6 text-center text-sm text-gray-400">No search data yet</div>
+    <% end %>
+  </div>
+
+  <!-- Zero-Result Searches (Content Gaps) -->
+  <div class="bg-white rounded-xl border border-gray-200 p-6">
+    <div class="flex items-center gap-2 mb-4">
+      <span class="material-symbols-outlined text-gray-400">search_off</span>
+      <h3 class="text-sm font-semibold text-gray-900">Content Gaps (Zero Results)</h3>
+    </div>
+    <% if @zero_result_searches.any? %>
+      <div class="space-y-2">
+        <% @zero_result_searches.each do |query, count| %>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-gray-700"><%= query %></span>
+            <span class="font-medium text-red-500"><%= count %> searches</span>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="py-6 text-center text-sm text-gray-400">No zero-result queries</div>
+    <% end %>
+  </div>
+</div>

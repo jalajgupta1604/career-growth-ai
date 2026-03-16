@@ -1,0 +1,26 @@
+<h2>Payment Receipt</h2>
+
+<p>Hi <%= @user.full_name.presence || "there" %>,</p>
+
+<p>We've received your payment. Here are the details:</p>
+
+<div style="background-color: #f9fafb; border-radius: 8px; padding: 16px; margin: 16px 0;">
+  <table style="width: 100%; font-size: 14px; color: #4b5563;">
+    <tr>
+      <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;"><strong>Plan</strong></td>
+      <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb; text-align: right;">Pro <%= @subscription.plan_name.capitalize %></td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;"><strong>Amount</strong></td>
+      <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb; text-align: right;">&#8377;<%= @subscription.amount %></td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0;"><strong>Next billing date</strong></td>
+      <td style="padding: 8px 0; text-align: right;"><%= @subscription.current_period_end&.strftime("%B %d, %Y") || "N/A" %></td>
+    </tr>
+  </table>
+</div>
+
+<p style="text-align: center; margin-top: 24px;">
+  <a href="<%= manage_subscriptions_url %>" class="btn">Manage Subscription</a>
+</p>

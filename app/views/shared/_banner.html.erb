@@ -1,0 +1,12 @@
+<% banners = CmsContent.active_banners.limit(1) %>
+<% banners.each do |banner| %>
+  <div class="bg-cyan-600 text-white text-center py-2 px-4 text-sm" data-controller="dismiss" data-dismiss-key-value="banner-<%= banner.id %>">
+    <div class="max-w-7xl mx-auto flex items-center justify-center gap-3">
+      <span class="material-symbols-outlined text-base">campaign</span>
+      <span><%= banner.body&.truncate(200) %></span>
+      <button type="button" data-action="dismiss#close" class="ml-2 text-white/70 hover:text-white">
+        <span class="material-symbols-outlined text-base">close</span>
+      </button>
+    </div>
+  </div>
+<% end %>

@@ -660,4 +660,157 @@ Positioned for:
 
 ------------------------------------------------------------------------
 
+# 15. Phase 9 Requirements (Month 42--48) — Operational Hardening & Real-Time
+
+## Objectives
+
+-   Achieve production-grade observability and incident response
+-   Enable real-time user experience via WebSocket notifications
+-   Drive retention through automated re-engagement campaigns
+-   Surface trending content and search intelligence
+
+## Features
+
+### 15.1 Monitoring & Infrastructure
+
+-   **Error tracking** — Sentry integration for production error monitoring with source maps and alerting
+-   **Health check dashboard** — Admin panel showing job queue depth, error rates, DB connection stats, storage usage
+-   **ActionCable real-time notifications** — WebSocket channels for live notification push to connected users
+-   **Session management** — User-facing page to view active sessions and revoke them
+-   **CDN configuration** — CloudFront/Cloudflare for static assets, uploaded files, and generated PDFs
+
+### 15.2 Re-engagement & Smart Nudges
+
+-   **Re-engagement campaigns** — Automated email sequences for users inactive 7/14/30 days
+-   **Context-aware smart nudges** — "3 new jobs match your profile", "Your readiness score improved 12%"
+-   **Trending content aggregation** — Most liked posts, most discussed threads, most applied jobs, trending skills
+-   **Search analytics** — Track search queries to identify content gaps and feature demand
+
+## Phase 9 Metrics
+
+-   Error detection MTTD < 5 minutes
+-   Re-engagement email open rate > 20%
+-   Real-time notification delivery < 2 seconds
+-   Trending content engagement +15%
+
+------------------------------------------------------------------------
+
+# 16. Phase 10 Requirements (Month 48--54) — Employer Intelligence & Trust
+
+## Objectives
+
+-   Unlock employer revenue via hiring analytics and marketplace intelligence
+-   Build automated trust and safety systems for community content
+-   Enable privacy-first user controls for data visibility
+
+## Features
+
+### 16.1 Employer Analytics & Marketplace Depth
+
+-   **Hiring analytics dashboard** — Time-to-hire, cost-per-hire, conversion rates per pipeline stage
+-   **Employer talent pool insights** — Available candidates by skill/city, salary benchmarks, hiring velocity
+-   **Interview scheduling** — Integrated calendar booking between employer and candidate
+-   **Smart candidate matching** — ML-powered scoring: skill fit (40%), salary alignment (25%), career trajectory (20%), cultural fit (15%)
+-   **Offer management** — Employers create offers in-platform, candidates compare offers side-by-side
+-   **Referral hiring** — Employees refer candidates through platform with commission tracking
+
+### 16.2 Trust, Moderation & Privacy
+
+-   **AI auto-moderation** — Gemini-powered content screening for spam, profanity, fake reviews, misleading data
+-   **User trust scores** — Composite score from profile completeness, contribution quality, account age, verified email
+-   **Privacy controls** — Granular visibility settings for salary, profile, and activity (public/connections/private)
+-   **Community guidelines enforcement** — Tiered system: warn → mute → suspend → ban with admin tooling
+-   **Revenue recognition** — Track recognized vs deferred revenue for accounting compliance
+
+## Phase 10 Metrics
+
+-   50+ employer accounts with hiring analytics enabled
+-   Auto-moderation catches 80% of flagged content before manual review
+-   100% of users have default privacy settings applied
+-   Trust score coverage: 90% of active users
+
+------------------------------------------------------------------------
+
+# 17. Phase 11 Requirements (Month 54--60) — Intelligence & Integrations
+
+## Objectives
+
+-   Build AI-driven personalization that adapts to each user's behavior
+-   Create integration ecosystem for workflow stickiness
+-   Reduce churn through predictive interventions
+
+## Features
+
+### 17.1 AI Personalization Engine
+
+-   **User health scoring** — Churn risk prediction based on activity, engagement, and payment patterns
+-   **Predictive career insights** — "Based on your trajectory, focus on [Skill] this month"
+-   **Content recommendations** — "Users in your role found these resources most helpful"
+-   **Adaptive difficulty** — Challenges, coding problems, and interview prep adjust to user skill level
+-   **Engagement scoring** — Predict optimal time and channel to send notifications per user
+
+### 17.2 External Integrations
+
+-   **Calendar integration** — Google/Outlook Calendar sync for peer practice, mock interviews, study groups
+-   **Slack/Teams bot** — Daily challenges in workspace channels, streak reminders, team leaderboards
+-   **Job board syndication** — Auto-post marketplace jobs to LinkedIn Jobs, Naukri, Indeed
+-   **Zapier/Make webhook triggers** — Standard webhook format for workflow automation with 1000+ apps
+-   **SSO for Enterprise** — SAML/OIDC single sign-on for enterprise HR dashboard customers
+
+## Phase 11 Metrics
+
+-   Health score predicts churn with >70% accuracy
+-   Calendar integration adoption: 20% of active users
+-   Slack bot installed in 50+ workspaces
+-   SSO enabled for 10+ enterprise clients
+
+------------------------------------------------------------------------
+
+# 18. Phase 12 Requirements (Month 60--66) — Polish & Scale Readiness
+
+## Objectives
+
+-   Build experimentation infrastructure for data-driven product decisions
+-   Achieve content independence from engineering team
+-   Prepare for Series A with polished reporting and mobile presence
+
+## Features
+
+### 18.1 Experimentation & Reporting
+
+-   **A/B testing infrastructure** — Feature flag system with experiment tracking and statistical significance
+-   **Exportable analytics reports** — PDF/CSV exports for board meetings and investor updates
+-   **Revenue recognition** — Recognized vs deferred revenue tracking for accounting compliance
+
+### 18.2 Content & Mobile Polish
+
+-   **Content versioning** — Track changes to CMS content with diff view and rollback capability
+-   **Skill trend importer** — Semi-automated pipeline from job boards (Naukri, LinkedIn) to update trends
+-   **Deep linking** — Open specific pages from notifications, emails, and shared links
+-   **Native app wrapper** — Capacitor shell for Play Store/App Store presence
+
+## Phase 12 Metrics
+
+-   3+ A/B tests running concurrently
+-   Content team creates 100% of lessons without engineering
+-   Play Store listing with 4+ star rating
+-   Series A deck metrics fully automated from analytics portal
+
+------------------------------------------------------------------------
+
+# 19. Updated Strategic Outcome (66-Month Vision)
+
+By end of Phase 12, platform additionally owns:
+
+-   Production-grade observability with <5 min incident response
+-   Real-time notification delivery via WebSockets
+-   AI-powered trust and safety system protecting community
+-   Predictive churn prevention saving 15-20% of at-risk users
+-   Integration ecosystem (Slack, Calendar, Zapier, SSO) creating lock-in
+-   ML-powered candidate matching making marketplace defensible
+-   Experimentation culture with data-driven product decisions
+-   Mobile presence on Play Store/App Store
+
+------------------------------------------------------------------------
+
 End of Master PRD

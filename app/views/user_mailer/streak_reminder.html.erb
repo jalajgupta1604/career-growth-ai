@@ -1,0 +1,15 @@
+<h2>Don't lose your streak!</h2>
+
+<p>Hi <%= @user.full_name.presence || "there" %>,</p>
+
+<p>You're on a <strong><%= @streak&.current_streak || 0 %>-day streak</strong>. Don't break it now!</p>
+
+<p>A quick 5-minute daily challenge is all it takes to keep your momentum going.</p>
+
+<p style="text-align: center; margin-top: 24px;">
+  <a href="<%= daily_challenge_url %>" class="btn">Complete Today's Challenge</a>
+</p>
+
+<p style="font-size: 13px; color: #9ca3af; margin-top: 24px;">
+  Consistency beats intensity. Even a small practice session keeps your skills sharp.
+</p>

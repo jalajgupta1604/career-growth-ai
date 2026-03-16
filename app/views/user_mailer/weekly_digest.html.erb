@@ -1,0 +1,30 @@
+<h2>Your Weekly Progress</h2>
+
+<p>Hi <%= @user.full_name.presence || "there" %>, here's your career growth summary for the past week:</p>
+
+<div style="text-align: center; margin: 24px 0;">
+  <div class="stat-card">
+    <div class="stat-value"><%= @stats[:challenges_completed] || 0 %></div>
+    <div class="stat-label">Challenges</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value"><%= @stats[:current_streak] || 0 %></div>
+    <div class="stat-label">Day Streak</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value"><%= @stats[:interviews_practiced] || 0 %></div>
+    <div class="stat-label">Interviews</div>
+  </div>
+</div>
+
+<% if @stats[:badges_earned]&.positive? %>
+  <p>You earned <strong><%= @stats[:badges_earned] %> new badge<%= @stats[:badges_earned] == 1 ? "" : "s" %></strong> this week!</p>
+<% end %>
+
+<% if @stats[:new_lessons_available]&.positive? %>
+  <p>There are <strong><%= @stats[:new_lessons_available] %> new lessons</strong> available for your preparation.</p>
+<% end %>
+
+<p style="text-align: center; margin-top: 24px;">
+  <a href="<%= dashboard_url %>" class="btn">View Full Dashboard</a>
+</p>

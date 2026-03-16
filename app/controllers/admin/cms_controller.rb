@@ -28,6 +28,7 @@ module Admin
 
     def update
       @content = CmsContent.find(params[:id])
+      @content.create_version!(author: current_user, change_summary: params[:change_summary])
       if @content.update(content_params)
         audit!("update_content", resource: @content)
         redirect_to admin_cms_index_path, notice: "Content updated."

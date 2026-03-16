@@ -37,7 +37,7 @@ class BadgeService
   end
 
   def self.check_interview_ace(user)
-    count = user.mock_interviews.where("score >= ?", 70).count
+    count = user.mock_interviews.where("overall_score >= ?", 70).count
     return if count < 3
     level = if count >= 25 then "platinum"
            elsif count >= 15 then "gold"

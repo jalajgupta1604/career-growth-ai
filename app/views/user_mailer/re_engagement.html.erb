@@ -1,0 +1,31 @@
+<h2>We miss you!</h2>
+
+<p>Hi <%= @user.full_name.presence || "there" %>,</p>
+
+<% case @template %>
+<% when :day_7 %>
+  <p>It's been a week since your last visit. Here's what's happening:</p>
+  <ul style="font-size: 14px; color: #4b5563; line-height: 2;">
+    <li>New daily challenges are waiting for you</li>
+    <li>Your interview prep progress is ready to continue</li>
+    <li>Fresh salary insights have been updated for your role</li>
+  </ul>
+<% when :day_14 %>
+  <p>Your career growth journey is on pause. Just 5 minutes a day can make a real difference:</p>
+  <ul style="font-size: 14px; color: #4b5563; line-height: 2;">
+    <li>Complete a quick daily challenge to sharpen your skills</li>
+    <li>Check how your salary compares to latest market data</li>
+    <li>Try a mock interview to boost your confidence</li>
+  </ul>
+<% when :day_30 %>
+  <p>It's been a month! Your profile and progress are still saved and waiting for you.</p>
+  <p>The job market moves fast — staying prepared gives you an edge when opportunity knocks.</p>
+<% end %>
+
+<p style="text-align: center; margin-top: 24px;">
+  <a href="<%= dashboard_url %>" class="btn">Get Back on Track</a>
+</p>
+
+<p style="font-size: 13px; color: #9ca3af; margin-top: 24px;">
+  Don't want these reminders? <a href="<%= notification_preferences_url %>" style="color: #06b6d4;">Update your preferences</a>
+</p>

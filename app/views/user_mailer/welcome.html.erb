@@ -1,0 +1,20 @@
+<h2>Welcome to CareerGrowth AI!</h2>
+
+<p>Hi <%= @user.full_name.presence || "there" %>,</p>
+
+<p>You're all set to accelerate your career. Here's what you can do right now:</p>
+
+<ul style="font-size: 14px; color: #4b5563; line-height: 2;">
+  <li><strong>Upload your resume</strong> to get an AI-powered career report</li>
+  <li><strong>Practice daily challenges</strong> to build a streak</li>
+  <li><strong>Try mock interviews</strong> with AI-generated questions</li>
+  <li><strong>Explore salary insights</strong> and benchmarks</li>
+</ul>
+
+<p style="text-align: center; margin-top: 24px;">
+  <a href="<%= dashboard_url %>" class="btn">Go to Dashboard</a>
+</p>
+
+<p style="font-size: 13px; color: #9ca3af; margin-top: 24px;">
+  Have questions? Just reply to this email — we'd love to help.
+</p>

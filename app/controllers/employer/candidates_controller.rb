@@ -10,7 +10,16 @@ module Employer
         filters: search_filters
       )
       @candidates = @search.execute
+      @revealed_ids = current_employer.candidate_reveals.where(user_id: @candidates.map(&:id)).pluck(:user_id)
       render :results
+    end
+
+    def reveal
+      user = User.find(params[:id])
+      current_employer.reveal!(user)
+      redirect_back fallback_location: employer_candidates_path, notice: "Candidate revealed. #{current_employer.candidate_reveal_credits} credits remaining."
+    rescue => e
+      redirect_back fallback_location: employer_candidates_path, alert: e.message
     end
 
     private

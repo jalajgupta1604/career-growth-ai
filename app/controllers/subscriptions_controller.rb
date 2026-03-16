@@ -114,6 +114,43 @@ class SubscriptionsController < ApplicationController
     end
   end
 
+  def change_plan
+    subscription = current_user.subscription
+    new_plan = params[:plan]
+
+    unless subscription&.active?
+      redirect_to manage_subscriptions_path, alert: "No active subscription."
+      return
+    end
+
+    unless Subscription::PLANS.key?(new_plan) && new_plan != subscription.plan_name
+      redirect_to manage_subscriptions_path, alert: "Invalid plan change."
+      return
+    end
+
+    if Subscription::PLANS[new_plan][:amount] > Subscription::PLANS[subscription.plan_name][:amount]
+      # Upgrade: immediate
+      begin
+        Razorpay::Subscription.cancel(subscription.razorpay_subscription_id, cancel_at_cycle_end: false)
+      rescue => e
+        Rails.logger.warn("Old subscription cancel during upgrade: #{e.message}")
+      end
+      subscription.update!(
+        previous_plan_name: subscription.plan_name,
+        pending_plan_name: new_plan,
+        plan_change_scheduled_at: Time.current
+      )
+      redirect_to new_subscriptions_path(plan: new_plan), notice: "Upgrade to #{new_plan.titleize} plan. Complete payment to activate."
+    else
+      # Downgrade: end of current cycle
+      subscription.update!(
+        pending_plan_name: new_plan,
+        plan_change_scheduled_at: subscription.current_period_end
+      )
+      redirect_to manage_subscriptions_path, notice: "Downgrade scheduled. Your #{new_plan.titleize} plan will activate on #{subscription.current_period_end&.strftime('%B %d, %Y')}."
+    end
+  end
+
   def webhook
     payload = request.body.read
     signature = request.headers["X-Razorpay-Signature"]
@@ -155,13 +192,17 @@ class SubscriptionsController < ApplicationController
         current_period_end: entity["current_end"] ? Time.at(entity["current_end"]) : nil,
         paid_count: entity["paid_count"] || subscription.paid_count + 1
       )
+      DunningService.new(subscription).reset!
+      UserMailer.payment_receipt(subscription.user, subscription).deliver_later
     when "subscription.halted"
       subscription.update!(status: :halted)
+      DunningService.new(subscription).process
     when "subscription.cancelled"
       subscription.update!(
         status: :cancelled,
         cancelled_at: subscription.cancelled_at || Time.current
       )
+      UserMailer.subscription_cancelled(subscription.user, subscription).deliver_later
     when "subscription.completed"
       subscription.update!(status: :completed)
     when "subscription.pending"

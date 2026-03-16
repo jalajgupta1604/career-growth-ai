@@ -1,0 +1,21 @@
+<h2>Payment Failed</h2>
+
+<p>Hi <%= @user.full_name.presence || "there" %>,</p>
+
+<p>We couldn't process your subscription payment. This usually happens when:</p>
+
+<ul style="font-size: 14px; color: #4b5563; line-height: 2;">
+  <li>Your card has expired or been replaced</li>
+  <li>Insufficient funds in your account</li>
+  <li>Your bank blocked the transaction</li>
+</ul>
+
+<div style="background-color: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 16px; margin: 16px 0;">
+  <p style="margin: 0; font-size: 14px; color: #991b1b;">
+    <strong>Action needed:</strong> Please update your payment method to keep your Pro access.
+  </p>
+</div>
+
+<p style="text-align: center; margin-top: 24px;">
+  <a href="<%= manage_subscriptions_url %>" class="btn">Update Payment</a>
+</p>

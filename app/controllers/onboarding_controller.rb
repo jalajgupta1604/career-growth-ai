@@ -13,6 +13,13 @@ class OnboardingController < ApplicationController
     "Jaipur", "Chandigarh"
   ].freeze
 
+  ONBOARDING_PATHS = {
+    "job_seeker" => { label: "Find a New Job", icon: "work", features: %w[resume_builder job_recommendations interview_prep] },
+    "career_growth" => { label: "Grow in My Role", icon: "trending_up", features: %w[skill_trends salary_insights career_reports] },
+    "interview_prep" => { label: "Ace Interviews", icon: "record_voice_over", features: %w[mock_interviews daily_challenges company_packs] },
+    "salary_negotiation" => { label: "Negotiate Better", icon: "payments", features: %w[salary_benchmarks negotiation_tools offer_analysis] }
+  }.freeze
+
   def show
     redirect_to dashboard_path if current_user.onboarding_complete?
     @resume = current_user.resumes.new
@@ -37,6 +44,6 @@ class OnboardingController < ApplicationController
   private
 
   def onboarding_params
-    params.require(:user).permit(:role, :city, :experience_years, :current_salary)
+    params.require(:user).permit(:role, :city, :experience_years, :current_salary, :onboarding_path, career_goals: [])
   end
 end

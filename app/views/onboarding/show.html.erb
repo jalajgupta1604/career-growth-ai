@@ -97,6 +97,25 @@
         </div>
       </div>
 
+      <!-- Career Goals -->
+      <div>
+        <h3 class="text-lg font-bold text-gray-900 mb-2">What brings you here?</h3>
+        <p class="text-sm text-gray-500 mb-4">Pick one so we can personalize your experience.</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <% OnboardingController::ONBOARDING_PATHS.each do |key, path| %>
+            <label class="relative cursor-pointer">
+              <%= f.radio_button :onboarding_path, key, class: "peer sr-only" %>
+              <div class="flex items-center gap-3 p-4 rounded-xl border-2 border-gray-200 bg-white peer-checked:border-cyan-500 peer-checked:bg-cyan-50 hover:border-gray-300 transition">
+                <div class="w-10 h-10 rounded-lg bg-gray-100 peer-checked:bg-cyan-100 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-gray-500"><%= path[:icon] %></span>
+                </div>
+                <span class="text-sm font-semibold text-gray-900"><%= path[:label] %></span>
+              </div>
+            </label>
+          <% end %>
+        </div>
+      </div>
+
       <!-- Resume Upload -->
       <div>
         <div class="flex items-center space-x-2 mb-4">

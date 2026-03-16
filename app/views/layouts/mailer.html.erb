@@ -2,12 +2,36 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-      /* Email styles need to be inline */
+      body { margin: 0; padding: 0; background-color: #f9fafb; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+      .email-wrapper { max-width: 600px; margin: 0 auto; padding: 24px 16px; }
+      .email-header { text-align: center; padding: 24px 0; }
+      .email-header h1 { font-size: 20px; font-weight: 700; color: #06b6d4; margin: 0; }
+      .email-body { background-color: #ffffff; border-radius: 12px; border: 1px solid #e5e7eb; padding: 32px; }
+      .email-footer { text-align: center; padding: 24px 0; font-size: 12px; color: #9ca3af; }
+      .email-footer a { color: #06b6d4; text-decoration: none; }
+      .btn { display: inline-block; padding: 12px 24px; background-color: #06b6d4; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px; }
+      h2 { font-size: 18px; font-weight: 600; color: #111827; margin-top: 0; }
+      p { font-size: 14px; color: #4b5563; line-height: 1.6; }
+      .stat-card { display: inline-block; padding: 12px 16px; background-color: #f0f9ff; border-radius: 8px; text-align: center; margin: 4px; }
+      .stat-value { font-size: 20px; font-weight: 700; color: #06b6d4; }
+      .stat-label { font-size: 11px; color: #6b7280; text-transform: uppercase; }
     </style>
   </head>
-
   <body>
-    <%= yield %>
+    <div class="email-wrapper">
+      <div class="email-header">
+        <h1>CareerGrowth AI</h1>
+      </div>
+      <div class="email-body">
+        <%= yield %>
+      </div>
+      <div class="email-footer">
+        <p>&copy; <%= Date.current.year %> CareerGrowth AI &bull; <a href="<%= root_url %>">Visit Dashboard</a></p>
+        <p>You're receiving this because you have an account on CareerGrowth AI.<br>
+        <a href="<%= notification_preferences_url rescue '#' %>">Manage email preferences</a></p>
+      </div>
+    </div>
   </body>
 </html>

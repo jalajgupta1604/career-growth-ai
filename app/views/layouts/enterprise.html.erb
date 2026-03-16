@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html class="h-full">
+  <head>
+    <title><%= content_for(:page_title).present? ? "#{content_for(:page_title)} — Enterprise HR" : "Enterprise HR — Career Growth AI" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <link rel="icon" href="/icon.png" type="image/png">
+
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="h-full bg-gray-50">
+    <div class="min-h-full flex">
+      <!-- Sidebar -->
+      <aside class="w-60 bg-emerald-950 text-white flex flex-col flex-shrink-0 fixed inset-y-0 left-0 z-30">
+        <!-- Company Brand -->
+        <div class="p-5 border-b border-emerald-900">
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 bg-emerald-600 rounded-lg flex items-center justify-center">
+              <span class="material-symbols-outlined text-white text-lg">corporate_fare</span>
+            </div>
+            <div>
+              <h1 class="text-sm font-bold leading-tight"><%= @company&.name || "Enterprise" %></h1>
+              <p class="text-[11px] text-emerald-300">Enterprise HR</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 p-3 space-y-0.5 overflow-y-auto">
+          <p class="px-3 pt-2 pb-1 text-[10px] font-semibold text-emerald-400 uppercase tracking-wider">Overview</p>
+          <%= enterprise_nav_link "Dashboard", enterprise_root_path, "dashboard" %>
+
+          <p class="px-3 pt-5 pb-1 text-[10px] font-semibold text-emerald-400 uppercase tracking-wider">People</p>
+          <%= enterprise_nav_link "Team Members", enterprise_members_path, "group" %>
+          <%= enterprise_nav_link "Departments", enterprise_departments_path, "account_tree" %>
+
+          <% if current_member&.hr_admin? %>
+            <p class="px-3 pt-5 pb-1 text-[10px] font-semibold text-emerald-400 uppercase tracking-wider">Admin</p>
+            <%= enterprise_nav_link "Settings", "#", "settings" %>
+          <% end %>
+        </nav>
+
+        <!-- Footer -->
+        <div class="p-4 border-t border-emerald-900">
+          <div class="flex items-center gap-2.5 mb-3">
+            <div class="w-8 h-8 rounded-full bg-emerald-700 flex items-center justify-center text-xs font-bold">
+              <%= current_user.full_name&.first&.upcase || "U" %>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium truncate"><%= current_user.full_name || current_user.email %></p>
+              <p class="text-[11px] text-emerald-400 truncate"><%= current_member&.role&.humanize || "Member" %></p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <%= link_to dashboard_path, class: "flex-1 flex items-center justify-center gap-1 px-2 py-1.5 text-[11px] text-emerald-300 hover:text-white hover:bg-emerald-900 rounded-lg transition" do %>
+              <span class="material-symbols-outlined text-sm">swap_horiz</span>
+              Candidate App
+            <% end %>
+            <%= button_to destroy_user_session_path, method: :delete, class: "flex items-center justify-center px-2 py-1.5 text-[11px] text-emerald-400 hover:text-red-400 hover:bg-emerald-900 rounded-lg transition" do %>
+              <span class="material-symbols-outlined text-sm">logout</span>
+            <% end %>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main content -->
+      <div class="flex-1 ml-60 flex flex-col min-w-0">
+        <!-- Top bar -->
+        <header class="bg-white border-b border-gray-200 px-8 py-4 sticky top-0 z-20">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-lg font-bold text-gray-900"><%= yield :page_title %></h2>
+              <% if content_for?(:page_subtitle) %>
+                <p class="text-sm text-gray-500"><%= yield :page_subtitle %></p>
+              <% end %>
+            </div>
+            <div class="flex items-center gap-3">
+              <% if content_for?(:page_actions) %>
+                <%= yield :page_actions %>
+              <% end %>
+            </div>
+          </div>
+        </header>
+
+        <% if notice.present? %>
+          <div class="mx-8 mt-4">
+            <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm"><%= notice %></div>
+          </div>
+        <% end %>
+        <% if alert.present? %>
+          <div class="mx-8 mt-4">
+            <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm"><%= alert %></div>
+          </div>
+        <% end %>
+
+        <main class="flex-1 p-8">
+          <%= yield %>
+        </main>
+
+        <!-- Footer -->
+        <footer class="border-t border-gray-100 px-8 py-4">
+          <p class="text-xs text-gray-400">&copy; <%= Date.current.year %> Career Growth AI &middot; Enterprise HR Platform</p>
+        </footer>
+      </div>
+    </div>
+  </body>
+</html>

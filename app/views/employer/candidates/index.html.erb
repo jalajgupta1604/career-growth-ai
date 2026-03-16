@@ -1,7 +1,10 @@
-<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<% content_for :page_title, "Applications" %>
+<% content_for :page_subtitle, "Review and manage candidate applications" %>
+
+<div>
   <!-- Back link -->
   <div class="mb-6">
-    <%= link_to employer_dashboard_path, class: "inline-flex items-center gap-1 text-sm text-gray-500 hover:text-cyan-600 transition-colors" do %>
+    <%= link_to employer_root_path, class: "inline-flex items-center gap-1 text-sm text-gray-500 hover:text-cyan-600 transition-colors" do %>
       <span class="material-symbols-outlined text-[18px]">arrow_back</span>
       Back to Dashboard
     <% end %>
@@ -20,7 +23,7 @@
       <h2 class="text-lg font-semibold text-gray-900">Search Filters</h2>
     </div>
 
-    <%= form_with url: employer_candidates_results_path, method: :get, class: "space-y-6" do |f| %>
+    <%= form_with url: search_employer_candidates_path, method: :post, class: "space-y-6" do |f| %>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <!-- Role -->
         <div>
@@ -59,7 +62,7 @@
   </div>
 
   <!-- Previous Searches -->
-  <% if @previous_searches.present? && @previous_searches.any? %>
+  <% if @searches.present? && @searches.any? %>
     <div class="bg-white rounded-2xl border border-gray-100 p-6">
       <div class="flex items-center gap-2 mb-4">
         <span class="material-symbols-outlined text-gray-400">history</span>
@@ -67,7 +70,7 @@
       </div>
 
       <div class="space-y-2">
-        <% @previous_searches.each do |search| %>
+        <% @searches.each do |search| %>
           <div class="flex items-center justify-between px-4 py-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
             <div class="flex items-center gap-4">
               <div class="w-8 h-8 bg-cyan-50 rounded-lg flex items-center justify-center">
@@ -88,7 +91,7 @@
                 </p>
               </div>
             </div>
-            <%= link_to employer_candidates_results_path(role: search.role, city: search.city, experience_min: search.experience_min, experience_max: search.experience_max), class: "inline-flex items-center gap-1 text-sm text-cyan-600 font-medium hover:text-cyan-700" do %>
+            <%= button_to search_employer_candidates_path, method: :post, params: { role: search.filters["role"], city: search.filters["city"], experience_min: search.filters["experience_min"], experience_max: search.filters["experience_max"] }, class: "inline-flex items-center gap-1 text-sm text-indigo-600 font-medium hover:text-indigo-700 cursor-pointer" do %>
               <span class="material-symbols-outlined text-[16px]">refresh</span>
               Run Again
             <% end %>

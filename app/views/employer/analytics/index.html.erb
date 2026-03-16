@@ -1,0 +1,102 @@
+<% content_for :page_title, "Hiring Analytics" %>
+
+<div class="space-y-6">
+  <!-- Stats -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="bg-white rounded-xl border border-gray-200 p-5">
+      <p class="text-sm text-gray-500">Total Applications</p>
+      <p class="text-2xl font-bold text-gray-900 mt-1"><%= @total_applications %></p>
+    </div>
+    <div class="bg-white rounded-xl border border-gray-200 p-5">
+      <p class="text-sm text-gray-500">Total Hires</p>
+      <p class="text-2xl font-bold text-green-600 mt-1"><%= @total_hires %></p>
+    </div>
+    <div class="bg-white rounded-xl border border-gray-200 p-5">
+      <p class="text-sm text-gray-500">Active Jobs</p>
+      <p class="text-2xl font-bold text-indigo-600 mt-1"><%= @active_jobs %></p>
+    </div>
+    <div class="bg-white rounded-xl border border-gray-200 p-5">
+      <p class="text-sm text-gray-500">Avg. Time to Hire</p>
+      <p class="text-2xl font-bold text-amber-600 mt-1"><%= @time_to_hire %> <span class="text-sm font-normal text-gray-400">days</span></p>
+    </div>
+  </div>
+
+  <!-- Pipeline Funnel & Conversion -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Pipeline Breakdown -->
+    <div class="bg-white rounded-xl border border-gray-200 p-6">
+      <h3 class="text-sm font-semibold text-gray-900 mb-4">Pipeline Breakdown</h3>
+      <% stages = %w[applied shortlisted interviewing offered hired rejected withdrawn] %>
+      <% stage_colors = { "applied" => "bg-blue-500", "shortlisted" => "bg-cyan-500", "interviewing" => "bg-purple-500", "offered" => "bg-amber-500", "hired" => "bg-green-500", "rejected" => "bg-red-400", "withdrawn" => "bg-gray-400" } %>
+      <% max = [@pipeline_stats.values.max.to_i, 1].max %>
+      <div class="space-y-3">
+        <% stages.each do |stage| %>
+          <% count = @pipeline_stats[stage] || 0 %>
+          <div>
+            <div class="flex items-center justify-between text-sm mb-1">
+              <span class="text-gray-700 capitalize"><%= stage %></span>
+              <span class="font-medium text-gray-900"><%= count %></span>
+            </div>
+            <div class="w-full bg-gray-100 rounded-full h-2.5">
+              <div class="h-2.5 rounded-full <%= stage_colors[stage] || 'bg-gray-500' %>" style="width: <%= (count.to_f / max * 100).round %>%"></div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Conversion Funnel -->
+    <div class="bg-white rounded-xl border border-gray-200 p-6">
+      <h3 class="text-sm font-semibold text-gray-900 mb-4">Conversion Funnel</h3>
+      <% if @source_quality.any? %>
+        <div class="space-y-4">
+          <% @source_quality.each do |stage, pct| %>
+            <div class="flex items-center gap-4">
+              <div class="w-28 text-sm text-gray-700"><%= stage %></div>
+              <div class="flex-1 bg-gray-100 rounded-full h-6 relative overflow-hidden">
+                <div class="h-6 rounded-full bg-indigo-500 transition-all flex items-center justify-end pr-2" style="width: <%= pct %>%">
+                  <span class="text-xs font-semibold text-white"><%= pct %>%</span>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="py-8 text-center text-sm text-gray-400">No data yet</div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Recent Activity -->
+  <div class="bg-white rounded-xl border border-gray-200">
+    <div class="p-5 border-b border-gray-100">
+      <h3 class="text-sm font-semibold text-gray-900">Recent Activity</h3>
+    </div>
+    <% if @recent_activity.any? %>
+      <div class="divide-y divide-gray-50">
+        <% @recent_activity.each do |app| %>
+          <div class="px-6 py-4 flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-900"><%= app.user&.full_name || "Candidate" %></p>
+              <p class="text-xs text-gray-500"><%= app.job_posting&.title %> &bull; <%= time_ago_in_words(app.updated_at) %> ago</p>
+            </div>
+            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium
+              <%= case app.status
+                  when 'applied' then 'bg-blue-100 text-blue-700'
+                  when 'shortlisted' then 'bg-cyan-100 text-cyan-700'
+                  when 'interviewing' then 'bg-purple-100 text-purple-700'
+                  when 'offered' then 'bg-amber-100 text-amber-700'
+                  when 'hired' then 'bg-green-100 text-green-700'
+                  when 'rejected' then 'bg-red-100 text-red-700'
+                  else 'bg-gray-100 text-gray-700'
+                  end %>">
+              <%= app.status.capitalize %>
+            </span>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="p-8 text-center text-sm text-gray-400">No activity yet</div>
+    <% end %>
+  </div>
+</div>

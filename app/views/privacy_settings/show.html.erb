@@ -1,0 +1,62 @@
+<% content_for :page_title, "Privacy Settings" %>
+
+<div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <h1 class="text-2xl font-bold text-gray-900 mb-2">Privacy Settings</h1>
+  <p class="text-sm text-gray-500 mb-8">Control who can see your information on CareerGrowth AI.</p>
+
+  <%= form_with url: privacy_settings_path, method: :patch, class: "space-y-6" do |f| %>
+    <div class="bg-white rounded-2xl border border-gray-100 divide-y divide-gray-100">
+      <!-- Salary Visibility -->
+      <div class="p-5">
+        <label class="block text-sm font-medium text-gray-900 mb-1">Salary Information</label>
+        <p class="text-xs text-gray-500 mb-3">Who can see your salary data in benchmarks and peer comparisons</p>
+        <select name="privacy[salary_visibility]" class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-cyan-500 focus:border-transparent">
+          <option value="public" <%= "selected" if @settings["salary_visibility"] == "public" %>>Everyone (anonymized)</option>
+          <option value="connections" <%= "selected" if @settings["salary_visibility"] == "connections" %>>Peers in my role only</option>
+          <option value="private" <%= "selected" if @settings["salary_visibility"] == "private" || @settings["salary_visibility"].blank? %>>Private (only me)</option>
+        </select>
+      </div>
+
+      <!-- Profile Visibility -->
+      <div class="p-5">
+        <label class="block text-sm font-medium text-gray-900 mb-1">Profile Visibility</label>
+        <p class="text-xs text-gray-500 mb-3">Controls whether employers and other users can find your profile</p>
+        <select name="privacy[profile_visibility]" class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-cyan-500 focus:border-transparent">
+          <option value="public" <%= "selected" if @settings["profile_visibility"] == "public" %>>Public (visible to employers)</option>
+          <option value="connections" <%= "selected" if @settings["profile_visibility"] == "connections" || @settings["profile_visibility"].blank? %>>Limited (name hidden until revealed)</option>
+          <option value="private" <%= "selected" if @settings["profile_visibility"] == "private" %>>Private (not searchable)</option>
+        </select>
+      </div>
+
+      <!-- Activity Visibility -->
+      <div class="p-5">
+        <label class="block text-sm font-medium text-gray-900 mb-1">Activity & Contributions</label>
+        <p class="text-xs text-gray-500 mb-3">Who can see your community posts, reviews, and discussion activity</p>
+        <select name="privacy[activity_visibility]" class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-cyan-500 focus:border-transparent">
+          <option value="public" <%= "selected" if @settings["activity_visibility"] == "public" %>>Everyone</option>
+          <option value="connections" <%= "selected" if @settings["activity_visibility"] == "connections" %>>Registered users only</option>
+          <option value="private" <%= "selected" if @settings["activity_visibility"] == "private" || @settings["activity_visibility"].blank? %>>Private</option>
+        </select>
+      </div>
+
+      <!-- Search Inclusion -->
+      <label class="flex items-center justify-between p-5 cursor-pointer hover:bg-gray-50 transition">
+        <div>
+          <p class="text-sm font-medium text-gray-900">Include in Employer Search</p>
+          <p class="text-xs text-gray-500">Allow verified employers to find your anonymized profile in candidate search</p>
+        </div>
+        <input type="hidden" name="privacy[show_in_search]" value="0">
+        <input type="checkbox" name="privacy[show_in_search]" value="1"
+          class="h-5 w-5 text-cyan-500 rounded border-gray-300 focus:ring-cyan-500"
+          <%= "checked" if @settings.fetch("show_in_search", true) %>>
+      </label>
+    </div>
+
+    <div class="flex items-center justify-between">
+      <%= link_to "Back to Profile", profile_path, class: "text-sm text-cyan-600 font-medium hover:text-cyan-700" %>
+      <button type="submit" class="px-6 py-2.5 bg-cyan-500 text-white font-semibold rounded-lg hover:bg-cyan-600 transition-colors cursor-pointer">
+        Save Settings
+      </button>
+    </div>
+  <% end %>
+</div>

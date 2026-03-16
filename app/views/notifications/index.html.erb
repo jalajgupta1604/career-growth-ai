@@ -11,14 +11,14 @@
       <div class="bg-white rounded-xl border border-gray-200 p-4 flex items-start gap-3 <%= 'bg-cyan-50/50 border-cyan-100' unless notification.read? %>">
         <div class="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 <%= notification.read? ? 'bg-gray-100' : 'bg-cyan-100' %>">
           <span class="material-symbols-outlined text-lg <%= notification.read? ? 'text-gray-400' : 'text-cyan-600' %>">
-            <% case notification.category %>
-            <% when "achievement" %>emoji_events
-            <% when "subscription" %>star
-            <% when "interview" %>record_voice_over
-            <% when "career" %>trending_up
-            <% when "community" %>forum
-            <% else %>notifications
-            <% end %>
+            <%= case notification.category
+                when "achievement" then "emoji_events"
+                when "subscription" then "star"
+                when "interview" then "record_voice_over"
+                when "career" then "trending_up"
+                when "community" then "forum"
+                else "notifications"
+                end %>
           </span>
         </div>
         <div class="flex-1 min-w-0">

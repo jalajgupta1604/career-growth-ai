@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_13_150006) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_16_140001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -84,6 +84,16 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_13_150006) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_audit_logs_on_user_id"
+  end
+
+  create_table "candidate_reveals", force: :cascade do |t|
+    t.bigint "employer_profile_id", null: false
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["employer_profile_id", "user_id"], name: "index_candidate_reveals_on_employer_profile_id_and_user_id", unique: true
+    t.index ["employer_profile_id"], name: "index_candidate_reveals_on_employer_profile_id"
+    t.index ["user_id"], name: "index_candidate_reveals_on_user_id"
   end
 
   create_table "candidate_searches", force: :cascade do |t|
@@ -245,8 +255,17 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_13_150006) do
     t.datetime "joined_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "department_id"
+    t.string "title"
+    t.bigint "manager_id"
+    t.string "employment_status", default: "active"
+    t.date "start_date"
+    t.date "end_date"
     t.index ["company_id", "user_id"], name: "index_company_members_on_company_id_and_user_id", unique: true
     t.index ["company_id"], name: "index_company_members_on_company_id"
+    t.index ["department_id"], name: "index_company_members_on_department_id"
+    t.index ["employment_status"], name: "index_company_members_on_employment_status"
+    t.index ["manager_id"], name: "index_company_members_on_manager_id"
     t.index ["role"], name: "index_company_members_on_role"
     t.index ["user_id"], name: "index_company_members_on_user_id"
   end
@@ -299,6 +318,20 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_13_150006) do
     t.index ["user_id"], name: "index_content_flags_on_user_id"
   end
 
+  create_table "content_versions", force: :cascade do |t|
+    t.bigint "cms_content_id", null: false
+    t.bigint "author_id", null: false
+    t.integer "version_number", null: false
+    t.text "body"
+    t.string "title"
+    t.text "change_summary"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["author_id"], name: "index_content_versions_on_author_id"
+    t.index ["cms_content_id", "version_number"], name: "index_content_versions_on_cms_content_id_and_version_number", unique: true
+    t.index ["cms_content_id"], name: "index_content_versions_on_cms_content_id"
+  end
+
   create_table "daily_challenges", force: :cascade do |t|
     t.date "challenge_date", null: false
     t.string "challenge_type", null: false
@@ -307,6 +340,20 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_13_150006) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["challenge_date"], name: "index_daily_challenges_on_challenge_date", unique: true
+  end
+
+  create_table "departments", force: :cascade do |t|
+    t.bigint "company_id", null: false
+    t.string "name", null: false
+    t.bigint "head_id"
+    t.bigint "parent_department_id"
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id", "name"], name: "index_departments_on_company_id_and_name", unique: true
+    t.index ["company_id"], name: "index_departments_on_company_id"
+    t.index ["head_id"], name: "index_departments_on_head_id"
+    t.index ["parent_department_id"], name: "index_departments_on_parent_department_id"
   end
 
   create_table "discussion_replies", force: :cascade do |t|
@@ -345,7 +392,17 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_13_150006) do
     t.datetime "verified_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "slug"
+    t.string "company_website"
+    t.string "headquarters"
+    t.integer "candidate_reveal_credits", default: 0
+    t.string "billing_plan"
+    t.datetime "billing_period_end"
+    t.integer "total_hires", default: 0
+    t.float "avg_time_to_hire_days"
+    t.float "avg_cost_per_hire"
     t.index ["company_domain"], name: "index_employer_profiles_on_company_domain"
+    t.index ["slug"], name: "index_employer_profiles_on_slug", unique: true
     t.index ["user_id"], name: "index_employer_profiles_on_user_id"
     t.index ["verification_token"], name: "index_employer_profiles_on_verification_token", unique: true
   end
@@ -629,7 +686,12 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_13_150006) do
     t.integer "status", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "razorpay_refund_id"
+    t.datetime "refunded_at"
+    t.text "refund_reason"
+    t.bigint "refunded_by_id"
     t.index ["career_report_id"], name: "index_payments_on_career_report_id"
+    t.index ["refunded_by_id"], name: "index_payments_on_refunded_by_id"
     t.index ["user_id"], name: "index_payments_on_user_id"
   end
 
@@ -703,6 +765,17 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_13_150006) do
     t.datetime "updated_at", null: false
     t.index ["position"], name: "index_prep_lessons_on_position"
     t.index ["prep_category_id"], name: "index_prep_lessons_on_prep_category_id"
+  end
+
+  create_table "push_subscriptions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "endpoint", null: false
+    t.string "p256dh_key"
+    t.string "auth_key"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["endpoint"], name: "index_push_subscriptions_on_endpoint", unique: true
+    t.index ["user_id"], name: "index_push_subscriptions_on_user_id"
   end
 
   create_table "readiness_scores", force: :cascade do |t|
@@ -840,6 +913,19 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_13_150006) do
     t.index ["scheduled_for"], name: "index_scheduled_challenges_on_scheduled_for", unique: true
   end
 
+  create_table "search_queries", force: :cascade do |t|
+    t.bigint "user_id"
+    t.string "query", null: false
+    t.integer "results_count", default: 0
+    t.string "result_type_clicked"
+    t.integer "result_id_clicked"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_search_queries_on_created_at"
+    t.index ["query"], name: "index_search_queries_on_query"
+    t.index ["user_id"], name: "index_search_queries_on_user_id"
+  end
+
   create_table "skill_badges", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "badge_type", null: false
@@ -919,9 +1005,29 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_13_150006) do
     t.string "razorpay_customer_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "dunning_attempts", default: 0
+    t.datetime "last_dunning_at"
+    t.string "dunning_state"
+    t.string "previous_plan_name"
+    t.datetime "plan_change_scheduled_at"
+    t.string "pending_plan_name"
+    t.index ["dunning_state"], name: "index_subscriptions_on_dunning_state"
     t.index ["razorpay_subscription_id"], name: "index_subscriptions_on_razorpay_subscription_id", unique: true
     t.index ["status"], name: "index_subscriptions_on_status"
     t.index ["user_id"], name: "index_subscriptions_on_user_id", unique: true
+  end
+
+  create_table "user_sessions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "session_token", null: false
+    t.string "ip_address"
+    t.string "user_agent"
+    t.string "device_type"
+    t.datetime "last_active_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["session_token"], name: "index_user_sessions_on_session_token", unique: true
+    t.index ["user_id"], name: "index_user_sessions_on_user_id"
   end
 
   create_table "user_streaks", force: :cascade do |t|
@@ -963,6 +1069,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_13_150006) do
     t.jsonb "dashboard_layout", default: {}
     t.jsonb "notification_preferences", default: {}
     t.datetime "last_active_at"
+    t.jsonb "career_goals", default: []
+    t.string "onboarding_path"
+    t.jsonb "privacy_settings", default: {}
+    t.string "health_score_risk"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["referral_code"], name: "index_users_on_referral_code", unique: true
     t.index ["referred_by_id"], name: "index_users_on_referred_by_id"
@@ -987,6 +1097,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_13_150006) do
   add_foreign_key "analytics_events", "users"
   add_foreign_key "api_keys", "users"
   add_foreign_key "audit_logs", "users"
+  add_foreign_key "candidate_reveals", "employer_profiles"
+  add_foreign_key "candidate_reveals", "users"
   add_foreign_key "candidate_searches", "employer_profiles"
   add_foreign_key "career_reports", "users"
   add_foreign_key "career_simulations", "users"
@@ -999,10 +1111,17 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_13_150006) do
   add_foreign_key "community_posts", "users"
   add_foreign_key "company_analytics_snapshots", "companies"
   add_foreign_key "company_members", "companies"
+  add_foreign_key "company_members", "company_members", column: "manager_id"
+  add_foreign_key "company_members", "departments"
   add_foreign_key "company_members", "users"
   add_foreign_key "company_reviews", "users"
   add_foreign_key "content_flags", "users"
   add_foreign_key "content_flags", "users", column: "resolved_by_id"
+  add_foreign_key "content_versions", "cms_contents"
+  add_foreign_key "content_versions", "users", column: "author_id"
+  add_foreign_key "departments", "companies"
+  add_foreign_key "departments", "departments", column: "parent_department_id"
+  add_foreign_key "departments", "users", column: "head_id"
   add_foreign_key "discussion_replies", "discussion_threads"
   add_foreign_key "discussion_replies", "users"
   add_foreign_key "discussion_threads", "users"
@@ -1028,12 +1147,14 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_13_150006) do
   add_foreign_key "offer_analyses", "users"
   add_foreign_key "payments", "career_reports"
   add_foreign_key "payments", "users"
+  add_foreign_key "payments", "users", column: "refunded_by_id"
   add_foreign_key "peer_benchmarks", "users"
   add_foreign_key "peer_practice_sessions", "users"
   add_foreign_key "peer_practice_sessions", "users", column: "partner_id"
   add_foreign_key "post_likes", "community_posts"
   add_foreign_key "post_likes", "users"
   add_foreign_key "prep_lessons", "prep_categories"
+  add_foreign_key "push_subscriptions", "users"
   add_foreign_key "readiness_scores", "users"
   add_foreign_key "referral_rewards", "users"
   add_foreign_key "referral_rewards", "users", column: "referred_user_id"
@@ -1043,11 +1164,13 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_13_150006) do
   add_foreign_key "salary_forecasts", "users"
   add_foreign_key "salary_submissions", "users"
   add_foreign_key "scheduled_challenges", "cms_contents"
+  add_foreign_key "search_queries", "users"
   add_foreign_key "skill_badges", "users"
   add_foreign_key "study_group_memberships", "study_groups"
   add_foreign_key "study_group_memberships", "users"
   add_foreign_key "study_groups", "users", column: "creator_id"
   add_foreign_key "subscriptions", "users"
+  add_foreign_key "user_sessions", "users"
   add_foreign_key "user_streaks", "users"
   add_foreign_key "webhook_subscriptions", "users"
 end

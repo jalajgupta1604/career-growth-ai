@@ -4,6 +4,11 @@ module Employer
       @jobs = current_employer.job_postings.order(created_at: :desc).page(params[:page]).per(10)
     end
 
+    def show
+      @job = current_employer.job_postings.find(params[:id])
+      @applications = @job.job_applications.includes(:user).order(created_at: :desc)
+    end
+
     def new
       @job = current_employer.job_postings.build
     end

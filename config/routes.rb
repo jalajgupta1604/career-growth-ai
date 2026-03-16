@@ -61,6 +61,7 @@ Rails.application.routes.draw do
       post :webhook
       get :manage
       post :cancel
+      post :change_plan
     end
   end
 
@@ -115,12 +116,13 @@ Rails.application.routes.draw do
     end
   end
 
-  # Enterprise HR Analytics
-  get "enterprise", to: "enterprise#dashboard", as: :enterprise_dashboard
-  post "enterprise/refresh", to: "enterprise#refresh", as: :enterprise_refresh
-  get "enterprise/members", to: "enterprise#manage_members", as: :enterprise_members
-  post "enterprise/members", to: "enterprise#add_member", as: :enterprise_add_member
-  delete "enterprise/members/:member_id", to: "enterprise#remove_member", as: :enterprise_remove_member
+  # Enterprise HR
+  namespace :enterprise do
+    root to: "dashboard#show"
+    post "refresh", to: "dashboard#refresh", as: :refresh
+    resources :members, only: [:index, :create, :destroy]
+    resources :departments
+  end
 
   # AI Career Coach
   resources :career_coach, only: [:index, :show, :create] do
@@ -219,6 +221,22 @@ Rails.application.routes.draw do
     end
   end
 
+  # Push Subscriptions
+  resources :push_subscriptions, only: [:create, :destroy]
+
+  # Notification Preferences
+  resource :notification_preferences, only: [:show, :update]
+
+  # Privacy Settings
+  resource :privacy_settings, only: [:show, :update]
+
+  # Session Management
+  resources :sessions_management, only: [:index, :destroy] do
+    collection do
+      post :destroy_all
+    end
+  end
+
   # Notifications
   resources :notifications, only: [:index] do
     member do
@@ -245,6 +263,11 @@ Rails.application.routes.draw do
       end
     end
     get "revenue", to: "revenue#index", as: :revenue
+    resources :payments, only: [] do
+      member do
+        post :refund
+      end
+    end
     resources :audit_logs, only: [:index]
     get "analytics", to: "analytics#index", as: :analytics
     resources :cms, only: [:index, :new, :create, :edit, :update] do
@@ -269,17 +292,29 @@ Rails.application.routes.draw do
     post :cancel_deletion
   end
 
+  # Public Company Pages
+  get "companies/:slug", to: "companies#show", as: :public_company
+
   # Employer Portal
+  get "employer/welcome", to: "employer/landing#index", as: :employer_landing
+  get "employer/login", to: "employer/sessions#new", as: :employer_login
   namespace :employer do
     root to: "dashboard#show"
+    get "onboarding", to: "registrations#new", as: :onboarding
     get "register", to: "registrations#new", as: :registration
     post "register", to: "registrations#create"
+    resource :settings, only: [:show, :update], controller: "settings"
     resources :jobs, except: [:destroy]
     resources :candidates, only: [:index] do
       collection do
         post :search
       end
+      member do
+        post :reveal
+      end
     end
+    resource :billing, only: [:show], controller: "billing"
+    resources :analytics, only: [:index], controller: "analytics"
     resources :pipeline, only: [:index] do
       member do
         post :update_stage
