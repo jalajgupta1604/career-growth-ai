@@ -247,6 +247,13 @@ Rails.application.routes.draw do
     end
   end
 
+  # Interview Schedules (candidate-facing)
+  resources :interview_schedules, only: [:index, :show] do
+    member do
+      post :confirm
+    end
+  end
+
   # Admin Panel
   namespace :admin do
     root to: "dashboard#show"
@@ -254,8 +261,10 @@ Rails.application.routes.draw do
       member do
         post :toggle_admin
         post :toggle_subscription
+        post :impersonate, to: "impersonation#create"
       end
     end
+    delete "stop_impersonation", to: "impersonation#destroy", as: :stop_impersonation
     resources :moderation, only: [:index] do
       member do
         post :resolve
@@ -270,6 +279,12 @@ Rails.application.routes.draw do
     end
     resources :audit_logs, only: [:index]
     get "analytics", to: "analytics#index", as: :analytics
+    resources :experiments do
+      member do
+        post :start
+        post :stop
+      end
+    end
     resources :cms, only: [:index, :new, :create, :edit, :update] do
       member do
         post :publish
@@ -318,6 +333,25 @@ Rails.application.routes.draw do
     resources :pipeline, only: [:index] do
       member do
         post :update_stage
+      end
+    end
+    resources :schedules do
+      member do
+        post :confirm
+        post :complete
+        post :cancel
+      end
+    end
+    resources :offers do
+      member do
+        post :send_offer
+        post :withdraw
+      end
+    end
+    resources :referrals, only: [:index] do
+      member do
+        post :update_status
+        post :pay_commission
       end
     end
   end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_16_140001) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_16_150001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -208,6 +208,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_16_140001) do
     t.integer "likes_count", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "moderation_status", default: "approved", null: false
+    t.jsonb "flagged_keywords", default: []
+    t.datetime "auto_moderated_at"
     t.index ["content"], name: "idx_community_posts_content_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["created_at"], name: "index_community_posts_on_created_at"
     t.index ["post_type"], name: "index_community_posts_on_post_type"
@@ -362,6 +365,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_16_140001) do
     t.text "body"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "moderation_status", default: "approved", null: false
     t.index ["discussion_thread_id"], name: "index_discussion_replies_on_discussion_thread_id"
     t.index ["user_id"], name: "index_discussion_replies_on_user_id"
   end
@@ -375,6 +379,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_16_140001) do
     t.integer "replies_count", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "moderation_status", default: "approved", null: false
     t.index ["title"], name: "idx_discussion_threads_title_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["user_id"], name: "index_discussion_threads_on_user_id"
   end
@@ -407,6 +412,35 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_16_140001) do
     t.index ["verification_token"], name: "index_employer_profiles_on_verification_token", unique: true
   end
 
+  create_table "experiment_assignments", force: :cascade do |t|
+    t.bigint "experiment_id", null: false
+    t.bigint "user_id", null: false
+    t.string "variant", null: false
+    t.boolean "converted", default: false
+    t.datetime "converted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["experiment_id", "user_id"], name: "index_experiment_assignments_on_experiment_id_and_user_id", unique: true
+    t.index ["experiment_id"], name: "index_experiment_assignments_on_experiment_id"
+    t.index ["user_id"], name: "index_experiment_assignments_on_user_id"
+  end
+
+  create_table "experiments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "description"
+    t.string "status", default: "draft", null: false
+    t.jsonb "variants", default: [], null: false
+    t.string "metric", null: false
+    t.float "traffic_percentage", default: 100.0
+    t.datetime "started_at"
+    t.datetime "ended_at"
+    t.jsonb "results", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_experiments_on_name", unique: true
+    t.index ["status"], name: "index_experiments_on_status"
+  end
+
   create_table "generated_resumes", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "target_role", null: false
@@ -416,6 +450,39 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_16_140001) do
     t.datetime "updated_at", null: false
     t.index ["user_id", "created_at"], name: "index_generated_resumes_on_user_id_and_created_at"
     t.index ["user_id"], name: "index_generated_resumes_on_user_id"
+  end
+
+  create_table "hiring_referrals", force: :cascade do |t|
+    t.bigint "referrer_id", null: false
+    t.bigint "candidate_id", null: false
+    t.bigint "job_posting_id", null: false
+    t.bigint "employer_profile_id", null: false
+    t.string "status", default: "referred", null: false
+    t.decimal "commission_amount", precision: 10, scale: 2
+    t.string "commission_status", default: "pending"
+    t.datetime "hired_at"
+    t.datetime "commission_paid_at"
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["candidate_id"], name: "index_hiring_referrals_on_candidate_id"
+    t.index ["employer_profile_id"], name: "index_hiring_referrals_on_employer_profile_id"
+    t.index ["job_posting_id"], name: "index_hiring_referrals_on_job_posting_id"
+    t.index ["referrer_id", "candidate_id", "job_posting_id"], name: "idx_unique_hiring_referral", unique: true
+    t.index ["referrer_id"], name: "index_hiring_referrals_on_referrer_id"
+  end
+
+  create_table "impersonation_logs", force: :cascade do |t|
+    t.bigint "admin_id", null: false
+    t.bigint "target_user_id", null: false
+    t.string "reason", null: false
+    t.datetime "started_at", null: false
+    t.datetime "ended_at"
+    t.string "ip_address"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["admin_id"], name: "index_impersonation_logs_on_admin_id"
+    t.index ["target_user_id"], name: "index_impersonation_logs_on_target_user_id"
   end
 
   create_table "interview_debriefs", force: :cascade do |t|
@@ -453,6 +520,33 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_16_140001) do
     t.index ["difficulty"], name: "index_interview_experiences_on_difficulty"
     t.index ["outcome"], name: "index_interview_experiences_on_outcome"
     t.index ["user_id"], name: "index_interview_experiences_on_user_id"
+  end
+
+  create_table "interview_schedules", force: :cascade do |t|
+    t.bigint "job_application_id", null: false
+    t.bigint "employer_profile_id", null: false
+    t.bigint "candidate_id", null: false
+    t.string "title", null: false
+    t.string "round_type", default: "screening", null: false
+    t.datetime "scheduled_at", null: false
+    t.integer "duration_minutes", default: 60
+    t.string "meeting_link"
+    t.string "location"
+    t.string "status", default: "pending", null: false
+    t.text "notes"
+    t.text "candidate_notes"
+    t.text "interviewer_feedback"
+    t.integer "rating"
+    t.datetime "confirmed_at"
+    t.datetime "completed_at"
+    t.datetime "cancelled_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["candidate_id"], name: "index_interview_schedules_on_candidate_id"
+    t.index ["employer_profile_id"], name: "index_interview_schedules_on_employer_profile_id"
+    t.index ["job_application_id"], name: "index_interview_schedules_on_job_application_id"
+    t.index ["scheduled_at"], name: "index_interview_schedules_on_scheduled_at"
+    t.index ["status"], name: "index_interview_schedules_on_status"
   end
 
   create_table "invoices", force: :cascade do |t|
@@ -512,6 +606,32 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_16_140001) do
     t.index ["active"], name: "index_job_listings_on_active"
     t.index ["location"], name: "index_job_listings_on_location"
     t.index ["title", "company_name"], name: "index_job_listings_on_title_and_company_name"
+  end
+
+  create_table "job_offers", force: :cascade do |t|
+    t.bigint "job_application_id", null: false
+    t.bigint "employer_profile_id", null: false
+    t.bigint "candidate_id", null: false
+    t.decimal "base_salary", precision: 12, scale: 2
+    t.decimal "variable_pay", precision: 12, scale: 2
+    t.decimal "equity_value", precision: 12, scale: 2
+    t.string "designation"
+    t.string "location"
+    t.date "joining_date"
+    t.text "benefits"
+    t.text "additional_terms"
+    t.string "status", default: "draft", null: false
+    t.datetime "sent_at"
+    t.datetime "accepted_at"
+    t.datetime "declined_at"
+    t.datetime "expires_at"
+    t.text "decline_reason"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["candidate_id"], name: "index_job_offers_on_candidate_id"
+    t.index ["employer_profile_id"], name: "index_job_offers_on_employer_profile_id"
+    t.index ["job_application_id"], name: "index_job_offers_on_job_application_id"
+    t.index ["status"], name: "index_job_offers_on_status"
   end
 
   create_table "job_postings", force: :cascade do |t|
@@ -1073,6 +1193,11 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_16_140001) do
     t.string "onboarding_path"
     t.jsonb "privacy_settings", default: {}
     t.string "health_score_risk"
+    t.float "trust_score", default: 50.0, null: false
+    t.string "trust_level", default: "new", null: false
+    t.integer "flags_received_count", default: 0, null: false
+    t.integer "flags_given_count", default: 0, null: false
+    t.integer "helpful_count", default: 0, null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["referral_code"], name: "index_users_on_referral_code", unique: true
     t.index ["referred_by_id"], name: "index_users_on_referred_by_id"
@@ -1126,13 +1251,27 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_16_140001) do
   add_foreign_key "discussion_replies", "users"
   add_foreign_key "discussion_threads", "users"
   add_foreign_key "employer_profiles", "users"
+  add_foreign_key "experiment_assignments", "experiments"
+  add_foreign_key "experiment_assignments", "users"
   add_foreign_key "generated_resumes", "users"
+  add_foreign_key "hiring_referrals", "employer_profiles"
+  add_foreign_key "hiring_referrals", "job_postings"
+  add_foreign_key "hiring_referrals", "users", column: "candidate_id"
+  add_foreign_key "hiring_referrals", "users", column: "referrer_id"
+  add_foreign_key "impersonation_logs", "users", column: "admin_id"
+  add_foreign_key "impersonation_logs", "users", column: "target_user_id"
   add_foreign_key "interview_debriefs", "users"
   add_foreign_key "interview_experiences", "users"
+  add_foreign_key "interview_schedules", "employer_profiles"
+  add_foreign_key "interview_schedules", "job_applications"
+  add_foreign_key "interview_schedules", "users", column: "candidate_id"
   add_foreign_key "invoices", "payments"
   add_foreign_key "invoices", "users"
   add_foreign_key "job_applications", "job_postings"
   add_foreign_key "job_applications", "users"
+  add_foreign_key "job_offers", "employer_profiles"
+  add_foreign_key "job_offers", "job_applications"
+  add_foreign_key "job_offers", "users", column: "candidate_id"
   add_foreign_key "job_postings", "employer_profiles"
   add_foreign_key "job_postings", "users", column: "posted_by_id"
   add_foreign_key "job_recommendations", "job_listings"

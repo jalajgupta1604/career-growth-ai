@@ -7,7 +7,11 @@ class CommunityPost < ApplicationRecord
   validates :content, presence: true
 
   scope :recent, -> { order(created_at: :desc) }
-  scope :feed, -> { recent.includes(:user) }
+  scope :feed, -> { where(moderation_status: "approved").recent.includes(:user) }
+  scope :pending_review, -> { where(moderation_status: "pending_review") }
+  scope :rejected, -> { where(moderation_status: "rejected") }
+
+  after_create :run_auto_moderation
 
   def liked_by?(user)
     post_likes.exists?(user_id: user.id)
@@ -15,5 +19,11 @@ class CommunityPost < ApplicationRecord
 
   def display_author
     anonymous? ? "Anonymous Professional" : (user.full_name || "User")
+  end
+
+  private
+
+  def run_auto_moderation
+    AutoModerationService.moderate_post(self)
   end
 end

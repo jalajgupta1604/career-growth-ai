@@ -25,18 +25,20 @@
 
       <!-- Projected Salaries: Year 1, 2, 3 -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <% @forecast.projected_salaries.each_with_index do |projection, idx| %>
+        <% projections = @forecast.projected_salaries.is_a?(Hash) ? @forecast.projected_salaries.values : Array(@forecast.projected_salaries) %>
+        <% projections.each_with_index do |projection, idx| %>
+          <% projection = projection.is_a?(Hash) ? projection : {} %>
           <div class="bg-white rounded-2xl border border-gray-100 p-6 text-center">
             <span class="material-symbols-outlined text-cyan-500 text-[28px] mb-2">calendar_month</span>
             <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">Year <%= idx + 1 %></p>
             <div class="space-y-2">
               <div>
-                <p class="text-2xl font-bold text-gray-900"><%= "#{(projection["likely"] / 100000.0).round(1)}L" %></p>
+                <p class="text-2xl font-bold text-gray-900"><%= "#{(projection["likely"].to_f / 100000.0).round(1)}L" %></p>
                 <p class="text-xs text-gray-400">Most Likely</p>
               </div>
               <div class="flex items-center justify-center gap-3 text-xs text-gray-500">
-                <span class="px-2 py-0.5 bg-gray-50 rounded-full">Min: <%= "#{(projection["min"] / 100000.0).round(1)}L" %></span>
-                <span class="px-2 py-0.5 bg-gray-50 rounded-full">Max: <%= "#{(projection["max"] / 100000.0).round(1)}L" %></span>
+                <span class="px-2 py-0.5 bg-gray-50 rounded-full">Min: <%= "#{(projection["min"].to_f / 100000.0).round(1)}L" %></span>
+                <span class="px-2 py-0.5 bg-gray-50 rounded-full">Max: <%= "#{(projection["max"].to_f / 100000.0).round(1)}L" %></span>
               </div>
             </div>
           </div>

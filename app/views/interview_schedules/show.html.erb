@@ -1,0 +1,58 @@
+<div class="min-h-screen bg-gray-50">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <nav class="flex items-center gap-2 text-sm mb-6">
+      <%= link_to "My Interviews", interview_schedules_path, class: "text-gray-400 hover:text-cyan-500 transition-colors" %>
+      <span class="material-symbols-outlined text-gray-300 text-[16px]">chevron_right</span>
+      <span class="text-gray-700 font-medium"><%= @schedule.title %></span>
+    </nav>
+
+    <div class="bg-white rounded-2xl border border-gray-100 p-8">
+      <div class="flex items-center gap-4 mb-6">
+        <div class="w-14 h-14 bg-cyan-50 rounded-xl flex items-center justify-center">
+          <span class="material-symbols-outlined text-[28px] text-cyan-500">event</span>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold text-gray-900"><%= @schedule.title %></h1>
+          <p class="text-sm text-gray-500"><%= @schedule.employer_profile.company_name %> &middot; <%= @schedule.round_type.humanize %></p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-6 mb-6">
+        <div>
+          <p class="text-xs text-gray-400 font-semibold uppercase mb-1">Date & Time</p>
+          <p class="text-sm text-gray-900"><%= @schedule.time_display %></p>
+        </div>
+        <div>
+          <p class="text-xs text-gray-400 font-semibold uppercase mb-1">Duration</p>
+          <p class="text-sm text-gray-900"><%= @schedule.duration_minutes %> minutes</p>
+        </div>
+        <div>
+          <p class="text-xs text-gray-400 font-semibold uppercase mb-1">Status</p>
+          <span class="px-2 py-1 text-xs font-semibold rounded-full
+            <%= @schedule.status == 'confirmed' ? 'bg-green-50 text-green-600' : 'bg-yellow-50 text-yellow-600' %>">
+            <%= @schedule.status.capitalize %>
+          </span>
+        </div>
+        <% if @schedule.meeting_link.present? %>
+          <div>
+            <p class="text-xs text-gray-400 font-semibold uppercase mb-1">Meeting Link</p>
+            <a href="<%= @schedule.meeting_link %>" target="_blank" class="text-sm text-cyan-600 hover:underline break-all"><%= @schedule.meeting_link %></a>
+          </div>
+        <% end %>
+      </div>
+
+      <% if @schedule.candidate_notes.present? %>
+        <div class="p-4 bg-gray-50 rounded-xl">
+          <p class="text-xs text-gray-400 font-semibold uppercase mb-1">Notes</p>
+          <p class="text-sm text-gray-600"><%= @schedule.candidate_notes %></p>
+        </div>
+      <% end %>
+
+      <% if @schedule.status == "pending" %>
+        <div class="mt-6">
+          <%= button_to "Confirm Interview", confirm_interview_schedule_path(@schedule), method: :post, class: "px-5 py-2.5 bg-cyan-500 text-white font-semibold rounded-xl hover:bg-cyan-600 transition-colors cursor-pointer" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

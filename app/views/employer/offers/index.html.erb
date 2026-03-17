@@ -1,0 +1,73 @@
+<div class="min-h-screen bg-gray-50">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Offer Management</h1>
+        <p class="text-sm text-gray-500 mt-1">Track and manage job offers</p>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+      <div class="bg-white rounded-2xl border border-gray-100 p-5 text-center">
+        <p class="text-xs font-semibold text-gray-400 uppercase mb-1">Total Offers</p>
+        <p class="text-2xl font-bold text-gray-900"><%= @stats[:total] %></p>
+      </div>
+      <div class="bg-white rounded-2xl border border-gray-100 p-5 text-center">
+        <p class="text-xs font-semibold text-gray-400 uppercase mb-1">Pending</p>
+        <p class="text-2xl font-bold text-yellow-500"><%= @stats[:sent] %></p>
+      </div>
+      <div class="bg-white rounded-2xl border border-gray-100 p-5 text-center">
+        <p class="text-xs font-semibold text-gray-400 uppercase mb-1">Accepted</p>
+        <p class="text-2xl font-bold text-green-500"><%= @stats[:accepted] %></p>
+      </div>
+      <div class="bg-white rounded-2xl border border-gray-100 p-5 text-center">
+        <p class="text-xs font-semibold text-gray-400 uppercase mb-1">Acceptance Rate</p>
+        <p class="text-2xl font-bold text-indigo-500"><%= @stats[:acceptance_rate] %>%</p>
+      </div>
+    </div>
+
+    <!-- Offers List -->
+    <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+      <table class="w-full">
+        <thead>
+          <tr class="border-b border-gray-100">
+            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Candidate</th>
+            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Designation</th>
+            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">CTC</th>
+            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Status</th>
+            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-50">
+          <% @offers.each do |offer| %>
+            <tr class="hover:bg-gray-50">
+              <td class="px-6 py-4 text-sm font-medium text-gray-900"><%= offer.candidate.full_name || offer.candidate.email %></td>
+              <td class="px-6 py-4 text-sm text-gray-600"><%= offer.designation || "N/A" %></td>
+              <td class="px-6 py-4 text-sm font-semibold text-gray-900"><%= offer.ctc_in_lakhs %>L</td>
+              <td class="px-6 py-4">
+                <span class="px-2 py-1 text-xs font-semibold rounded-full
+                  <%= case offer.status
+                      when 'accepted' then 'bg-green-50 text-green-600'
+                      when 'declined' then 'bg-red-50 text-red-600'
+                      when 'sent' then 'bg-yellow-50 text-yellow-600'
+                      else 'bg-gray-100 text-gray-600'
+                      end %>">
+                  <%= offer.status.capitalize %>
+                </span>
+              </td>
+              <td class="px-6 py-4">
+                <%= link_to "View", employer_offer_path(offer), class: "text-sm text-indigo-600 hover:text-indigo-800" %>
+                <% if offer.status == "draft" %>
+                  <%= button_to "Send", send_offer_employer_offer_path(offer), method: :post, class: "text-sm text-green-600 hover:text-green-800 ml-2 cursor-pointer" %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <%= paginate @offers if @offers.respond_to?(:total_pages) %>
+  </div>
+</div>

@@ -1,0 +1,74 @@
+<div class="min-h-screen bg-gray-50">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <nav class="flex items-center gap-2 text-sm mb-6">
+      <%= link_to "Offers", employer_offers_path, class: "text-gray-400 hover:text-indigo-500 transition-colors" %>
+      <span class="material-symbols-outlined text-gray-300 text-[16px]">chevron_right</span>
+      <span class="text-gray-700 font-medium">Offer Details</span>
+    </nav>
+
+    <div class="bg-white rounded-2xl border border-gray-100 p-8 mb-6">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h1 class="text-xl font-bold text-gray-900">Offer for <%= @offer.candidate.full_name || @offer.candidate.email %></h1>
+          <p class="text-sm text-gray-500"><%= @offer.designation %> &middot; <%= @offer.location %></p>
+        </div>
+        <span class="px-3 py-1 text-sm font-semibold rounded-full
+          <%= case @offer.status
+              when 'accepted' then 'bg-green-50 text-green-600'
+              when 'declined' then 'bg-red-50 text-red-600'
+              when 'sent' then 'bg-yellow-50 text-yellow-600'
+              else 'bg-gray-100 text-gray-600'
+              end %>">
+          <%= @offer.status.capitalize %>
+        </span>
+      </div>
+
+      <!-- Compensation Breakdown -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        <div class="bg-gray-50 rounded-xl p-4 text-center">
+          <p class="text-xs text-gray-400 font-semibold uppercase mb-1">Base Salary</p>
+          <p class="text-xl font-bold text-gray-900"><%= (@offer.base_salary.to_f / 100000.0).round(1) %>L</p>
+        </div>
+        <div class="bg-gray-50 rounded-xl p-4 text-center">
+          <p class="text-xs text-gray-400 font-semibold uppercase mb-1">Variable Pay</p>
+          <p class="text-xl font-bold text-gray-900"><%= (@offer.variable_pay.to_f / 100000.0).round(1) %>L</p>
+        </div>
+        <div class="bg-indigo-50 rounded-xl p-4 text-center">
+          <p class="text-xs text-indigo-400 font-semibold uppercase mb-1">Total CTC</p>
+          <p class="text-xl font-bold text-indigo-600"><%= @offer.ctc_in_lakhs %>L</p>
+        </div>
+      </div>
+
+      <div class="space-y-3">
+        <% if @offer.joining_date.present? %>
+          <div class="flex justify-between py-2 border-b border-gray-50">
+            <span class="text-sm text-gray-500">Joining Date</span>
+            <span class="text-sm font-medium text-gray-900"><%= @offer.joining_date.strftime("%b %d, %Y") %></span>
+          </div>
+        <% end %>
+        <% if @offer.benefits.present? %>
+          <div class="py-2 border-b border-gray-50">
+            <p class="text-sm text-gray-500 mb-1">Benefits</p>
+            <p class="text-sm text-gray-900"><%= @offer.benefits %></p>
+          </div>
+        <% end %>
+        <% if @offer.expires_at.present? %>
+          <div class="flex justify-between py-2">
+            <span class="text-sm text-gray-500">Expires</span>
+            <span class="text-sm font-medium text-gray-900"><%= @offer.expires_at.strftime("%b %d, %Y") %></span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex items-center gap-3">
+      <% if @offer.status == "draft" %>
+        <%= button_to "Send Offer", send_offer_employer_offer_path(@offer), method: :post, class: "px-5 py-2.5 bg-green-500 text-white font-semibold rounded-xl hover:bg-green-600 transition-colors cursor-pointer" %>
+      <% end %>
+      <% if @offer.status.in?(%w[draft sent]) %>
+        <%= button_to "Withdraw", withdraw_employer_offer_path(@offer), method: :post, class: "px-5 py-2.5 bg-red-500 text-white font-semibold rounded-xl hover:bg-red-600 transition-colors cursor-pointer", data: { turbo_confirm: "Withdraw this offer?" } %>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -16,7 +16,7 @@ class ContentRecommendationService
   def role_based_lessons
     return [] unless @user.role.present?
 
-    completed_ids = @user.lesson_progresses.where(completed: true).pluck(:prep_lesson_id)
+    completed_ids = @user.lesson_progresses.where(status: :completed).pluck(:prep_lesson_id)
 
     PrepLesson.joins(:prep_category)
               .where.not(id: completed_ids)
@@ -49,14 +49,14 @@ class ContentRecommendationService
                    .pluck(:id)
     return [] if peer_ids.empty?
 
-    popular_lesson_ids = LessonProgress.where(user_id: peer_ids, completed: true)
+    popular_lesson_ids = LessonProgress.where(user_id: peer_ids, status: :completed)
                                         .group(:prep_lesson_id)
                                         .order("count_id DESC")
                                         .limit(3)
                                         .count(:id)
                                         .keys
 
-    completed_ids = @user.lesson_progresses.where(completed: true).pluck(:prep_lesson_id)
+    completed_ids = @user.lesson_progresses.where(status: :completed).pluck(:prep_lesson_id)
     remaining = popular_lesson_ids - completed_ids
     return [] if remaining.empty?
 

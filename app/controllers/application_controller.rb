@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::Base
   allow_browser versions: :modern
+  helper_method :impersonating?, :ab_variant
 
   private
 
@@ -17,5 +18,14 @@ class ApplicationController < ActionController::Base
     else
       onboarding_path
     end
+  end
+
+  def impersonating?
+    session[:admin_id].present?
+  end
+
+  def ab_variant(experiment_name)
+    return nil unless current_user
+    AbTestingService.new(current_user).variant_for(experiment_name)
   end
 end

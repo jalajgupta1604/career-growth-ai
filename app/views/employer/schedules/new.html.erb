@@ -1,0 +1,59 @@
+<div class="min-h-screen bg-gray-50">
+  <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h1 class="text-2xl font-bold text-gray-900 mb-6">Schedule Interview</h1>
+
+    <%= form_with url: employer_schedules_path, method: :post, class: "space-y-5" do %>
+      <input type="hidden" name="interview_schedule[job_application_id]" value="<%= @application.id %>">
+
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-4">
+        <p class="text-sm text-gray-500">Scheduling interview for</p>
+        <p class="text-lg font-bold text-gray-900"><%= @application.user.full_name || @application.user.email %></p>
+        <p class="text-sm text-gray-400"><%= @application.job_posting.title rescue "Position" %></p>
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-1">Interview Title</label>
+        <input type="text" name="interview_schedule[title]" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g., Technical Round 1">
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-1">Round Type</label>
+        <select name="interview_schedule[round_type]" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          <% InterviewSchedule::ROUND_TYPES.each do |type| %>
+            <option value="<%= type %>"><%= type.humanize %></option>
+          <% end %>
+        </select>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Date & Time</label>
+          <input type="datetime-local" name="interview_schedule[scheduled_at]" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Duration (minutes)</label>
+          <input type="number" name="interview_schedule[duration_minutes]" value="60" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-1">Meeting Link</label>
+        <input type="url" name="interview_schedule[meeting_link]" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="https://meet.google.com/...">
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-1">Location (if in-person)</label>
+        <input type="text" name="interview_schedule[location]" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Office address">
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-1">Notes for Interviewer</label>
+        <textarea name="interview_schedule[notes]" rows="3" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+      </div>
+
+      <button type="submit" class="px-6 py-2.5 bg-indigo-500 text-white font-semibold rounded-xl hover:bg-indigo-600 transition-colors cursor-pointer">
+        Schedule Interview
+      </button>
+    <% end %>
+  </div>
+</div>

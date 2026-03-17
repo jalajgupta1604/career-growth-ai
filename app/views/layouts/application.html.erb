@@ -30,6 +30,12 @@
   </head>
 
   <body class="h-full bg-gray-50">
+    <% if impersonating? %>
+      <div class="bg-yellow-400 text-yellow-900 px-4 py-2 text-center text-sm font-semibold">
+        You are impersonating <%= current_user.email %>.
+        <%= button_to "Stop Impersonation", admin_stop_impersonation_path, method: :delete, class: "underline font-bold ml-2 cursor-pointer" %>
+      </div>
+    <% end %>
     <%= render "shared/banner" %>
     <% if user_signed_in? && !controller_name.in?(%w[pages onboarding career_reports resumes sessions registrations interview_prep]) %>
       <nav class="bg-white border-b border-gray-100">

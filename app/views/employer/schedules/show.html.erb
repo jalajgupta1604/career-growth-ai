@@ -1,0 +1,88 @@
+<div class="min-h-screen bg-gray-50">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <nav class="flex items-center gap-2 text-sm mb-6">
+      <%= link_to "Schedules", employer_schedules_path, class: "text-gray-400 hover:text-indigo-500 transition-colors" %>
+      <span class="material-symbols-outlined text-gray-300 text-[16px]">chevron_right</span>
+      <span class="text-gray-700 font-medium"><%= @schedule.title %></span>
+    </nav>
+
+    <div class="bg-white rounded-2xl border border-gray-100 p-8 mb-6">
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 bg-indigo-50 rounded-xl flex items-center justify-center">
+            <span class="material-symbols-outlined text-[28px] text-indigo-500">event</span>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold text-gray-900"><%= @schedule.title %></h1>
+            <p class="text-sm text-gray-500"><%= @schedule.round_type.humanize %> Round</p>
+          </div>
+        </div>
+        <span class="px-3 py-1 text-sm font-semibold rounded-full
+          <%= case @schedule.status
+              when 'confirmed' then 'bg-green-50 text-green-600'
+              when 'completed' then 'bg-blue-50 text-blue-600'
+              when 'cancelled' then 'bg-red-50 text-red-600'
+              else 'bg-yellow-50 text-yellow-600'
+              end %>">
+          <%= @schedule.status.capitalize %>
+        </span>
+      </div>
+
+      <div class="grid grid-cols-2 gap-6">
+        <div>
+          <p class="text-xs text-gray-400 font-semibold uppercase mb-1">Candidate</p>
+          <p class="text-sm text-gray-900"><%= @schedule.candidate.full_name || @schedule.candidate.email %></p>
+        </div>
+        <div>
+          <p class="text-xs text-gray-400 font-semibold uppercase mb-1">Date & Time</p>
+          <p class="text-sm text-gray-900"><%= @schedule.time_display %></p>
+        </div>
+        <div>
+          <p class="text-xs text-gray-400 font-semibold uppercase mb-1">Duration</p>
+          <p class="text-sm text-gray-900"><%= @schedule.duration_minutes %> minutes</p>
+        </div>
+        <div>
+          <p class="text-xs text-gray-400 font-semibold uppercase mb-1">Location</p>
+          <p class="text-sm text-gray-900"><%= @schedule.meeting_link.present? ? "Virtual" : (@schedule.location || "TBD") %></p>
+        </div>
+      </div>
+
+      <% if @schedule.meeting_link.present? %>
+        <div class="mt-4 p-3 bg-indigo-50 rounded-xl">
+          <p class="text-xs text-gray-400 font-semibold uppercase mb-1">Meeting Link</p>
+          <p class="text-sm text-indigo-600 break-all"><%= @schedule.meeting_link %></p>
+        </div>
+      <% end %>
+
+      <% if @schedule.notes.present? %>
+        <div class="mt-4">
+          <p class="text-xs text-gray-400 font-semibold uppercase mb-1">Notes</p>
+          <p class="text-sm text-gray-600"><%= @schedule.notes %></p>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex items-center gap-3">
+      <% if @schedule.status == "pending" %>
+        <%= button_to "Confirm", confirm_employer_schedule_path(@schedule), method: :post, class: "px-4 py-2 bg-green-500 text-white font-semibold rounded-xl hover:bg-green-600 transition-colors cursor-pointer" %>
+      <% end %>
+      <% if @schedule.upcoming? %>
+        <%= button_to "Cancel", cancel_employer_schedule_path(@schedule), method: :post, class: "px-4 py-2 bg-red-500 text-white font-semibold rounded-xl hover:bg-red-600 transition-colors cursor-pointer", data: { turbo_confirm: "Cancel this interview?" } %>
+      <% end %>
+      <% if @schedule.status == "confirmed" && @schedule.scheduled_at < Time.current %>
+        <%= form_with url: complete_employer_schedule_path(@schedule), method: :post, class: "flex items-center gap-2" do %>
+          <select name="rating" class="px-3 py-2 border border-gray-200 rounded-xl text-sm">
+            <option value="">Rating</option>
+            <% (1..5).each do |r| %>
+              <option value="<%= r %>"><%= r %>/5</option>
+            <% end %>
+          </select>
+          <button type="submit" class="px-4 py-2 bg-indigo-500 text-white font-semibold rounded-xl hover:bg-indigo-600 transition-colors cursor-pointer">
+            Complete
+          </button>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>

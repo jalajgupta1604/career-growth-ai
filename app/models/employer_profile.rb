@@ -3,6 +3,9 @@ class EmployerProfile < ApplicationRecord
   has_many :candidate_searches, dependent: :destroy
   has_many :job_postings, dependent: :nullify
   has_many :candidate_reveals, dependent: :destroy
+  has_many :interview_schedules, dependent: :destroy
+  has_many :job_offers, dependent: :destroy
+  has_many :hiring_referrals, dependent: :destroy
 
   validates :company_name, presence: true
   validates :company_size, inclusion: { in: %w[1-10 11-50 51-200 201-500 501-1000 1000+] }, allow_blank: true

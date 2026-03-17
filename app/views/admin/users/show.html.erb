@@ -57,6 +57,36 @@
       <% if @user.subscribed? %>
         <%= button_to "Cancel Subscription", toggle_subscription_admin_user_path(@user), method: :post, class: "w-full px-4 py-2 text-sm font-medium rounded-lg border border-red-200 text-red-600 hover:bg-red-50 transition", data: { turbo_confirm: "Are you sure you want to cancel this user's subscription?" } %>
       <% end %>
+      <% if current_user.super_admin? && !@user.admin? %>
+        <%= form_with url: impersonate_admin_user_path(@user), method: :post, class: "space-y-2" do %>
+          <input type="text" name="reason" required placeholder="Reason for impersonation..." class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-cyan-500">
+          <button type="submit" class="w-full px-4 py-2 text-sm font-medium rounded-lg border border-yellow-200 text-yellow-700 hover:bg-yellow-50 transition cursor-pointer">
+            <span class="material-symbols-outlined text-[14px] align-middle mr-1">person</span>
+            Impersonate User
+          </button>
+        <% end %>
+      <% end %>
+    </div>
+
+    <!-- Trust Score -->
+    <div class="mt-4 pt-4 border-t border-gray-100">
+      <div class="flex justify-between items-center mb-2">
+        <span class="text-xs text-gray-500 font-semibold uppercase">Trust Score</span>
+        <span class="px-2 py-0.5 text-xs font-semibold rounded-full
+          <%= case @user.trust_level
+              when 'exemplary' then 'bg-green-50 text-green-600'
+              when 'veteran' then 'bg-blue-50 text-blue-600'
+              when 'trusted' then 'bg-cyan-50 text-cyan-600'
+              when 'basic' then 'bg-yellow-50 text-yellow-600'
+              else 'bg-gray-100 text-gray-500'
+              end %>">
+          <%= @user.trust_level.capitalize %>
+        </span>
+      </div>
+      <div class="w-full bg-gray-100 rounded-full h-2">
+        <div class="bg-cyan-500 h-2 rounded-full" style="width: <%= @user.trust_score %>%"></div>
+      </div>
+      <p class="text-xs text-gray-400 mt-1"><%= @user.trust_score %>/100</p>
     </div>
   </div>
 

@@ -52,6 +52,12 @@ class User < ApplicationRecord
   has_many :push_subscriptions, dependent: :destroy
   has_many :user_sessions, dependent: :destroy
   has_many :search_queries, dependent: :destroy
+  has_many :impersonation_logs_as_admin, class_name: "ImpersonationLog", foreign_key: :admin_id, dependent: :destroy
+  has_many :experiment_assignments, dependent: :destroy
+  has_many :interview_schedules, foreign_key: :candidate_id, dependent: :destroy
+  has_many :job_offers, foreign_key: :candidate_id, dependent: :destroy
+  has_many :referrals_given, class_name: "HiringReferral", foreign_key: :referrer_id, dependent: :destroy
+  has_many :referrals_received, class_name: "HiringReferral", foreign_key: :candidate_id, dependent: :destroy
   has_one_attached :profile_photo
 
   belongs_to :referrer, class_name: "User", foreign_key: :referred_by_id, optional: true

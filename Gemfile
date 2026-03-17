@@ -65,6 +65,10 @@ gem "kaminari"
 # Rate Limiting
 gem "rack-attack"
 
+# Error Tracking
+gem "sentry-ruby"
+gem "sentry-rails"
+
 # PDF Generation
 gem "wicked_pdf"
 gem "wkhtmltopdf-binary"

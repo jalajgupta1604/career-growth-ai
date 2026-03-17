@@ -1,0 +1,88 @@
+<div class="min-h-screen bg-gray-50">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Referral Hiring</h1>
+        <p class="text-sm text-gray-500 mt-1">Track referrals and commission payouts</p>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-6">
+      <div class="bg-white rounded-2xl border border-gray-100 p-5 text-center">
+        <p class="text-xs font-semibold text-gray-400 uppercase mb-1">Total Referrals</p>
+        <p class="text-2xl font-bold text-gray-900"><%= @stats[:total_referrals] %></p>
+      </div>
+      <div class="bg-white rounded-2xl border border-gray-100 p-5 text-center">
+        <p class="text-xs font-semibold text-gray-400 uppercase mb-1">Hired</p>
+        <p class="text-2xl font-bold text-green-500"><%= @stats[:hired] %></p>
+      </div>
+      <div class="bg-white rounded-2xl border border-gray-100 p-5 text-center">
+        <p class="text-xs font-semibold text-gray-400 uppercase mb-1">Conversion</p>
+        <p class="text-2xl font-bold text-indigo-500"><%= @stats[:conversion_rate] %>%</p>
+      </div>
+      <div class="bg-white rounded-2xl border border-gray-100 p-5 text-center">
+        <p class="text-xs font-semibold text-gray-400 uppercase mb-1">Commission Paid</p>
+        <p class="text-2xl font-bold text-gray-900"><%= number_to_currency(@stats[:total_commission_paid], unit: "\u20B9", precision: 0) %></p>
+      </div>
+      <div class="bg-white rounded-2xl border border-gray-100 p-5 text-center">
+        <p class="text-xs font-semibold text-gray-400 uppercase mb-1">Pending</p>
+        <p class="text-2xl font-bold text-yellow-500"><%= number_to_currency(@stats[:pending_commission], unit: "\u20B9", precision: 0) %></p>
+      </div>
+    </div>
+
+    <!-- Referrals List -->
+    <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+      <table class="w-full">
+        <thead>
+          <tr class="border-b border-gray-100">
+            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Referrer</th>
+            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Candidate</th>
+            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Position</th>
+            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Status</th>
+            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Commission</th>
+            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-50">
+          <% @referrals.each do |ref| %>
+            <tr class="hover:bg-gray-50">
+              <td class="px-6 py-4 text-sm text-gray-900"><%= ref.referrer.full_name || ref.referrer.email %></td>
+              <td class="px-6 py-4 text-sm text-gray-600"><%= ref.candidate.full_name || ref.candidate.email %></td>
+              <td class="px-6 py-4 text-sm text-gray-600"><%= ref.job_posting.title %></td>
+              <td class="px-6 py-4">
+                <span class="px-2 py-1 text-xs font-semibold rounded-full
+                  <%= case ref.status
+                      when 'hired' then 'bg-green-50 text-green-600'
+                      when 'rejected', 'withdrawn' then 'bg-red-50 text-red-600'
+                      when 'interviewing' then 'bg-blue-50 text-blue-600'
+                      else 'bg-yellow-50 text-yellow-600'
+                      end %>">
+                  <%= ref.status.capitalize %>
+                </span>
+              </td>
+              <td class="px-6 py-4 text-sm text-gray-600">
+                <% if ref.commission_amount.present? %>
+                  <%= number_to_currency(ref.commission_amount, unit: "\u20B9", precision: 0) %>
+                  <span class="text-xs text-gray-400">(<%= ref.commission_status %>)</span>
+                <% else %>
+                  -
+                <% end %>
+              </td>
+              <td class="px-6 py-4">
+                <% if ref.status != "hired" && ref.status != "rejected" %>
+                  <%= button_to "Mark Hired", update_status_employer_referral_path(ref, status: "hired"), method: :post, class: "text-xs text-green-600 hover:text-green-800 cursor-pointer" %>
+                <% end %>
+                <% if ref.commission_status == "pending" && ref.commission_amount.present? %>
+                  <%= button_to "Pay", pay_commission_employer_referral_path(ref), method: :post, class: "text-xs text-indigo-600 hover:text-indigo-800 ml-2 cursor-pointer" %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <%= paginate @referrals if @referrals.respond_to?(:total_pages) %>
+  </div>
+</div>

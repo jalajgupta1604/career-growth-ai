@@ -1,0 +1,76 @@
+<div class="min-h-screen bg-gray-50">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h1 class="text-2xl font-bold text-gray-900 mb-6">My Interviews</h1>
+
+    <!-- Upcoming -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
+      <div class="flex items-center gap-3 mb-5">
+        <span class="material-symbols-outlined text-cyan-500">event_upcoming</span>
+        <h2 class="text-lg font-bold text-gray-900">Upcoming Interviews</h2>
+      </div>
+
+      <% if @upcoming.any? %>
+        <div class="space-y-3">
+          <% @upcoming.each do |schedule| %>
+            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-cyan-50 rounded-xl flex items-center justify-center">
+                  <span class="material-symbols-outlined text-cyan-500">videocam</span>
+                </div>
+                <div>
+                  <h4 class="text-sm font-semibold text-gray-900"><%= schedule.title %></h4>
+                  <p class="text-xs text-gray-500">
+                    <%= schedule.employer_profile.company_name %> &middot;
+                    <span class="capitalize"><%= schedule.round_type.humanize %></span> &middot;
+                    <%= schedule.time_display %>
+                  </p>
+                  <% if schedule.meeting_link.present? %>
+                    <p class="text-xs text-cyan-600 mt-1"><%= schedule.meeting_link %></p>
+                  <% end %>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <% if schedule.status == "pending" %>
+                  <%= button_to "Confirm", confirm_interview_schedule_path(schedule), method: :post, class: "px-3 py-1.5 text-xs bg-cyan-500 text-white font-semibold rounded-lg hover:bg-cyan-600 transition-colors cursor-pointer" %>
+                <% else %>
+                  <span class="px-2 py-1 text-xs font-semibold bg-green-50 text-green-600 rounded-full">Confirmed</span>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="text-center py-8">
+          <span class="material-symbols-outlined text-gray-300 text-[48px]">event_busy</span>
+          <p class="text-sm text-gray-400 mt-2">No upcoming interviews</p>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Past -->
+    <% if @past.any? %>
+      <div class="bg-white rounded-2xl border border-gray-100 p-6">
+        <div class="flex items-center gap-3 mb-5">
+          <span class="material-symbols-outlined text-gray-400">history</span>
+          <h2 class="text-lg font-bold text-gray-900">Past Interviews</h2>
+        </div>
+        <div class="space-y-3">
+          <% @past.each do |schedule| %>
+            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+              <div>
+                <h4 class="text-sm font-semibold text-gray-900"><%= schedule.title %></h4>
+                <p class="text-xs text-gray-500">
+                  <%= schedule.employer_profile.company_name %> &middot; <%= schedule.time_display %>
+                </p>
+              </div>
+              <span class="px-2 py-1 text-xs font-semibold bg-gray-100 text-gray-600 rounded-full">
+                <%= schedule.status.capitalize %>
+              </span>
+            </div>
+          <% end %>
+        </div>
+        <%= paginate @past if @past.respond_to?(:total_pages) %>
+      </div>
+    <% end %>
+  </div>
+</div>
